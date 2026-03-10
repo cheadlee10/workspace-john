@@ -25,6 +25,7 @@ import {
   type EmailContext,
 } from "./email-templates";
 import { isOnDnc } from "./dnc-store";
+import { canSendToday, recordSend } from "./send-throttle";
 
 // Pipeline stages
 export type PipelineStage =
@@ -137,8 +138,18 @@ export async function runPipeline(config: PipelineConfig): Promise<PipelineProsp
         },
       };
 
-      // Step 6: Send initial pitch email
+      // Step 6: Send initial pitch email (with warmup throttle check)
+      if (!(await canSendToday())) {
+        console.warn(`[Pipeline] Daily send limit reached — deferring email for ${prospect.restaurant.name}`);
+        pipelineProspect.nextAction = {
+          type: "email",
+          scheduledFor: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
+        };
+        allProspects.push(pipelineProspect);
+        continue;
+      }
       await sendPitchEmail(pipelineProspect, config);
+      await recordSend();
       pipelineProspect.stage = "email_sent";
       pipelineProspect.emailsSent = 1;
 
@@ -190,7 +201,12 @@ export async function processFollowUps(
     switch (prospect.nextAction.type) {
       case "followup":
         if (prospect.emailsSent === 1) {
+          if (!(await canSendToday())) {
+            console.warn(`[Pipeline] Daily send limit reached — deferring follow-up for ${prospect.restaurant.name}`);
+            continue;
+          }
           await sendFollowUpEmail(prospect, config);
+          await recordSend();
           prospect.emailsSent = 2;
           prospect.stage = "followup_sent";
           prospect.nextAction = {
@@ -214,7 +230,12 @@ export async function processFollowUps(
 
       case "email":
         if (prospect.emailsSent === 2) {
+          if (!(await canSendToday())) {
+            console.warn(`[Pipeline] Daily send limit reached — deferring final email for ${prospect.restaurant.name}`);
+            continue;
+          }
           await sendFinalEmail(prospect, config);
+          await recordSend();
           prospect.emailsSent = 3;
           prospect.stage = "final_email_sent";
           prospect.nextAction = undefined; // End of cadence

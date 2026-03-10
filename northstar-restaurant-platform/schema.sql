@@ -199,7 +199,13 @@ create table if not exists activities (
 create index if not exists idx_activities_created on activities (created_at desc);
 create index if not exists idx_activities_type on activities (type);
 
--- 13. DNC LIST (Do Not Contact)
+-- 13. DAILY SEND LOG (Domain Warmup Throttle)
+create table if not exists daily_send_log (
+  date text primary key,
+  send_count integer not null default 0
+);
+
+-- 14. DNC LIST (Do Not Contact)
 create table if not exists dnc_list (
   id text primary key,
   email text,
@@ -229,6 +235,7 @@ alter table sequences enable row level security;
 alter table enrollments enable row level security;
 alter table activities enable row level security;
 alter table dnc_list enable row level security;
+alter table daily_send_log enable row level security;
 
 -- Service role bypasses RLS, so no policies needed for server-side access.
 -- If public (anon) access is ever needed (e.g., public FAQs), add policies then.
