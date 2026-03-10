@@ -217,6 +217,18 @@ create table if not exists dnc_list (
 create index if not exists idx_dnc_email on dnc_list (lower(email));
 create index if not exists idx_dnc_phone on dnc_list (phone);
 
+-- 15. EMAIL EVENTS (Open/Click Tracking)
+create table if not exists email_events (
+  id text primary key,
+  lead_id text,
+  sequence_id text,
+  event_type text not null,
+  timestamp text not null,
+  metadata jsonb
+);
+create index if not exists idx_email_events_lead on email_events (lead_id);
+create index if not exists idx_email_events_type on email_events (event_type);
+
 -- ============================================================
 -- Enable Row Level Security (RLS) on all tables
 -- Since we use service_role key, RLS won't block our queries,
@@ -236,6 +248,7 @@ alter table enrollments enable row level security;
 alter table activities enable row level security;
 alter table dnc_list enable row level security;
 alter table daily_send_log enable row level security;
+alter table email_events enable row level security;
 
 -- Service role bypasses RLS, so no policies needed for server-side access.
 -- If public (anon) access is ever needed (e.g., public FAQs), add policies then.

@@ -14,6 +14,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateLead, getAllLeads } from "@/lib/crm/lead-store";
 import { logActivity } from "@/lib/activity/activity-store";
+import { logEmailEvent } from "@/lib/outreach/email-event-store";
 import { getEnrollmentsForLead } from "@/lib/outreach/sequence-store";
 import { getSupabase, isDbEnabled } from "@/lib/db/supabase";
 
@@ -152,6 +153,14 @@ export async function POST(request: NextRequest) {
     }
 
     case "email.opened": {
+      const openEnrollments = await getEnrollmentsForLead(lead.id);
+      const openSeqId = openEnrollments.find((e) => e.status === "active")?.sequenceId;
+
+      logEmailEvent(lead.id, openSeqId, "opened", {
+        emailId: event.data.email_id,
+        timestamp: now,
+      });
+
       logActivity({
         type: "outreach",
         action: "email_opened",
@@ -164,6 +173,14 @@ export async function POST(request: NextRequest) {
     }
 
     case "email.clicked": {
+      const clickEnrollments = await getEnrollmentsForLead(lead.id);
+      const clickSeqId = clickEnrollments.find((e) => e.status === "active")?.sequenceId;
+
+      logEmailEvent(lead.id, clickSeqId, "clicked", {
+        emailId: event.data.email_id,
+        timestamp: now,
+      });
+
       logActivity({
         type: "outreach",
         action: "email_clicked",
