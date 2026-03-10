@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local Service WOW+ Content Model",
+  "type": "object",
+  "required": [
+    "business",
+    "hero",
+    "proof",
+    "services",
+    "beforeAfter",
+    "process",
+    "offer",
+    "faq",
+    "contact"
+  ],
+  "properties": {
+    "business": {
+      "type": "object",
+      "required": ["name", "phone", "primaryCity", "serviceArea", "licenseLabel"],
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "primaryCity": { "type": "string" },
+        "serviceArea": { "type": "array", "items": { "type": "string" }, "minItems": 3 },
+        "licenseLabel": { "type": "string" }
+      }
+    },
+    "hero": {
+      "type": "object",
+      "required": ["headline", "subheadline", "chips", "guaranteeMicrocopy"],
+      "properties": {
+        "headline": { "type": "string", "maxLength": 95 },
+        "subheadline": { "type": "string", "maxLength": 190 },
+        "chips": { "type": "array", "items": { "type": "string" }, "minItems": 3 },
+        "guaranteeMicrocopy": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "proof": {
+      "type": "object",
+      "required": ["rating", "reviews", "jobsCompleted", "responseSla", "warranty"],
+      "properties": {
+        "rating": { "type": "number", "minimum": 0, "maximum": 5 },
+        "reviews": { "type": "integer", "minimum": 1 },
+        "jobsCompleted": { "type": "integer", "minimum": 1 },
+        "responseSla": { "type": "string" },
+        "warranty": { "type": "string" }
+      }
+    },
+    "services": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["name", "problem", "outcome", "eta"],
+        "properties": {
+          "name": { "type": "string" },
+          "problem": { "type": "string" },
+          "outcome": { "type": "string" },
+          "eta": { "type": "string" }
+        }
+      }
+    },
+    "beforeAfter": {
+      "type": "object",
+      "required": ["title", "metrics"],
+      "properties": {
+        "title": { "type": "string" },
+        "metrics": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["label", "delta"],
+            "properties": {
+              "label": { "type": "string" },
+              "delta": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "process": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["step", "title", "detail"],
+        "properties": {
+          "step": { "type": "integer", "minimum": 1, "maximum": 4 },
+          "title": { "type": "string" },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "offer": {
+      "type": "object",
+      "required": ["title", "details", "guarantee", "expiresNote"],
+      "properties": {
+        "title": { "type": "string" },
+        "details": { "type": "string" },
+        "guarantee": { "type": "string" },
+        "expiresNote": { "type": "string" }
+      }
+    },
+    "faq": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["q", "a"],
+        "properties": {
+          "q": { "type": "string" },
+          "a": { "type": "string" }
+        }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "required": ["formEndpoint", "ctaPrimary", "ctaSecondary"],
+      "properties": {
+        "formEndpoint": { "type": "string" },
+        "ctaPrimary": { "type": "string" },
+        "ctaSecondary": { "type": "string" }
+      }
+    }
+  }
+}

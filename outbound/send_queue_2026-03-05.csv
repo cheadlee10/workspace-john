@@ -1,0 +1,33 @@
+queue_id,send_date_pt,priority,batch,lead_id,business_name,source,channel_primary,channel_secondary,phone,url,timezone_local,window_start_pt,window_end_pt,template_id,owner,status,attempt_count,last_attempt_pt,response_status,response_text,response_at_pt,next_followup_pt,notes
+20260305-A01,2026-03-05,P1,A,nosite-037,Regal Roofing & Contracting,Yelp-Unclaimed,call,sms,+12067842689,,PT,10:05,10:15,CALL-T1,john,queued,0,,pending,,,2026-03-05 13:30,High-ticket roofing
+20260305-A02,2026-03-05,P1,A,nosite-068,Quality Construction & Roofing,Yelp-Unclaimed,call,sms,+18322826486,,CT,10:15,10:25,CALL-T1,john,queued,0,,pending,,,2026-03-05 13:45,High-ticket roofing
+20260305-A03,2026-03-05,P1,A,nosite-109,San Diego Heating and Cooling,Yelp-Unclaimed,call,sms,+16194432665,,PT,10:25,10:35,CALL-T1,john,queued,0,,pending,,,2026-03-05 14:00,HVAC high-value
+20260305-A04,2026-03-05,P1,A,nosite-005,Envision Landscaping,Yelp-Unclaimed,sms,call,+12066798525,,PT,10:35,10:40,SMS-T1,john,queued,0,,pending,,,2026-03-05 14:10,Landscaping WA
+20260305-A05,2026-03-05,P1,A,nosite-004,Northwest Landscape and Patio Bellevue,Yelp-Unclaimed,sms,call,+14253904959,,PT,10:40,10:45,SMS-T1,john,queued,0,,pending,,,2026-03-05 14:15,Landscaping WA
+20260305-A06,2026-03-05,P1,A,nosite-001,Perez Landscaping,Yelp-Unclaimed,sms,call,+12066029766,,PT,10:45,10:50,SMS-T1,john,queued,0,,pending,,,2026-03-05 14:20,Landscaping WA
+20260305-A07,2026-03-05,P1,A,nosite-002,Ligaya Landscaping,Yelp-Unclaimed,sms,call,+12063517402,,PT,10:50,10:55,SMS-T1,john,queued,0,,pending,,,2026-03-05 14:25,Landscaping WA
+20260305-A08,2026-03-05,P1,A,nosite-003,Greenscapes Landscaping,Yelp-Unclaimed,sms,call,+12068028186,,PT,10:55,11:00,SMS-T1,john,queued,0,,pending,,,2026-03-05 14:30,Landscaping WA
+20260305-B01,2026-03-05,P2,B,nosite-050,Valley Landscaping,Yelp-Unclaimed,sms,call,+16234864922,,MT,11:30,11:35,SMS-T1,john,queued,0,,pending,,,2026-03-05 15:00,Phoenix landscaping
+20260305-B02,2026-03-05,P2,B,nosite-049,Valle Landscaping,Yelp-Unclaimed,sms,call,+14808069550,,MT,11:35,11:40,SMS-T1,john,queued,0,,pending,,,2026-03-05 15:05,Phoenix landscaping
+20260305-B03,2026-03-05,P2,B,nosite-052,CC Landscaping,Yelp-Unclaimed,sms,call,+16233249775,,MT,11:40,11:45,SMS-T1,john,queued,0,,pending,,,2026-03-05 15:10,Phoenix landscaping
+20260305-B04,2026-03-05,P2,B,nosite-053,RB Landscaping Service,Yelp-Unclaimed,sms,call,+14805408509,,MT,11:45,11:50,SMS-T1,john,queued,0,,pending,,,2026-03-05 15:15,Phoenix landscaping
+20260305-B05,2026-03-05,P2,B,nosite-101,Cedar Fencing Plus,Yelp-Unclaimed,sms,call,+15032446216,,PT,11:50,11:55,SMS-T1,john,queued,0,,pending,,,2026-03-05 15:20,Fencing lead
+20260305-B06,2026-03-05,P2,B,nosite-102,Austin's Custom Fencing,Yelp-Unclaimed,sms,call,+15037626010,,PT,11:55,12:00,SMS-T1,john,queued,0,,pending,,,2026-03-05 15:25,Fencing lead
+20260305-B07,2026-03-05,P2,B,nosite-115,Ace Fencing,Yelp-Unclaimed,sms,call,+17025688330,,PT,12:00,12:05,SMS-T1,john,queued,0,,pending,,,2026-03-05 15:30,Las Vegas fencing
+20260305-B08,2026-03-05,P2,B,nosite-061,JV Pool Services,Yelp-Unclaimed,call,sms,+12149294278,,CT,12:05,12:15,CALL-T1,john,queued,0,,pending,,,2026-03-05 15:35,Dallas pool service
+20260305-C01,2026-03-05,P3,C,nosite-023,Handy-Den,Yelp-Unclaimed,sms,call,+12532302928,,PT,13:30,13:35,SMS-T1,john,queued,0,,pending,,,2026-03-06 09:30,Handyman Tacoma
+20260305-C02,2026-03-05,P3,C,nosite-007,Half-Price Handyman,Yelp-Unclaimed,sms,call,+14252698545,,PT,13:35,13:40,SMS-T1,john,queued,0,,pending,,,2026-03-06 09:35,Handyman Kirkland
+20260305-C03,2026-03-05,P3,C,nosite-006,Home-Crafters-Handyman,Yelp-Unclaimed,sms,call,+12062356574,,PT,13:40,13:45,SMS-T1,john,queued,0,,pending,,,2026-03-06 09:40,Handyman Kirkland
+20260305-C04,2026-03-05,P3,C,nosite-008,R & S Cleaning Services,Yelp-Unclaimed,sms,call,+14257803018,,PT,13:45,13:50,SMS-T1,john,queued,0,,pending,,,2026-03-06 09:45,Cleaning Redmond
+20260305-C05,2026-03-05,P3,C,nosite-085,Bug Free Exterminating,Yelp-Unclaimed,sms,call,+17709202288,,ET,13:50,13:55,SMS-T1,john,queued,0,,pending,,,2026-03-06 10:00,Pest control ATL
+20260305-C06,2026-03-05,P3,C,nosite-084,American Termite & Pest Elimination,Yelp-Unclaimed,sms,call,+14048745250,,ET,13:55,14:00,SMS-T1,john,queued,0,,pending,,,2026-03-06 10:05,Pest control ATL
+20260305-C07,2026-03-05,P3,C,nosite-087,Contact Pest Control,Yelp-Unclaimed,sms,call,+17709090444,,ET,14:00,14:05,SMS-T1,john,queued,0,,pending,,,2026-03-06 10:10,Pest control ATL
+20260305-C08,2026-03-05,P3,C,nosite-086,CRC Services Termite & Pest Control,Yelp-Unclaimed,sms,call,+17709737103,,ET,14:05,14:10,SMS-T1,john,queued,0,,pending,,,2026-03-06 10:15,Pest control ATL
+20260305-D01,2026-03-05,P2,D,wave4-001,Plumbers of Nashville,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/plumbers-of-nashville-nashville,CT,15:30,15:35,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 10:30,No phone DM only
+20260305-D02,2026-03-05,P2,D,wave4-002,Integrity Plumbing,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/integrity-plumbing-nashville-2,CT,15:35,15:40,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 10:35,No phone DM only
+20260305-D03,2026-03-05,P2,D,wave4-004,Buchi Plumbing,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/buchi-plumbing-nashville,CT,15:40,15:45,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 10:40,No phone DM only
+20260305-D04,2026-03-05,P2,D,wave4-005,East Nashville Plumbing,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/east-nashville-plumbing-nashville,CT,15:45,15:50,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 10:45,No phone DM only
+20260305-D05,2026-03-05,P2,D,wave4-009,Austin's Best Plumbing,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/austins-best-plumbing-austin,CT,15:50,15:55,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 10:50,No phone DM only
+20260305-D06,2026-03-05,P2,D,wave4-010,Austin Plumbing,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/austin-plumbing-austin-4,CT,15:55,16:00,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 10:55,No phone DM only
+20260305-D07,2026-03-05,P2,D,wave4-017,Dallas Emergency Plumbers,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/dallas-emergency-plumbers-dallas,CT,16:00,16:05,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 11:00,No phone DM only
+20260305-D08,2026-03-05,P2,D,wave4-021,Phoenix 24 Hr Plumbing,Yelp-Unclaimed,yelp_dm,, ,https://www.yelp.com/biz/phoenix-24-hr-plumbing-phoenix,MT,16:05,16:10,YELP-DM-T1,john,queued,0,,pending,,,2026-03-06 11:05,No phone DM only

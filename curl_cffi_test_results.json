@@ -1,0 +1,7 @@
+{
+  "basic_http": true,
+  "perimeterx_detection": true,
+  "tls_spoofing_works": false,
+  "login_possible": false,
+  "errors": []
+}

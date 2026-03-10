@@ -1,0 +1,17 @@
+[2026-02-25T06:59:32.240Z] === FIVERR BOT v2.0 STEALTH EDITION STARTING ===\n[2026-02-25T06:59:32.243Z] Launching stealth browser...\n[2026-02-25T06:59:33.081Z] Stealth browser launched successfully\n[2026-02-25T06:59:33.082Z] Navigating to Fiverr login...\n[2026-02-25T07:00:03.092Z] ERROR: page.goto: Timeout 30000ms exceeded.
+Call log:
+[2m  - navigating to "https://www.fiverr.com/login", waiting until "networkidle"[22m
+\n[2026-02-25T07:00:03.093Z] page.goto: Timeout 30000ms exceeded.
+Call log:
+[2m  - navigating to "https://www.fiverr.com/login", waiting until "networkidle"[22m
+
+    at login (C:\Users\chead\.openclaw\workspace-john\fiverr-bot-stealth.js:87:16)
+    at main (C:\Users\chead\.openclaw\workspace-john\fiverr-bot-stealth.js:164:15)\n[2026-02-25T07:02:41.196Z] === FIVERR BOT v2.0 STEALTH EDITION STARTING ===\n[2026-02-25T07:02:41.198Z] Launching stealth browser...\n[2026-02-25T07:02:42.014Z] Stealth browser launched successfully\n[2026-02-25T07:02:42.015Z] Navigating to Fiverr login...\n[2026-02-25T07:02:47.963Z] Entering credentials...\n[2026-02-25T07:03:17.974Z] ERROR: page.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('input[type="email"], input[name="username"]')[22m
+\n[2026-02-25T07:03:17.975Z] page.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('input[type="email"], input[name="username"]')[22m
+
+    at login (C:\Users\chead\.openclaw\workspace-john\fiverr-bot-stealth.js:97:16)
+    at async main (C:\Users\chead\.openclaw\workspace-john\fiverr-bot-stealth.js:173:9)\n

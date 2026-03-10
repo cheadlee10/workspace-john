@@ -1,0 +1,30 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4A574;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0C080;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer circle background -->
+  <circle cx="100" cy="100" r="95" fill="#0F2340" opacity="0.08"/>
+  
+  <!-- Main star shape - 5-pointed star -->
+  <g id="star">
+    <!-- Points: North (top), NE, SE, SW, NW -->
+    <!-- North point -->
+    <polygon points="100,20 125,85 195,85 140,130 165,195 100,150 35,195 60,130 5,85 75,85" 
+             fill="url(#goldGradient)" 
+             stroke="#D4A574" 
+             stroke-width="1.5"/>
+  </g>
+  
+  <!-- Inner decorative circle -->
+  <circle cx="100" cy="100" r="60" fill="none" 
+          stroke="#D4A574" 
+          stroke-width="2" 
+          opacity="0.3"/>
+  
+  <!-- Center accent dot -->
+  <circle cx="100" cy="100" r="4" fill="#0F2340" opacity="0.6"/>
+</svg>

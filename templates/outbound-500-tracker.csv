@@ -1,0 +1,2 @@
+timestamp,batch_id,day,channel,lead_id,business_name,city,state,template_id,send_status,delivery_status,open_status,reply_status,positive_reply,unsubscribe,complaint,bounce_type,suppressed,notes
+2026-03-02T09:00:00-08:00,D1-B1,1,email,example-001,Example Landscaping,Seattle,WA,T1,sent,delivered,opened,none,no,no,no,none,no,

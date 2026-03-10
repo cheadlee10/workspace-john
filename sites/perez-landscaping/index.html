@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Perez Landscaping — Professional Landscaping Services | Seattle, WA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+:root {
+  --primary: #1a3a8a;
+  --secondary: #22a652;
+  --accent: #FFD54F;
+  --white: #FFFFFF;
+  --text: #1A2B3C;
+  --text-muted: #5C7A94;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #F7F9FC;
+  color: var(--text);
+}
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #091E4A 0%, #0e2d6b 30%, #1a3a8a 60%, #22a652 100%);
+  display: flex;
+  align-items: center;
+  padding: 120px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-content {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 24px;
+}
+.badge-dot { width: 8px; height: 8px; border-radius: 50%; background: #22a652; box-shadow: 0 0 8px #22a652; }
+.badge-text { font-size: 12px; font-weight: 700; letter-spacing: 3; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.06;
+  margin-bottom: 24px;
+}
+h1 span {
+  background: linear-gradient(90deg, #FFD54F, #FFB300, #FFD54F);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-style: italic;
+}
+.hero p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.65);
+  max-width: 480px;
+  margin: 0 auto 36px;
+}
+.cta-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #FFD54F, #FFB300);
+  color: #091E4A;
+  padding: 17px 38px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(255,213,79,0.35);
+  margin: 8px;
+}
+.cta-secondary {
+  display: inline-block;
+  color: var(--white);
+  padding: 17px 38px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  border: 2px solid rgba(255,255,255,0.25);
+  margin: 8px;
+}
+.services {
+  padding: 100px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.services h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 60px;
+}
+.services h2 span { color: var(--primary); font-style: italic; }
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.service-card {
+  background: var(--white);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #D0DDE8;
+  transition: transform 0.4s, box-shadow 0.4s;
+}
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 56px rgba(27,95,175,0.15);
+}
+.service-header {
+  height: 170px;
+  background: linear-gradient(135deg, #091E4A, #1a3a8a, #22a652);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.service-icon {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  backdrop-filter: blur(8px);
+}
+.service-body { padding: 22px 24px 26px; }
+.service-body h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.service-body ul { list-style: none; }
+.service-body li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13.5px; color: var(--text-muted);
+  margin-bottom: 7px;
+}
+.service-body li::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22a652, #00ACC1);
+}
+.contact {
+  background: linear-gradient(135deg, #091E4A, #1a3a8a);
+  padding: 90px 24px;
+  text-align: center;
+}
+.contact h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.contact p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.55);
+  max-width: 420px;
+  margin: 0 auto 36px;
+}
+.phone { font-size: 32px; color: #FFD54F; font-weight: 700; }
+@media (max-width: 900px) {
+  .service-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .service-grid { grid-template-columns: 1fr; }
+  h1 { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      <span class="badge-text">PEREZ LANDSCAPING</span>
+    </div>
+    <h1>Transform Your<br/><span>Outdoor Space.</span></h1>
+    <p>Professional landscaping services serving SeaTac, Tukwila & greater Seattle. Lawn care, garden design, seasonal cleanups & more. Latino-owned. Family-operated.</p>
+    <a href="tel:2066029766" class="cta-btn">Call (206) 602-9766</a>
+    <a href="#services" class="cta-secondary">View Services</a>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <h2>Professional <span>Services</span></h2>
+  <div class="service-grid">
+    <div class="service-card">
+      <div class="service-header"><div class="service-icon">🌿</div></div>
+      <div class="service-body">
+        <h3>Lawn Care</h3>
+        <ul><li>Mowing & edging</li><li>Fertilization</li><li>Weed control</li><li>Seasonal cleanups</li></ul>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header"><div class="service-icon">🌳</div></div>
+      <div class="service-body">
+        <h3>Landscaping</h3>
+        <ul><li>Garden design</li><li>Mulching</li><li>Tree care</li><li>Bed preparation</li></ul>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header"><div class="service-icon">🧱</div></div>
+      <div class="service-body">
+        <h3>Hardscaping</h3>
+        <ul><li>Patio installation</li><li>Retaining walls</li><li>Stone walkways</li><li>Outdoor lighting</li></ul>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header"><div class="service-icon">✨</div></div>
+      <div class="service-body">
+        <h3>Cleanup</h3>
+        <ul><li>Yard debris</li><li>Gutter cleaning</li><li>Pressure washing</li><li>Full property</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact">
+  <h2>Ready to Transform?</h2>
+  <p>Free estimates. No obligation. Serving Latino families across Seattle since 2015.</p>
+  <div class="phone">(206) 602-9766</div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+{
+  "queue_id": "sendops-2026-03-05",
+  "generated_at": "2026-03-05T07:40:00-08:00",
+  "owner": "john",
+  "summary": {
+    "total_sends": 45,
+    "by_status": {
+      "pending": 45,
+      "sent": 0,
+      "delivered": 0,
+      "failed": 0,
+      "responded": 0
+    },
+    "by_channel": {
+      "sms": 31,
+      "email": 14
+    },
+    "by_batch": {
+      "P1-HIGH-VALUE": 8,
+      "P2-MEDIUM-VALUE": 12,
+      "P3-SMS-AFTERNOON": 11,
+      "P4-LATE-AFTERNOON": 14
+    },
+    "estimated_pipeline_value": 35850,
+    "target_response_rate": 0.05
+  },
+  "batches": [
+    {
+      "batch_id": "P1-HIGH-VALUE",
+      "priority": 1,
+      "window_pt": "09:15-09:55",
+      "send_count": 8,
+      "channels": ["email", "sms"],
+      "status": "pending",
+      "estimated_value": 8400
+    },
+    {
+      "batch_id": "P2-MEDIUM-VALUE",
+      "priority": 2,
+      "window_pt": "10:00-11:00",
+      "send_count": 12,
+      "channels": ["email", "sms"],
+      "status": "pending",
+      "estimated_value": 10200
+    },
+    {
+      "batch_id": "P3-SMS-AFTERNOON",
+      "priority": 3,
+      "window_pt": "13:00-14:15",
+      "send_count": 11,
+      "channels": ["sms"],
+      "status": "pending",
+      "estimated_value": 6400
+    },
+    {
+      "batch_id": "P4-LATE-AFTERNOON",
+      "priority": 4,
+      "window_pt": "15:00-16:05",
+      "send_count": 14,
+      "channels": ["sms"],
+      "status": "pending",
+      "estimated_value": 8600
+    }
+  ],
+  "response_tracking": {
+    "responses_received": 0,
+    "positive_responses": 0,
+    "negative_responses": 0,
+    "booked_calls": 0,
+    "response_log": []
+  },
+  "execution_log": [],
+  "next_actions": [
+    {
+      "action": "execute_batch_p1",
+      "due_at_pt": "09:15",
+      "status": "pending"
+    },
+    {
+      "action": "execute_batch_p2", 
+      "due_at_pt": "10:00",
+      "status": "pending"
+    },
+    {
+      "action": "execute_batch_p3",
+      "due_at_pt": "13:00",
+      "status": "pending"
+    },
+    {
+      "action": "execute_batch_p4",
+      "due_at_pt": "15:00",
+      "status": "pending"
+    },
+    {
+      "action": "end_of_day_report",
+      "due_at_pt": "17:00",
+      "status": "pending"
+    }
+  ],
+  "guardrails": {
+    "sms_pacing_sec": 90,
+    "email_pacing_sec": 300,
+    "max_daily_touches": 100,
+    "require_qa_pass": true,
+    "tcpa_compliant": true
+  }
+}

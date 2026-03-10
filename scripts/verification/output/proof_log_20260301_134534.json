@@ -1,0 +1,393 @@
+{
+  "timestamp": "2026-03-01T13:45:34.381886",
+  "summary": {
+    "total": 10,
+    "passed": 7,
+    "failed": 3,
+    "pass_rate": 70.0
+  },
+  "results": [
+    {
+      "area": "lead_qualification",
+      "name": "Qualified lead with email and strong fit",
+      "passed": true,
+      "input": {
+        "id": "q1",
+        "company": "Evergreen Landscaping",
+        "email": "owner@evergreen.com",
+        "industry": "landscaping",
+        "has_no_website": true,
+        "needs_automation": true
+      },
+      "expected": true,
+      "actual": true,
+      "evidence": {
+        "has_channel": true,
+        "score": 70,
+        "threshold": 55,
+        "dnc": false
+      }
+    },
+    {
+      "area": "lead_qualification",
+      "name": "Fails without contact channel",
+      "passed": true,
+      "input": {
+        "id": "q2",
+        "company": "No Contact Co",
+        "industry": "landscaping",
+        "has_no_website": true,
+        "needs_automation": true
+      },
+      "expected": false,
+      "actual": false,
+      "evidence": {
+        "has_channel": false,
+        "score": 55,
+        "threshold": 55,
+        "dnc": false
+      }
+    },
+    {
+      "area": "lead_qualification",
+      "name": "Fails do-not-contact",
+      "passed": true,
+      "input": {
+        "id": "q3",
+        "company": "DNC Services",
+        "email": "owner@dnc.com",
+        "industry": "home services",
+        "needs_automation": true,
+        "do_not_contact": true
+      },
+      "expected": false,
+      "actual": false,
+      "evidence": {
+        "has_channel": true,
+        "score": 0,
+        "threshold": 55,
+        "dnc": true
+      }
+    },
+    {
+      "area": "dedupe",
+      "name": "Unique count is correct",
+      "passed": false,
+      "input": [
+        {
+          "id": "d1",
+          "company": "Alpha",
+          "email": "sales@alpha.com",
+          "industry": "landscaping",
+          "needs_automation": true
+        },
+        {
+          "id": "d2",
+          "company": "Alpha Duplicate",
+          "email": "SALES@alpha.com",
+          "industry": "landscaping"
+        },
+        {
+          "id": "d3",
+          "company": "Beta",
+          "phone": "(425) 600-2267",
+          "industry": "contractor",
+          "needs_automation": true
+        },
+        {
+          "id": "d4",
+          "company": "Beta Duplicate",
+          "phone": "+1 425-600-2267",
+          "industry": "contractor"
+        },
+        {
+          "id": "d5",
+          "name": "Jane Doe",
+          "company": "Gamma"
+        },
+        {
+          "id": "d6",
+          "name": "jane doe",
+          "company": "gamma"
+        }
+      ],
+      "expected": 3,
+      "actual": 4,
+      "evidence": {
+        "unique_ids": [
+          "d1",
+          "d3",
+          "d4",
+          "d5"
+        ],
+        "collision_count": 2,
+        "collisions": [
+          {
+            "key": "email:sales@alpha.com",
+            "kept_id": "d1",
+            "dropped_id": "d2",
+            "kept_score": 55,
+            "dropped_score": 35
+          },
+          {
+            "key": "name_company:jane doe|gamma",
+            "kept_id": "d5",
+            "dropped_id": "d6",
+            "kept_score": 0,
+            "dropped_score": 0
+          }
+        ]
+      }
+    },
+    {
+      "area": "dedupe",
+      "name": "Correct records retained after collisions",
+      "passed": false,
+      "input": [
+        {
+          "id": "d1",
+          "company": "Alpha",
+          "email": "sales@alpha.com",
+          "industry": "landscaping",
+          "needs_automation": true
+        },
+        {
+          "id": "d2",
+          "company": "Alpha Duplicate",
+          "email": "SALES@alpha.com",
+          "industry": "landscaping"
+        },
+        {
+          "id": "d3",
+          "company": "Beta",
+          "phone": "(425) 600-2267",
+          "industry": "contractor",
+          "needs_automation": true
+        },
+        {
+          "id": "d4",
+          "company": "Beta Duplicate",
+          "phone": "+1 425-600-2267",
+          "industry": "contractor"
+        },
+        {
+          "id": "d5",
+          "name": "Jane Doe",
+          "company": "Gamma"
+        },
+        {
+          "id": "d6",
+          "name": "jane doe",
+          "company": "gamma"
+        }
+      ],
+      "expected": [
+        "d1",
+        "d3",
+        "d5"
+      ],
+      "actual": [
+        "d1",
+        "d3",
+        "d4",
+        "d5"
+      ],
+      "evidence": {
+        "collisions": [
+          {
+            "key": "email:sales@alpha.com",
+            "kept_id": "d1",
+            "dropped_id": "d2",
+            "kept_score": 55,
+            "dropped_score": 35
+          },
+          {
+            "key": "name_company:jane doe|gamma",
+            "kept_id": "d5",
+            "dropped_id": "d6",
+            "kept_score": 0,
+            "dropped_score": 0
+          }
+        ]
+      }
+    },
+    {
+      "area": "outreach_queue",
+      "name": "Queue includes only eligible leads and sorted by priority",
+      "passed": false,
+      "input": [
+        {
+          "id": "o1",
+          "company": "Top Lead",
+          "email": "a@top.com",
+          "industry": "landscaping",
+          "needs_automation": true,
+          "has_no_website": true,
+          "estimated_value": 2000,
+          "status": "new"
+        },
+        {
+          "id": "o2",
+          "company": "Already Contacted",
+          "email": "a@contacted.com",
+          "industry": "landscaping",
+          "needs_automation": true,
+          "estimated_value": 2500,
+          "status": "contacted"
+        },
+        {
+          "id": "o3",
+          "company": "Queued",
+          "email": "a@queued.com",
+          "industry": "landscaping",
+          "needs_automation": true,
+          "estimated_value": 1800,
+          "status": "new",
+          "already_queued": true
+        },
+        {
+          "id": "o4",
+          "company": "High Value 2",
+          "email": "a@hv2.com",
+          "industry": "home services",
+          "needs_automation": true,
+          "has_no_website": true,
+          "estimated_value": 1900,
+          "status": "new"
+        },
+        {
+          "id": "o5",
+          "company": "Weak Fit",
+          "email": "a@weak.com",
+          "industry": "unknown",
+          "estimated_value": 500,
+          "status": "new"
+        },
+        {
+          "id": "o6",
+          "company": "Good Fit 3",
+          "phone": "4251112222",
+          "industry": "contractor",
+          "needs_automation": true,
+          "estimated_value": 1200,
+          "status": "new"
+        }
+      ],
+      "expected": [
+        "o1",
+        "o4",
+        "o6"
+      ],
+      "actual": [
+        "o1",
+        "o4"
+      ],
+      "evidence": {
+        "queue": [
+          {
+            "id": "o1",
+            "company": "Top Lead",
+            "email": "a@top.com",
+            "industry": "landscaping",
+            "needs_automation": true,
+            "has_no_website": true,
+            "estimated_value": 2000,
+            "status": "new",
+            "_score": 70,
+            "_queue_reason": {
+              "has_channel": true,
+              "score": 70,
+              "threshold": 55,
+              "dnc": false
+            }
+          },
+          {
+            "id": "o4",
+            "company": "High Value 2",
+            "email": "a@hv2.com",
+            "industry": "home services",
+            "needs_automation": true,
+            "has_no_website": true,
+            "estimated_value": 1900,
+            "status": "new",
+            "_score": 70,
+            "_queue_reason": {
+              "has_channel": true,
+              "score": 70,
+              "threshold": 55,
+              "dnc": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "area": "webhook_idempotency",
+      "name": "First event accepted",
+      "passed": true,
+      "input": {
+        "event_id": "evt_001",
+        "type": "lead.created",
+        "lead_id": "L-1"
+      },
+      "expected": "processed",
+      "actual": "processed",
+      "evidence": {
+        "idempotency_key": "eid:evt_001",
+        "accepted": true,
+        "status": "processed"
+      }
+    },
+    {
+      "area": "webhook_idempotency",
+      "name": "Duplicate event_id ignored",
+      "passed": true,
+      "input": {
+        "event_id": "evt_001",
+        "type": "lead.created",
+        "lead_id": "L-1"
+      },
+      "expected": "duplicate_ignored",
+      "actual": "duplicate_ignored",
+      "evidence": {
+        "idempotency_key": "eid:evt_001",
+        "accepted": false,
+        "status": "duplicate_ignored"
+      }
+    },
+    {
+      "area": "webhook_idempotency",
+      "name": "Custom idempotency key accepted",
+      "passed": true,
+      "input": {
+        "idempotency_key": "abc-123",
+        "type": "lead.updated",
+        "lead_id": "L-1"
+      },
+      "expected": "processed",
+      "actual": "processed",
+      "evidence": {
+        "idempotency_key": "idk:abc-123",
+        "accepted": true,
+        "status": "processed"
+      }
+    },
+    {
+      "area": "webhook_idempotency",
+      "name": "Duplicate custom key ignored",
+      "passed": true,
+      "input": {
+        "idempotency_key": "abc-123",
+        "type": "lead.updated",
+        "lead_id": "L-1"
+      },
+      "expected": "duplicate_ignored",
+      "actual": "duplicate_ignored",
+      "evidence": {
+        "idempotency_key": "idk:abc-123",
+        "accepted": false,
+        "status": "duplicate_ignored"
+      }
+    }
+  ]
+}

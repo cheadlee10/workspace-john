@@ -1,0 +1,643 @@
+{
+  "queue_meta": {
+    "date": "2026-03-05",
+    "day_of_week": "Thursday",
+    "day_rating": "OPTIMAL",
+    "created_at": "2026-03-05T07:00:00-08:00",
+    "created_by": "john-subagent:watchdog-send-ops",
+    "total_sends": 45,
+    "channel_breakdown": {
+      "sms": 45,
+      "email": 0,
+      "call": 0
+    },
+    "constraint_notes": [
+      "Twilio trial mode: must verify recipient numbers before send OR upgrade account ($20)",
+      "All leads have phone only - no email addresses available",
+      "Thursday is #2 optimal day for outreach (Tuesday is #1)",
+      "Send windows optimized for 9-11am and 1-2pm in recipient's LOCAL time zone"
+    ]
+  },
+  "send_windows_pt": {
+    "BATCH_1_ET_MORNING": {
+      "pt_time": "06:00-08:00",
+      "local_time": "09:00-11:00 ET",
+      "description": "Eastern Time morning window - Atlanta, Raleigh"
+    },
+    "BATCH_2_CT_MORNING": {
+      "pt_time": "07:00-09:00",
+      "local_time": "09:00-11:00 CT",
+      "description": "Central Time morning window - Dallas, Houston, KC, Milwaukee, OKC, St Louis"
+    },
+    "BATCH_3_MT_MORNING": {
+      "pt_time": "08:00-10:00",
+      "local_time": "09:00-11:00 MT",
+      "description": "Mountain Time morning window - Phoenix, Albuquerque, El Paso, Tucson"
+    },
+    "BATCH_4_PT_MORNING": {
+      "pt_time": "09:00-11:00",
+      "local_time": "09:00-11:00 PT",
+      "description": "Pacific Time morning window - Seattle, Portland, Vegas, San Diego"
+    },
+    "BATCH_5_AFTERNOON": {
+      "pt_time": "10:00-11:30",
+      "local_time": "1:00-2:30pm ET",
+      "description": "Secondary afternoon window for all time zones (1-2pm local)"
+    }
+  },
+  "batches": [
+    {
+      "batch_id": "BATCH_1_ET",
+      "priority": 1,
+      "send_window_pt": "06:00-08:00",
+      "target_tz": "ET",
+      "leads_count": 6,
+      "estimated_value": 3650,
+      "leads": [
+        {
+          "id": "nosite-079",
+          "client": "New Image Mobile Auto Detailing",
+          "service": "Auto Detailing",
+          "location": "Atlanta, GA",
+          "phone": "+14043419569",
+          "estimated_value": 600,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-084",
+          "client": "American Termite & Pest Elimination",
+          "service": "Pest Control",
+          "location": "Atlanta, GA 30303",
+          "phone": "+14048745250",
+          "estimated_value": 550,
+          "has_contact_name": false,
+          "priority_score": 70
+        },
+        {
+          "id": "nosite-085",
+          "client": "Bug Free Exterminating",
+          "service": "Pest Control",
+          "location": "Atlanta, GA 30303",
+          "phone": "+17709202288",
+          "estimated_value": 550,
+          "has_contact_name": false,
+          "priority_score": 70
+        },
+        {
+          "id": "nosite-086",
+          "client": "CRC Services Termite & Pest Control",
+          "service": "Pest Control",
+          "location": "Atlanta, GA 30303",
+          "phone": "+17709737103",
+          "estimated_value": 550,
+          "has_contact_name": false,
+          "priority_score": 70
+        },
+        {
+          "id": "nosite-087",
+          "client": "Contact Pest Control",
+          "service": "Pest Control",
+          "location": "Atlanta, GA 30349",
+          "phone": "+17709090444",
+          "estimated_value": 550,
+          "has_contact_name": false,
+          "priority_score": 70
+        },
+        {
+          "id": "wave3-006",
+          "client": "Garrico Plumbing",
+          "service": "Plumbing",
+          "location": "Raleigh, NC",
+          "phone": "+19199108013",
+          "estimated_value": 350,
+          "has_contact_name": false,
+          "priority_score": 65
+        }
+      ]
+    },
+    {
+      "batch_id": "BATCH_1B_ET",
+      "priority": 2,
+      "send_window_pt": "06:30-08:00",
+      "target_tz": "ET",
+      "leads_count": 3,
+      "estimated_value": 1050,
+      "leads": [
+        {
+          "id": "wave3-007",
+          "client": "Dazco Plumbing",
+          "service": "Plumbing",
+          "location": "Raleigh, NC 27661",
+          "phone": "+19197878256",
+          "estimated_value": 350,
+          "has_contact_name": false,
+          "priority_score": 65
+        },
+        {
+          "id": "wave3-010",
+          "client": "Garman Plumbing",
+          "service": "Plumbing",
+          "location": "Raleigh, NC",
+          "phone": "+19198319898",
+          "estimated_value": 350,
+          "has_contact_name": false,
+          "priority_score": 65
+        }
+      ]
+    },
+    {
+      "batch_id": "BATCH_2_CT",
+      "priority": 3,
+      "send_window_pt": "07:00-09:00",
+      "target_tz": "CT",
+      "leads_count": 10,
+      "estimated_value": 5298,
+      "leads": [
+        {
+          "id": "nosite-068",
+          "client": "Quality Construction & Roofing",
+          "service": "Roofing/Contractor",
+          "location": "Houston, TX 77041",
+          "phone": "+18322826486",
+          "estimated_value": 1500,
+          "has_contact_name": false,
+          "priority_score": 90
+        },
+        {
+          "id": "nosite-061",
+          "client": "JV Pool Services",
+          "service": "Pool & Hot Tub Service",
+          "location": "Dallas, TX 75228",
+          "phone": "+12149294278",
+          "estimated_value": 700,
+          "has_contact_name": false,
+          "priority_score": 80
+        },
+        {
+          "id": "nosite-116",
+          "client": "Bachman Lawn Care",
+          "service": "Landscaping/Lawn Care",
+          "location": "Kansas City, MO 64155",
+          "phone": "+18165508823",
+          "estimated_value": 700,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "wave3-002",
+          "client": "Nash Auto Repair",
+          "service": "Auto Repair",
+          "location": "Milwaukee, WI 53212",
+          "phone": "+14143930200",
+          "estimated_value": 299,
+          "has_contact_name": false,
+          "priority_score": 60
+        },
+        {
+          "id": "wave3-004",
+          "client": "Sam & Dave's Auto Repair Shop",
+          "service": "Auto Repair",
+          "location": "Milwaukee, WI 53206",
+          "phone": "+14142631993",
+          "estimated_value": 299,
+          "has_contact_name": false,
+          "priority_score": 60
+        },
+        {
+          "id": "wave3-047",
+          "client": "Electrical Solutions",
+          "service": "Electrical",
+          "location": "Oklahoma City, OK 73165",
+          "phone": "+14057940200",
+          "estimated_value": 400,
+          "has_contact_name": false,
+          "priority_score": 65
+        },
+        {
+          "id": "wave3-048",
+          "client": "Metro Electrical Contractors",
+          "service": "Electrical",
+          "location": "Oklahoma City, OK 73107",
+          "phone": "+14052322535",
+          "estimated_value": 400,
+          "has_contact_name": false,
+          "priority_score": 65
+        },
+        {
+          "id": "wave3-050",
+          "client": "The BBC Electric",
+          "service": "Electrical",
+          "location": "Cleveland, OH (serves OKC)",
+          "phone": "+12167800808",
+          "estimated_value": 400,
+          "has_contact_name": false,
+          "priority_score": 60
+        },
+        {
+          "id": "wave3-090",
+          "client": "Top Tree Service",
+          "service": "Tree Services",
+          "location": "St. Louis, MO 63114",
+          "phone": "+13144278699",
+          "estimated_value": 300,
+          "has_contact_name": false,
+          "priority_score": 55
+        },
+        {
+          "id": "wave3-106",
+          "client": "Picasso Painting",
+          "service": "Painting",
+          "location": "Milwaukee, WI 53215",
+          "phone": "+14147959881",
+          "estimated_value": 400,
+          "has_contact_name": false,
+          "priority_score": 65
+        }
+      ]
+    },
+    {
+      "batch_id": "BATCH_3_MT",
+      "priority": 4,
+      "send_window_pt": "08:00-10:00",
+      "target_tz": "MT",
+      "leads_count": 13,
+      "estimated_value": 8448,
+      "leads": [
+        {
+          "id": "nosite-055",
+          "client": "Tony Handyman Survives",
+          "contact_name": "Tony",
+          "service": "Handyman",
+          "location": "Phoenix, AZ 85001",
+          "phone": "+14807407144",
+          "estimated_value": 600,
+          "has_contact_name": true,
+          "priority_score": 85
+        },
+        {
+          "id": "nosite-056",
+          "client": "Rick The Handyman",
+          "contact_name": "Rick",
+          "service": "Handyman",
+          "location": "Phoenix, AZ 85018",
+          "phone": "+16022004521",
+          "estimated_value": 600,
+          "has_contact_name": true,
+          "priority_score": 85
+        },
+        {
+          "id": "nosite-057",
+          "client": "Manny Handyman Svcs",
+          "contact_name": "Manny",
+          "service": "Handyman",
+          "location": "Phoenix, AZ",
+          "phone": "+14804508097",
+          "estimated_value": 600,
+          "has_contact_name": true,
+          "priority_score": 85
+        },
+        {
+          "id": "nosite-049",
+          "client": "Valle Landscaping",
+          "service": "Landscaping",
+          "location": "Phoenix, AZ",
+          "phone": "+14808069550",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-050",
+          "client": "Valley Landscaping",
+          "service": "Landscaping",
+          "location": "Phoenix, AZ 85003",
+          "phone": "+16234864922",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-052",
+          "client": "CC Landscaping",
+          "service": "Landscaping",
+          "location": "Phoenix, AZ 85036",
+          "phone": "+16233249775",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-053",
+          "client": "RB Landscaping Service",
+          "service": "Landscaping",
+          "location": "Phoenix, AZ",
+          "phone": "+14805408509",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "wave3-016",
+          "client": "New Mexico Flooring Specialist",
+          "service": "Flooring",
+          "location": "Albuquerque, NM 87105",
+          "phone": "+15054014695",
+          "estimated_value": 400,
+          "has_contact_name": false,
+          "priority_score": 65
+        },
+        {
+          "id": "wave3-023",
+          "client": "Sernas Flooring & Tile",
+          "service": "Flooring",
+          "location": "Albuquerque, NM 87112",
+          "phone": "+15054807659",
+          "estimated_value": 400,
+          "has_contact_name": false,
+          "priority_score": 65
+        },
+        {
+          "id": "wave3-029",
+          "client": "JC Auto Repair",
+          "service": "Auto Repair",
+          "location": "Tucson, AZ 85719",
+          "phone": "+15208820150",
+          "estimated_value": 299,
+          "has_contact_name": false,
+          "priority_score": 60
+        },
+        {
+          "id": "wave3-044",
+          "client": "MNR Auto Service",
+          "service": "Auto Repair",
+          "location": "El Paso, TX 79901",
+          "phone": "+19155439418",
+          "estimated_value": 299,
+          "has_contact_name": false,
+          "priority_score": 60
+        },
+        {
+          "id": "wave3-045",
+          "client": "Horizon Auto Center",
+          "service": "Auto Repair",
+          "location": "El Paso, TX 79928",
+          "phone": "+19158520069",
+          "estimated_value": 299,
+          "has_contact_name": false,
+          "priority_score": 60
+        }
+      ]
+    },
+    {
+      "batch_id": "BATCH_4_PT",
+      "priority": 5,
+      "send_window_pt": "09:00-11:00",
+      "target_tz": "PT",
+      "leads_count": 14,
+      "estimated_value": 10300,
+      "leads": [
+        {
+          "id": "nosite-037",
+          "client": "Regal Roofing & Contracting",
+          "service": "Roofing/Contractor",
+          "location": "Seattle, WA 98113",
+          "phone": "+12067842689",
+          "estimated_value": 1500,
+          "has_contact_name": false,
+          "priority_score": 90
+        },
+        {
+          "id": "nosite-109",
+          "client": "San Diego Heating and Cooling",
+          "service": "HVAC",
+          "location": "El Cajon, CA 92021",
+          "phone": "+16194432665",
+          "estimated_value": 900,
+          "has_contact_name": false,
+          "priority_score": 85
+        },
+        {
+          "id": "nosite-023",
+          "client": "Handy-Den",
+          "contact_name": "Den",
+          "service": "Handyman",
+          "location": "Tacoma, WA",
+          "phone": "+12532302928",
+          "estimated_value": 600,
+          "has_contact_name": true,
+          "priority_score": 85
+        },
+        {
+          "id": "nosite-033",
+          "client": "A A Landscaping",
+          "service": "Landscaping",
+          "location": "Bothell, WA 98011",
+          "phone": "+12062518199",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 80
+        },
+        {
+          "id": "nosite-001",
+          "client": "Perez Landscaping",
+          "service": "Landscaping",
+          "location": "Seattle, WA 98188",
+          "phone": "+12066029766",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-002",
+          "client": "Ligaya Landscaping",
+          "service": "Landscaping",
+          "location": "Seattle, WA 98101",
+          "phone": "+12063517402",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-003",
+          "client": "Greenscapes Landscaping",
+          "service": "Landscaping",
+          "location": "Seattle, WA 98146",
+          "phone": "+12068028186",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-004",
+          "client": "Northwest Landscape and Patio Bellevue",
+          "service": "Landscaping",
+          "location": "Bellevue, WA 98004",
+          "phone": "+14253904959",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-005",
+          "client": "Envision Landscaping",
+          "service": "Landscaping",
+          "location": "Bellevue, WA 98007",
+          "phone": "+12066798525",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-006",
+          "client": "Home-Crafters-Handyman",
+          "service": "Handyman",
+          "location": "Kirkland, WA",
+          "phone": "+12062356574",
+          "estimated_value": 600,
+          "has_contact_name": false,
+          "priority_score": 70
+        },
+        {
+          "id": "nosite-007",
+          "client": "Half-Price Handyman",
+          "service": "Handyman",
+          "location": "Kirkland, WA 98034",
+          "phone": "+14252698545",
+          "estimated_value": 600,
+          "has_contact_name": false,
+          "priority_score": 70
+        },
+        {
+          "id": "nosite-008",
+          "client": "R & S Cleaning Services",
+          "service": "House Cleaning",
+          "location": "Redmond, WA 98052",
+          "phone": "+14257803018",
+          "estimated_value": 500,
+          "has_contact_name": false,
+          "priority_score": 65
+        },
+        {
+          "id": "nosite-101",
+          "client": "Cedar Fencing Plus",
+          "service": "Fencing",
+          "location": "Portland, OR 97201",
+          "phone": "+15032446216",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-102",
+          "client": "Austin's Custom Fencing",
+          "service": "Fencing",
+          "location": "Portland, OR 97201",
+          "phone": "+15037626010",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        },
+        {
+          "id": "nosite-115",
+          "client": "Ace Fencing",
+          "service": "Fencing",
+          "location": "Las Vegas, NV 89101",
+          "phone": "+17025688330",
+          "estimated_value": 800,
+          "has_contact_name": false,
+          "priority_score": 75
+        }
+      ]
+    }
+  ],
+  "sms_template": {
+    "version": "v1.0-2026-03-05",
+    "char_limit": 160,
+    "templates": {
+      "with_name": "Hi {{NAME}}, this is John from NorthStar. We specialize in websites for {{SERVICE}} businesses. I noticed {{BUSINESS}} doesn't have one - quick question: would a professional site help you get more customers?",
+      "without_name": "Hi, this is John from NorthStar Synergy. We build websites for {{SERVICE}} businesses. I noticed {{BUSINESS}} doesn't have one - would a professional site help you get more customers?",
+      "follow_up_1": "Hey {{NAME_OR_THERE}}, following up on my message about a website for {{BUSINESS}}. Happy to show you a demo - no cost, no pressure. Worth 5 mins?",
+      "follow_up_2": "Last note: If a website isn't a priority right now, no worries. But if you ever want to chat about getting more customers online, I'm here. -John"
+    },
+    "personalization_rules": [
+      "Use contact_name if available (Tony, Rick, Den, Manny)",
+      "Mention specific service type (landscaping, handyman, plumbing)",
+      "Keep under 160 chars to avoid splitting",
+      "Soft CTA - question format, not hard sell"
+    ]
+  },
+  "tracking_schema": {
+    "fields": [
+      "lead_id",
+      "batch_id",
+      "send_timestamp_utc",
+      "channel",
+      "template_used",
+      "twilio_sid",
+      "delivery_status",
+      "response_received",
+      "response_timestamp_utc",
+      "response_text",
+      "sentiment",
+      "next_action",
+      "notes"
+    ],
+    "statuses": [
+      "queued",
+      "sent",
+      "delivered",
+      "failed",
+      "responded",
+      "converted",
+      "declined",
+      "no_response"
+    ]
+  },
+  "execution_checklist": {
+    "pre_send": [
+      "[ ] Verify Twilio account status (trial needs verified numbers)",
+      "[ ] Option A: Upgrade Twilio ($20) for unrestricted sends",
+      "[ ] Option B: Add each number to verified list (slow, manual)",
+      "[ ] Test template with one verified number first",
+      "[ ] Confirm send rate limits (1/sec recommended for trial)"
+    ],
+    "during_send": [
+      "[ ] Log each send with twilio_sid",
+      "[ ] Monitor delivery_status callbacks",
+      "[ ] Track any failures for retry"
+    ],
+    "post_send": [
+      "[ ] Update leads.jsonl status to 'contacted'",
+      "[ ] Log response times and content",
+      "[ ] Schedule follow-up for Day 3 (2026-03-08)"
+    ]
+  },
+  "priority_scoring_explanation": {
+    "90+": "High-value services (roofing, HVAC, contractors) - $1000+ potential",
+    "85": "Has contact name OR high-value service",
+    "75-80": "Core services (landscaping, fencing) - $800 potential",
+    "65-70": "Mid-tier services (handyman, cleaning, electrical) - $400-600 potential",
+    "60": "Lower-tier services (auto repair) - $299 potential"
+  },
+  "summary": {
+    "total_leads": 45,
+    "total_estimated_value": 28746,
+    "avg_value_per_lead": 638,
+    "leads_with_contact_name": 5,
+    "time_zones_covered": ["ET", "CT", "MT", "PT"],
+    "service_mix": {
+      "landscaping": 12,
+      "handyman": 7,
+      "pest_control": 4,
+      "roofing_contractor": 2,
+      "plumbing": 3,
+      "electrical": 4,
+      "fencing": 3,
+      "auto_repair": 6,
+      "flooring": 2,
+      "hvac": 1,
+      "other": 1
+    }
+  }
+}

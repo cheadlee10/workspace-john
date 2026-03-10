@@ -1,0 +1,1 @@
+2026-02-27 09:55:47 - Subagent started. Loaded leads, knowledge, and templates. Beginning nationwide lead generation.

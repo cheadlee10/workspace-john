@@ -1,0 +1,26 @@
+[2026-02-25T06:53:53.251Z] INFO: FiVERR BOT started with action: --action
+[2026-02-25T06:53:53.253Z] INFO: Initializing browser...
+[2026-02-25T06:53:55.413Z] INFO: Browser initialized
+[2026-02-25T06:53:55.414Z] ERROR: Unknown action: --action
+[2026-02-25T06:54:00.793Z] INFO: FiVERR BOT started with action: status
+[2026-02-25T06:56:42.819Z] INFO: FiVERR BOT started with action: post
+[2026-02-25T06:56:42.821Z] INFO: Initializing browser...
+[2026-02-25T06:56:43.382Z] INFO: Browser initialized
+[2026-02-25T06:56:43.384Z] INFO: Starting login...
+[2026-02-25T06:56:43.386Z] INFO: Navigate to login - Attempt 1/3
+[2026-02-25T06:57:13.407Z] ERROR: Navigate to login - Attempt 1 failed: page.goto: Timeout 30000ms exceeded.
+Call log:
+[2m  - navigating to "https://www.fiverr.com/login", waiting until "networkidle"[22m
+
+[2026-02-25T06:57:13.409Z] INFO: Retrying in 1000ms...
+[2026-02-25T06:57:14.422Z] INFO: Navigate to login - Attempt 2/3
+[2026-02-25T06:57:16.853Z] INFO: Navigated to login page
+[2026-02-25T06:57:18.935Z] INFO: Enter email - Attempt 1/3
+[2026-02-25T06:57:18.980Z] ERROR: Enter email - Attempt 1 failed: Email field not found
+[2026-02-25T06:57:18.980Z] INFO: Retrying in 1000ms...
+[2026-02-25T06:57:19.984Z] INFO: Enter email - Attempt 2/3
+[2026-02-25T06:57:20.028Z] ERROR: Enter email - Attempt 2 failed: Email field not found
+[2026-02-25T06:57:20.029Z] INFO: Retrying in 2000ms...
+[2026-02-25T06:57:22.030Z] INFO: Enter email - Attempt 3/3
+[2026-02-25T06:57:22.043Z] ERROR: Enter email - Attempt 3 failed: Email field not found
+[2026-02-25T06:57:22.044Z] ERROR: Fatal error: Enter email failed after 3 attempts: Email field not found

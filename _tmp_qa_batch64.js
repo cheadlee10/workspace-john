@@ -1,0 +1,11 @@
+const fs=require('fs');
+const path=require('path');
+const f=path.join(process.cwd(),'email-templates','next-queued-email-assets-2026-03-03-batch64.md');
+const c=fs.readFileSync(f,'utf8');
+const sections=(c.match(/^##\s+\d+\)/gm)||[]).length;
+const live=(c.match(/\{\{live_url\}\}/g)||[]).length;
+const shot=(c.match(/\{\{screenshot_url\}\}/g)||[]).length;
+const nonAscii=[...c].filter(ch=>ch.charCodeAt(0)>127).length;
+const bad=(c.match(/guarantee|#1|top-rated|best in|double your|increase [0-9]+%|ROI|rank #1/gi)||[]);
+const ids=[...(c.matchAll(/`(wave\d+-\d+)`/g))].map(m=>m[1]);
+console.log(JSON.stringify({sections,live,shot,nonAscii,badHits:bad.length,ids},null,2));

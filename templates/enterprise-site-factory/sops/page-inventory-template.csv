@@ -1,0 +1,7 @@
+url_slug,page_type,template_variant,status,owner,notes
+/,home,hero-a+proof-grid,in_progress,,
+/services/{service-1},service,service-blueprint-v1,not_started,,
+/services/{service-2},service,service-blueprint-v1,not_started,,
+/locations/{city-1},city,city-blueprint-v1,not_started,,
+/about,about,about-blueprint-v1,not_started,,
+/contact,contact,contact-conversion-v1,not_started,,

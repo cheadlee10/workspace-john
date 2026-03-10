@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "name": "Local Service WOW Variant Tokens",
+    "version": "2.0.0"
+  },
+  "color": {
+    "base": {
+      "bg": "#070B14",
+      "surface": "#0F172A",
+      "surfaceAlt": "#111C33",
+      "text": "#E5E7EB",
+      "textMuted": "#94A3B8",
+      "white": "#FFFFFF"
+    },
+    "brand": {
+      "primary": "#22D3EE",
+      "primaryHover": "#06B6D4",
+      "accent": "#A3E635",
+      "hot": "#FB7185"
+    },
+    "state": {
+      "success": "#22C55E",
+      "warning": "#F59E0B",
+      "danger": "#EF4444"
+    },
+    "niches": {
+      "landscaping": { "primary": "#22C55E", "accent": "#84CC16" },
+      "roofing": { "primary": "#F97316", "accent": "#F59E0B" },
+      "hvac": { "primary": "#38BDF8", "accent": "#2563EB" },
+      "pool": { "primary": "#06B6D4", "accent": "#22D3EE" },
+      "pest": { "primary": "#84CC16", "accent": "#A3E635" },
+      "handyman": { "primary": "#F59E0B", "accent": "#FB7185" }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "heading": "Manrope, Inter, system-ui, sans-serif",
+      "body": "Inter, system-ui, sans-serif"
+    },
+    "fontSize": {
+      "h1": "clamp(2rem, 4vw, 3.5rem)",
+      "h2": "clamp(1.6rem, 3vw, 2.4rem)",
+      "h3": "clamp(1.2rem, 2vw, 1.6rem)",
+      "body": "1rem",
+      "small": "0.875rem"
+    }
+  },
+  "spacing": {
+    "sectionYDesktop": "96px",
+    "sectionYMobile": "56px",
+    "containerX": "20px",
+    "cardGap": "16px"
+  },
+  "radius": {
+    "card": "18px",
+    "button": "12px",
+    "media": "22px"
+  },
+  "shadow": {
+    "card": "0 12px 30px rgba(0,0,0,0.28)",
+    "elevated": "0 24px 60px rgba(0,0,0,0.38)"
+  },
+  "motion": {
+    "fast": "120ms",
+    "base": "180ms",
+    "slow": "220ms"
+  },
+  "mobile": {
+    "minTapTarget": "48px",
+    "stickyCtaHeight": "62px",
+    "maxContentWidth": "640px"
+  }
+}

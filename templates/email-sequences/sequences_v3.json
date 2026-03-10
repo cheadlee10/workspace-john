@@ -1,0 +1,164 @@
+{
+  "version": "3.0",
+  "created": "2026-03-05",
+  "cadence": "3-7-7",
+  "sequences": {
+    "A": {
+      "name": "No Website",
+      "target": "Businesses with Yelp/GMB presence but no website",
+      "emails": {
+        "initial": {
+          "day": 0,
+          "subjects": [
+            "Quick question about {{CompanyName}}",
+            "Idea for {{CompanyName}}",
+            "{{FirstName}}, noticed something"
+          ],
+          "body": "Hi {{FirstName}},\n\nI found {{CompanyName}} on {{ReviewSource}} -- {{ReviewCount}} reviews and clearly people love your work. But when I searched for \"{{Service}} in {{City}}\" I could not find you anywhere on Google.\n\nThat means customers who do not already know your name are calling your competitors instead.\n\nWe just helped {{SimilarBusiness}} in {{NearbyCity}} launch their first website. Result: {{Result}} -- all from people who found them on Google.\n\nI mocked up what a site could look like for {{CompanyName}}:\n{{PreviewLink}}\n\nWorth a quick look?\n\n{{SenderName}}\nNorthStar Synergy\n{{SenderPhone}}",
+          "ctas": [
+            "Worth a quick look?",
+            "Want me to walk you through it?",
+            "Mind if I send a 2-minute video walkthrough?"
+          ],
+          "word_count": 94
+        },
+        "followup_1": {
+          "day": 3,
+          "subject": "Re: Quick question about {{CompanyName}}",
+          "body": "Hi {{FirstName}},\n\nJust bumping this -- I put together that preview for {{CompanyName}} in case it got buried:\n{{PreviewLink}}\n\nOne quick stat: 76% of people who search for local services call a business from the first page of Google. Without a website, you are invisible to them.\n\nYour {{ReviewCount}} reviews should be working harder for you.\n\nHappy to walk through it -- no pressure either way.\n\n{{SenderName}}",
+          "word_count": 72
+        },
+        "followup_2": {
+          "day": 10,
+          "subject": "Re: Quick question about {{CompanyName}}",
+          "body": "Hi {{FirstName}},\n\nQuick update -- {{SimilarBusiness}} (the {{Service}} company I mentioned) just hit {{Result}} since we launched their site.\n\nMost leads came from Google searches they were invisible to before.\n\nI still think there is a solid opportunity for {{CompanyName}} to capture more of the {{City}} market. Preview still live:\n{{PreviewLink}}\n\nWorth a quick conversation?\n\n{{SenderName}}",
+          "word_count": 63
+        },
+        "breakup": {
+          "day": 17,
+          "subject": "{{CompanyName}} -- closing the loop",
+          "body": "Hi {{FirstName}},\n\nI have reached out a few times about helping {{CompanyName}} show up on Google and have not heard back -- totally understand, you are busy running a business.\n\nI will stop reaching out after this. But if you ever want to explore getting more customers through search, that offer stands. Just reply to this email anytime.\n\nWishing you a great rest of the year.\n\n{{SenderName}}\nNorthStar Synergy",
+          "word_count": 70,
+          "optional": true
+        }
+      }
+    },
+    "B": {
+      "name": "Outdated Website",
+      "target": "Businesses with old, slow, or non-mobile-friendly sites",
+      "emails": {
+        "initial": {
+          "day": 0,
+          "subjects": [
+            "Noticed something about {{CompanyName}}'s site",
+            "Quick thought on {{CompanyName}}'s website",
+            "{{CompanyName}} site -- quick idea"
+          ],
+          "body": "Hi {{FirstName}},\n\nI was checking out {{CompanyName}}'s website and noticed {{Observation}} -- that is costing you calls. 53% of mobile visitors leave a site that takes more than 3 seconds to load.\n\nWe helped {{SimilarBusiness}} in {{NearbyCity}} fix this exact problem. Their new site loads in under 2 seconds and they saw {{Result}}.\n\nHere is what a refreshed version could look like:\n{{PreviewLink}}\n\nWorth a quick look?\n\n{{SenderName}}\nNorthStar Synergy\n{{SenderPhone}}",
+          "ctas": [
+            "Worth a quick look?",
+            "Curious what you think?",
+            "Want me to send a side-by-side comparison?"
+          ],
+          "observation_templates": [
+            "it takes over {{LoadTime}} seconds to load on mobile",
+            "it is not mobile-friendly -- text is tiny and buttons are hard to tap",
+            "the design looks like it has not been updated since around {{Year}}",
+            "several images are broken and the contact form does not work",
+            "there is no click-to-call button for mobile visitors"
+          ],
+          "word_count": 81
+        },
+        "followup_1": {
+          "day": 3,
+          "subject": "Re: Noticed something about {{CompanyName}}'s site",
+          "body": "Hi {{FirstName}},\n\nJust circling back on this -- here is that preview again:\n{{PreviewLink}}\n\nOne thing I forgot to mention: Google now ranks mobile-friendly sites higher in local search. If your competitors have faster sites, they are showing up ahead of you even if your work is better.\n\nHappy to walk through what an upgrade would look like -- takes about 5 minutes.\n\n{{SenderName}}",
+          "word_count": 68
+        },
+        "followup_2": {
+          "day": 10,
+          "subject": "Re: Noticed something about {{CompanyName}}'s site",
+          "body": "Hi {{FirstName}},\n\nQuick win to share -- we refreshed a site for a {{Service}} company in {{NearbyCity}} last week. Before: 8-second load time, buried on page 3. After: 1.5 seconds, now ranking on page 1.\n\nThey picked up {{Result}} in the first 2 weeks.\n\nYour {{ReviewCount}} reviews deserve a site that matches the quality of your work. Preview still here:\n{{PreviewLink}}\n\nWorth a quick chat?\n\n{{SenderName}}",
+          "word_count": 73
+        },
+        "breakup": {
+          "day": 17,
+          "subject": "{{CompanyName}} website -- last note",
+          "body": "Hi {{FirstName}},\n\nI have sent a few notes about refreshing {{CompanyName}}'s website and it sounds like now is not the right time -- no worries at all.\n\nIf things change and you want to explore a faster, mobile-friendly site that actually brings in calls, just reply here. The offer does not expire.\n\nBest of luck with everything.\n\n{{SenderName}}\nNorthStar Synergy",
+          "word_count": 62,
+          "optional": true
+        }
+      }
+    },
+    "C": {
+      "name": "Invisible on Google",
+      "target": "Businesses with decent websites but poor local SEO ranking",
+      "emails": {
+        "initial": {
+          "day": 0,
+          "subjects": [
+            "{{CompanyName}} + Google visibility",
+            "Quick question about {{CompanyName}}",
+            "Missing calls in {{City}}?"
+          ],
+          "body": "Hi {{FirstName}},\n\nI searched for \"{{Service}} in {{City}}\" and {{CompanyName}} {{Observation}} -- which means potential customers are finding your competitors first, even though you have got {{ReviewCount}} great reviews.\n\nWe recently helped {{SimilarBusiness}} in {{NearbyCity}} go from page 3 to the top of Google. Result: {{Result}}.\n\nI put together a quick preview of what a search-optimized site could look like for {{CompanyName}}:\n{{PreviewLink}}\n\nWorth a look?\n\n{{SenderName}}\nNorthStar Synergy\n{{SenderPhone}}",
+          "ctas": [
+            "Worth a look?",
+            "Want me to walk you through what we would change?",
+            "Curious if this resonates?"
+          ],
+          "observation_templates": [
+            "did not come up until page 3",
+            "did not appear in the first 5 pages",
+            "showed up below competitors with fewer reviews",
+            "only appeared in the map pack, not organic results"
+          ],
+          "word_count": 83
+        },
+        "followup_1": {
+          "day": 3,
+          "subject": "Re: {{CompanyName}} + Google visibility",
+          "body": "Hi {{FirstName}},\n\nJust bumping this in case it got buried. Here is that preview again:\n{{PreviewLink}}\n\nQuick context: 75% of people never scroll past page 1 on Google. If you are on page 3, you are invisible to 3 out of 4 potential customers searching for {{Service}} in {{City}}.\n\nHappy to show you exactly what we would change -- no pressure.\n\n{{SenderName}}",
+          "word_count": 64
+        },
+        "followup_2": {
+          "day": 10,
+          "subject": "Re: {{CompanyName}} + Google visibility",
+          "body": "Hi {{FirstName}},\n\nFresh result to share -- {{SimilarBusiness}} in {{NearbyCity}} just hit {{Result}} since we rebuilt their site for local search.\n\nBefore: buried on page 4. After: showing up for 12+ keywords in their service area.\n\nI still see a real opportunity for {{CompanyName}} to dominate the {{City}} market. Preview still live:\n{{PreviewLink}}\n\nWorth a 5-minute call?\n\n{{SenderName}}",
+          "word_count": 66
+        },
+        "breakup": {
+          "day": 17,
+          "subject": "{{CompanyName}} -- one last thing",
+          "body": "Hi {{FirstName}},\n\nI have reached out a few times about helping {{CompanyName}} rank higher on Google. Sounds like now might not be the right time, and that is completely fine.\n\nIf you ever want to revisit getting more calls from search, just reply here. I will keep your preview saved.\n\nWishing you continued success.\n\n{{SenderName}}\nNorthStar Synergy",
+          "word_count": 58,
+          "optional": true
+        }
+      }
+    }
+  },
+  "variables": {
+    "required": [
+      "FirstName",
+      "CompanyName",
+      "City",
+      "Service",
+      "PreviewLink",
+      "SenderName",
+      "SenderPhone"
+    ],
+    "recommended": [
+      "ReviewCount",
+      "ReviewSource",
+      "Observation",
+      "SimilarBusiness",
+      "NearbyCity",
+      "Result"
+    ]
+  },
+  "compliance": {
+    "footer": "NorthStar Synergy | Tacoma, WA\nReply STOP to opt out",
+    "max_sequence_length": 4,
+    "honor_optout_days": 10
+  }
+}

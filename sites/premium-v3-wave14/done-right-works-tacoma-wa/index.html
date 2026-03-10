@@ -1,0 +1,29 @@
+<!doctype html>
+<html><head><meta charset='UTF-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/>
+<title>Done Right Works | Tacoma, WA Premium Service Demo</title><meta name='description' content='Premium conversion page for fast homeowner requests, repair calls, and quote-ready project details.'/><link rel='canonical' href='https://preview.northstarsynergy.com/done-right-works-tacoma-wa/'/>
+<style>body{font-family:Inter,system-ui;background:#0b1220;color:#dbeafe;margin:0}.w{max-width:1080px;margin:auto;padding:22px}.card{background:#111c33;border:1px solid #284067;border-radius:16px;padding:20px}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.btn{display:inline-block;padding:11px 14px;border-radius:10px;text-decoration:none;font-weight:700}.pri{background:#38bdf8;color:#082f49}.sec{border:1px solid #7dd3fc;color:#e0f2fe}.chips span{display:inline-block;border:1px solid #365782;border-radius:999px;padding:6px 10px;margin:4px 6px 0 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}input,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid #365782;background:#0b1220;color:#fff;margin:6px 0}textarea{min-height:100px}label{display:block;margin-top:8px}ul{margin:0;padding-left:20px;line-height:1.8}small{color:#93c5fd}@media(max-width:900px){.hero,.grid{grid-template-columns:1fr}}</style></head>
+<body><div class='w'>
+  <div class='card' style='display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap'>
+    <strong>Done Right Works</strong>
+    <div><a class='btn sec' href='tel:2533242311' aria-label='Call (253) 324-2311'>Call (253) 324-2311</a> <a class='btn pri' href='#quote'>Get My Quote</a></div>
+  </div>
+  <div class='hero' style='margin-top:12px'>
+    <section class='card'><p>Tacoma, WA</p><h1>Tacoma Handyman Services Framed to Convert Calls into Booked Jobs</h1><p>Premium conversion page for fast homeowner requests, repair calls, and quote-ready project details.</p><div class='chips'><span>Local Tacoma Coverage</span><span>Fast Callback Funnel</span><span>Repairs + Installations</span></div></section>
+    <section class='card'><h2>Request a Quick Callback</h2><form action='/contact' method='post'>
+      <input type='hidden' name='business' value='done-right-works-tacoma-wa'/><input type='hidden' name='source' value='quick_callback'/>
+      <label for='name'>Full Name</label><input id='name' name='name' type='text' required autocomplete='name'/>
+      <label for='phone'>Phone Number</label><input id='phone' name='phone' type='tel' required autocomplete='tel'/>
+      <button class='btn pri' type='submit'>Request Callback</button></form></section>
+  </div>
+  <div class='grid' style='margin-top:12px'>
+    <section class='card'><h2>Core Services</h2><ul><li>General Handyman Repairs for Home and Rental Properties</li><li>Drywall, Carpentry, and Interior Fixes</li><li>Fixture Installations and Minor Electrical/Plumbing Support</li><li>Punch-List Work for Property Managers and Sellers</li></ul></section>
+    <section class='card' id='quote'><h2>Detailed Quote Request</h2><form action='/contact' method='post'>
+      <input type='hidden' name='business' value='done-right-works-tacoma-wa'/><input type='hidden' name='source' value='detailed_quote'/>
+      <label for='qname'>Full Name</label><input id='qname' name='name' type='text' required autocomplete='name'/>
+      <label for='qphone'>Phone Number</label><input id='qphone' name='phone' type='tel' required autocomplete='tel'/>
+      <label for='qemail'>Email</label><input id='qemail' name='email' type='email' required autocomplete='email'/>
+      <label for='qdetails'>Project details</label><textarea id='qdetails' name='details' required></textarea>
+      <button class='btn pri' type='submit'>Send My Quote Request</button></form>
+      <p>Contact: <a href='tel:2533242311' aria-label='Call (253) 324-2311'>(253) 324-2311</a> <small>Demo form routes to secure contact intake endpoint.</small></p></section>
+  </div>
+</div></body></html>

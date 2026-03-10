@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greenscapes Landscaping — Sustainable Outdoor Design | West Seattle</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sage: #87A878;
+  --forest: #2D5016;
+  --cream: #F7F5E6;
+  --terracotta: #C17F59;
+  --clay: #A0522D;
+  --charcoal: #2C3E50;
+  --wheat: #E8D5C4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); overflow-x: hidden; }
+
+/* Nav */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 32px; transition: all 0.4s; }
+nav.scrolled { background: rgba(247, 245, 230, 0.95); backdrop-filter: blur(20px); box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+nav.scrolled .logo-text { color: var(--forest); }
+nav.scrolled .nav-links a { color: var(--charcoal); }
+.nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--sage), var(--forest)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.logo-text { font-family: 'Frank Ruhl Libre', serif; font-size: 22px; font-weight: 700; color: white; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.3s; }
+.nav-links a:hover { color: white; }
+.cta-btn { background: linear-gradient(135deg, var(--terracotta), var(--clay)); color: white; padding: 12px 24px; border-radius: 50px; font-weight: 700; text-decoration: none; font-size: 13px; }
+
+/* Hero */
+.hero { min-height: 100vh; padding: 140px 32px 100px; position: relative; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; background: linear-gradient(160deg, var(--sage) 0%, var(--forest) 60%, #1a3a1a 100%); }
+.hero-bg::before { content: ''; position: absolute; top: 20%; right: 10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(193,127,89,0.2), transparent 60%); }
+.hero-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 80px; align-items: center; position: relative; z-index: 2; }
+.hero-text { color: white; }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; margin-bottom: 28px; }
+.badge-dot { width: 6px; height: 6px; background: var(--terracotta); border-radius: 50%; box-shadow: 0 0 10px var(--terracotta); }
+.badge-text { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+h1 { font-family: 'Frank Ruhl Libre', serif; font-size: clamp(44px, 6vw, 68px); line-height: 1.05; margin-bottom: 28px; }
+h1 span { color: var(--terracotta); font-style: italic; }
+.hero-subtitle { font-size: 18px; line-height: 1.7; opacity: 0.85; margin-bottom: 40px; max-width: 500px; }
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary { background: linear-gradient(135deg, var(--terracotta), var(--clay)); color: white; padding: 16px 36px; border-radius: 50px; font-weight: 700; text-decoration: none; font-size: 15px; box-shadow: 0 8px 30px rgba(193,127,89,0.4); }
+.btn-secondary { color: white; padding: 16px 36px; border-radius: 50px; font-weight: 700; text-decoration: none; font-size: 15px; border: 2px solid rgba(255,255,255,0.3); }
+.hero-stats { display: flex; gap: 48px; margin-top: 60px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); }
+.stat { text-align: left; }
+.stat-num { font-family: 'Frank Ruhl Libre', serif; font-size: 36px; font-weight: 700; color: var(--terracotta); }
+.stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-top: 4px; }
+
+/* Services */
+.services { padding: 120px 32px; max-width: 1200px; margin: 0 auto; }
+.section-label { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.section-label span { width: 40px; height: 2px; background: linear-gradient(90deg, var(--sage), var(--terracotta)); }
+.section-label-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--sage); }
+h2 { font-family: 'Frank Ruhl Libre', serif; font-size: 48px; margin-bottom: 20px; }
+h2 em { color: var(--terracotta); font-style: italic; }
+.section-subtitle { font-size: 18px; color: var(--charcoal); opacity: 0.7; margin-bottom: 60px; max-width: 600px; }
+.services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.service-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid var(--wheat); transition: transform 0.4s, box-shadow 0.4s; }
+.service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 56px rgba(45,80,22,0.12); }
+.service-header { height: 180px; background: linear-gradient(135deg, var(--sage), var(--forest)); display: flex; align-items: center; justify-content: center; position: relative; }
+.service-icon { width: 72px; height: 72px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; backdrop-filter: blur(8px); }
+.service-body { padding: 28px; }
+.service-body h3 { font-family: 'Frank Ruhl Libre', serif; font-size: 22px; margin-bottom: 16px; }
+.service-body ul { list-style: none; }
+.service-body li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--charcoal); opacity: 0.7; margin-bottom: 10px; }
+.service-body li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--sage); }
+
+/* CTA Section */
+.cta-section { background: linear-gradient(135deg, var(--forest), #1a3a1a); padding: 100px 32px; text-align: center; position: relative; }
+.cta-section h2 { color: white; font-size: 44px; margin-bottom: 24px; }
+.cta-section h2 em { color: var(--terracotta); }
+.cta-section p { color: rgba(255,255,255,0.7); font-size: 18px; max-width: 500px; margin: 0 auto 40px; }
+.cta-phone { font-size: 42px; color: var(--terracotta); font-weight: 700; font-family: 'Frank Ruhl Libre', serif; }
+
+/* Footer */
+footer { background: #1a2a1a; padding: 60px 32px 40px; color: rgba(255,255,255,0.5); }
+.footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+.footer-logo { font-family: 'Frank Ruhl Libre', serif; font-size: 24px; color: white; margin-bottom: 16px; }
+.footer-col h4 { color: white; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+.footer-col a { display: block; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; margin-bottom: 12px; }
+.footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; font-size: 13px; }
+
+@media (max-width: 900px) {
+  .hero-content { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  .hero-buttons { justify-content: center; }
+  .hero-stats { justify-content: center; }
+  .services-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .services-grid { grid-template-columns: 1fr; }
+  h2 { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <div class="nav-container">
+    <div class="logo">
+      <div class="logo-icon">🌿</div>
+      <span class="logo-text">GREENSCAPES</span>
+    </div>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#contact">Contact</a>
+      <a href="#contact" class="cta-btn">Get Free Quote</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span class="badge-text">WEST SEATTLE • SINCE 2018</span>
+      </div>
+      <h1>Sustainable<br><span>Landscapes.</span></h1>
+      <p class="hero-subtitle">Greensapes creates beautiful, eco-friendly outdoor spaces. Native plants, organic care, lasting results — for homeowners who care about the planet as much as their property.</p>
+      <div class="hero-buttons">
+        <a href="tel:2068028186" class="btn-primary">Start Your Project</a>
+        <a href="#services" class="btn-secondary">View Services</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">6+</div><div class="stat-label">Years Experience</div></div>
+        <div class="stat"><div class="stat-num">West</div><div class="stat-label">Seattle Area</div></div>
+        <div class="stat"><div class="stat-num">Eco</div><div class="stat-label">Friendly</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="centered" style="text-align: center;">
+    <div class="section-label" style="justify-content: center;">
+      <span></span>
+      <span class="section-label-text">Our Services</span>
+      <span></span>
+    </div>
+    <h2>Professional <em>Care</em></h2>
+    <p class="section-subtitle">From design to maintenance, we handle every detail so you don't have to. Sustainable solutions for every outdoor space.</p>
+  </div>
+  
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-header">
+        <div class="service-icon">🌿</div>
+      </div>
+      <div class="service-body">
+        <h3>Design & Install</h3>
+        <ul>
+          <li>Native garden design</li>
+          <li>Hardscape pathways</li>
+          <li>Drought-resistant plants</li>
+          <li>Organic soil prep</li>
+        </ul>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div class="service-icon">🌱</div>
+      </div>
+      <div class="service-body">
+        <h3>Lawn Care</h3>
+        <ul>
+          <li>Organic fertilization</li>
+          <li>Eco-friendly mowing</li>
+          <li>Natural weed control</li>
+          <li>Seasonal aeration</li>
+        </ul>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div class="service-icon">🍂</div>
+      </div>
+      <div class="service-body">
+        <h3>Maintenance</h3>
+        <ul>
+          <li>Year-round care</li>
+          <li>Pruning & trimming</li>
+          <li>Mulch revitalization</li>
+          <li>Seasonal cleanup</li>
+        </ul>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-header">
+        <div class="service-icon">♻️</div>
+      </div>
+      <div class="service-body">
+        <h3>Sustainability</h3>
+        <ul>
+          <li>Rain gardens</li>
+          <li>Compost systems</li>
+          <li>Water conservation</li>
+          <li>Wildlife habitats</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="contact">
+  <h2>Ready to Grow <em>Sustainably?</em></h2>
+  <p>Free consultation. No obligation. Just beautiful, eco-friendly results.</p>
+  <div class="cta-phone">(206) 802-8186</div>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <div class="footer-logo">🌿 GREENSCAPES</div>
+      <p style="color: rgba(255,255,255,0.4); font-size: 14px; max-width: 300px;">Sustainable landscaping for West Seattle homeowners who care about their outdoor space and the planet.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="#">Garden Design</a>
+      <a href="#">Lawn Care</a>
+      <a href="#">Maintenance</a>
+      <a href="#">Eco Solutions</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="tel:2068028186">(206) 802-8186</a>
+      <a href="#">West Seattle, WA</a>
+      <a href="#">Mon-Sat 8am-6pm</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About</a>
+      <a href="#">Our Work</a>
+      <a href="#">Sustainability</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Greenscapes Landscaping</span>
+    <span>Built with care in West Seattle</span>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+</script>
+</body>
+</html>

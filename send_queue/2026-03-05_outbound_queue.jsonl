@@ -1,0 +1,5 @@
+{"queue_id":"Q-2026-03-05","created":"2026-03-05T08:30:00-08:00","total_leads":35,"batches":4,"channels":["sms"],"status":"ready","notes":"First SMS campaign - Twilio trial (verified numbers only). High-value leads prioritized."}
+{"batch_id":"B1-AM","send_window":"09:00-10:30 PT","priority":"P1-HIGH","channel":"sms","leads_count":9,"estimated_value_total":8150,"status":"pending"}
+{"batch_id":"B2-MIDDAY","send_window":"11:30-13:00 PT","priority":"P2-MEDIUM","channel":"sms","leads_count":9,"estimated_value_total":5799,"status":"pending"}
+{"batch_id":"B3-AFTERNOON","send_window":"14:00-15:30 PT","priority":"P2-MEDIUM","channel":"sms","leads_count":9,"estimated_value_total":5249,"status":"pending"}
+{"batch_id":"B4-LATE","send_window":"16:00-17:00 PT","priority":"P3-LOW","channel":"sms","leads_count":8,"estimated_value_total":4047,"status":"pending"}

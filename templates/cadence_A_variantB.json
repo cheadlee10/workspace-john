@@ -1,0 +1,14 @@
+{
+  "segment":"SMBOps-SegA",
+  "cadence_id":"8-touch-A-variantB",
+  "touches": [
+    {"step":1, "channel":"email", "subject":"We build systems that save you hours (variant B)","body":"Hi {{name}}, I noticed you’re optimizing workflows at {{company}}. We help teams like yours automate Excel-heavy tasks and deploy reliable dashboards fast. Here’s a quick case study showing how we cut reporting time by 60%. Are you open to a 15-min call this week? Best, John"},
+    {"step":2, "channel":"LinkedIn", "text":"Hi {{name}} — quick note from a builder who helps automate Excel-heavy tasks. Happy to share a brief case study.", "delay_days":2},
+    {"step":3, "channel":"sms", "text":"Hi {{name}}, it’s John. Quick note: we help teams automate manual reporting in 1-2 days. Available for a 10-min chat this week?"},
+    {"step":4, "channel":"email", "subject":"Case study: 60% faster reporting at {{company}} (variant B)", "body":"Hi {{name}}, sharing the case study link. If it resonates, we can map a 90-min session to scope next steps. Are you free for a call? - John"},
+    {"step":5, "channel":"LinkedIn", "text":"Following up on the quick case study. If there’s value, I can share a tailored blueprint for {{company}}."},
+    {"step":6, "channel":"email", "subject":"Fast-path proposal for {{company}} (variant B)", "body":"Hi {{name}}, here’s a 3-tier proposal focusing on quick wins and long-term automation. Would you like me to send a lightweight scope?"},
+    {"step":7, "channel":"sms", "text":"John here again. Want to lock a 15-min discovery call to see if this matches your goals?"},
+    {"step":8, "channel":"LinkedIn", "text":"Last try: I can draft a tailored plan for {{company}} and share it if you’re open to a quick chat."}
+  ]
+}

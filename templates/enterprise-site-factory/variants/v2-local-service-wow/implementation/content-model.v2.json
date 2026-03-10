@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local Service WOW Content Model",
+  "type": "object",
+  "required": ["business", "hero", "proof", "services", "offer", "faq", "contact"],
+  "properties": {
+    "business": {
+      "type": "object",
+      "required": ["name", "phone", "primaryCity", "serviceArea"],
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "primaryCity": { "type": "string" },
+        "serviceArea": { "type": "array", "items": { "type": "string" }, "minItems": 3 }
+      }
+    },
+    "hero": {
+      "type": "object",
+      "required": ["headline", "subheadline", "badges"],
+      "properties": {
+        "headline": { "type": "string", "maxLength": 90 },
+        "subheadline": { "type": "string", "maxLength": 180 },
+        "badges": { "type": "array", "items": { "type": "string" }, "minItems": 3 }
+      }
+    },
+    "proof": {
+      "type": "object",
+      "required": ["rating", "reviews", "jobsCompleted", "years"],
+      "properties": {
+        "rating": { "type": "number", "minimum": 0, "maximum": 5 },
+        "reviews": { "type": "integer", "minimum": 1 },
+        "jobsCompleted": { "type": "integer", "minimum": 1 },
+        "years": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "services": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["name", "outcome", "eta"],
+        "properties": {
+          "name": { "type": "string" },
+          "outcome": { "type": "string" },
+          "eta": { "type": "string" }
+        }
+      }
+    },
+    "offer": {
+      "type": "object",
+      "required": ["title", "details", "guarantee"],
+      "properties": {
+        "title": { "type": "string" },
+        "details": { "type": "string" },
+        "guarantee": { "type": "string" }
+      }
+    },
+    "faq": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["q", "a"],
+        "properties": {
+          "q": { "type": "string" },
+          "a": { "type": "string" }
+        }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "required": ["cta", "formEndpoint"],
+      "properties": {
+        "cta": { "type": "string" },
+        "formEndpoint": { "type": "string" }
+      }
+    }
+  }
+}

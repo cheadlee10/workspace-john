@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Business 6 - landscaping services in Bellevue, WA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .hero { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; }
+        .hero p { font-size: 20px; margin-bottom: 30px; }
+        .cta-button {
+            background: white;
+            color: #667eea;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .services { padding: 80px 20px; background: #f5f5f5; }
+        .services h2 { text-align: center; font-size: 36px; margin-bottom: 50px; }
+        .service-grid { 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .contact { padding: 80px 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <h1>Professional landscaping services in Bellevue, WA</h1>
+        <p>Quality service you can trust</p>
+        <button class="cta-button" onclick="location.href='tel:(206) 555-1005'">
+            Get Free Quote
+        </button>
+    </section>
+    
+    <section class="services">
+        <h2>Our Services</h2>
+        <div class="service-grid">
+            <div class="service-card"><h3>Service 1</h3><p>Quality service</p></div><div class="service-card"><h3>Service 2</h3><p>Professional work</p></div><div class="service-card"><h3>Service 3</h3><p>Customer focused</p></div>
+        </div>
+    </section>
+    
+    <section class="contact">
+        <h2>Contact Us Today</h2>
+        <p style="font-size: 24px; margin: 20px 0;">
+            <a href="tel:(206) 555-1005" style="color: #667eea;">
+                (206) 555-1005
+            </a>
+        </p>
+    </section>
+</body>
+</html>

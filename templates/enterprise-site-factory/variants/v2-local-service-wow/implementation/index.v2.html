@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Summit Local Services | Fast Quotes in Seattle</title>
+  <meta name="description" content="Premium local service team delivering fast estimates, guaranteed workmanship, and five-star customer care." />
+  <style>
+    :root {
+      --bg:#070B14; --surface:#0F172A; --line:#233049; --text:#E5E7EB; --muted:#94A3B8;
+      --primary:#22D3EE; --accent:#A3E635; --radius:18px;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter,system-ui,sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:1100px; margin:0 auto; padding:0 20px; }
+    .topbar { background:#0A1224; border-bottom:1px solid var(--line); font-size:14px; }
+    .topbar .wrap { display:flex; justify-content:space-between; padding:10px 20px; }
+    .hero { padding:64px 0 48px; }
+    .hero-grid { display:grid; grid-template-columns:1.1fr .9fr; gap:20px; }
+    .card { background:linear-gradient(160deg,#0F172A,#111C33); border:1px solid var(--line); border-radius:var(--radius); padding:24px; }
+    h1 { font-family:Manrope,Inter,sans-serif; font-size:clamp(2rem,4vw,3.3rem); margin:.2em 0; line-height:1.1; }
+    h2 { font-size:clamp(1.4rem,2.6vw,2rem); margin:0 0 12px; }
+    p { color:var(--muted); line-height:1.65; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 20px; }
+    .chip { border:1px solid #2D3D5C; border-radius:999px; padding:8px 12px; font-size:13px; }
+    .btns { display:flex; gap:10px; flex-wrap:wrap; }
+    .btn { min-height:48px; border-radius:12px; padding:0 16px; display:inline-flex; align-items:center; font-weight:700; text-decoration:none; }
+    .btn-primary { background:var(--primary); color:#05202B; }
+    .btn-secondary { border:1px solid #355175; color:var(--text); }
+    .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:20px 0; }
+    .stat { background:#0D1629; border:1px solid var(--line); border-radius:14px; padding:14px; text-align:center; }
+    .stat b { display:block; font-size:1.25rem; color:#fff; }
+    section { padding:48px 0; }
+    .services { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .service { background:#0D1629; border:1px solid var(--line); border-radius:14px; padding:18px; }
+    .offer { border:1px solid #3B4D20; background:linear-gradient(145deg,#162211,#1A2B14); }
+    details { border-top:1px solid var(--line); padding:10px 0; }
+    summary { cursor:pointer; font-weight:600; }
+    form { display:grid; gap:10px; }
+    input, textarea { width:100%; background:#0B1325; border:1px solid #2A3956; border-radius:12px; color:#fff; padding:12px; }
+    .sticky-mobile { display:none; }
+    @media (max-width:900px){ .hero-grid,.services,.stats{grid-template-columns:1fr 1fr;} }
+    @media (max-width:700px){
+      .hero-grid,.services,.stats{grid-template-columns:1fr;}
+      .topbar .wrap { flex-direction:column; gap:4px; }
+      .sticky-mobile { display:flex; position:fixed; bottom:0; left:0; right:0; z-index:30; background:#0A1224; border-top:1px solid var(--line); }
+      .sticky-mobile a { flex:1; min-height:62px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-weight:800; }
+      .sticky-mobile a:first-child { background:var(--primary); color:#05202B; }
+      .sticky-mobile a:last-child { color:#fff; border-left:1px solid var(--line); }
+      body { padding-bottom:62px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar"><div class="wrap"><span>⭐ 4.9 (287 reviews) · Licensed & Insured</span><span>24/7 Call: (206) 555-0199</span></div></div>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div class="card">
+        <p>Serving Seattle · Bellevue · Kirkland</p>
+        <h1>Beautiful, Reliable Service Work Done Right the First Time.</h1>
+        <p>Fast estimates, clear pricing, and a workmanship guarantee from a trusted local crew.</p>
+        <div class="chips">
+          <span class="chip">Same-Day Response</span>
+          <span class="chip">Warranty Backed</span>
+          <span class="chip">5-Star Rated</span>
+        </div>
+        <div class="btns">
+          <a class="btn btn-primary" href="#quote">Get Fast Quote</a>
+          <a class="btn btn-secondary" href="tel:+12065550199">Call Now</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Get a Fast Estimate</h2>
+        <form id="quote">
+          <input placeholder="Full Name" required>
+          <input placeholder="Phone Number" inputmode="tel" required>
+          <input placeholder="Email">
+          <textarea rows="4" placeholder="Tell us about your project"></textarea>
+          <button class="btn btn-primary" type="submit">Request Estimate</button>
+        </form>
+      </div>
+    </div>
+    <div class="wrap stats">
+      <div class="stat"><b>1,800+</b><span>Projects Completed</span></div>
+      <div class="stat"><b>12 yrs</b><span>Local Experience</span></div>
+      <div class="stat"><b>2 hr</b><span>Avg Callback Time</span></div>
+      <div class="stat"><b>100%</b><span>Satisfaction Goal</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <h2>Popular Services</h2>
+      <div class="services">
+        <article class="service"><h3>Install & Upgrade</h3><p>Professional installs focused on long-term reliability and clean finish quality.</p></article>
+        <article class="service"><h3>Repair & Restore</h3><p>Rapid diagnostics and fixes with transparent scope and turnaround windows.</p></article>
+        <article class="service"><h3>Routine Maintenance</h3><p>Preventive plans that reduce emergency costs and keep systems running smoothly.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap card offer">
+      <h2>Spring Priority Offer</h2>
+      <p>Book this week and get a complimentary system check plus priority scheduling.</p>
+      <p><strong>Guarantee:</strong> If we miss the agreed timeline, your next service call is discounted.</p>
+      <a class="btn btn-primary" href="#quote">Claim Offer</a>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap card">
+      <h2>Frequently Asked Questions</h2>
+      <details><summary>How fast can you schedule?</summary><p>Most requests get same-day response and next-available scheduling windows.</p></details>
+      <details><summary>Do you provide written estimates?</summary><p>Yes—clear scope, pricing, and timeline are always provided before work begins.</p></details>
+      <details><summary>What areas do you serve?</summary><p>Seattle metro and nearby cities including Bellevue, Kirkland, and Redmond.</p></details>
+      <details><summary>Is your work guaranteed?</summary><p>All work includes warranty terms documented in your estimate packet.</p></details>
+    </div>
+  </section>
+
+  <div class="sticky-mobile">
+    <a href="#quote">Get Quote</a>
+    <a href="tel:+12065550199">Call Now</a>
+  </div>
+</body>
+</html>

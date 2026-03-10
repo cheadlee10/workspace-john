@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joe's Appliance Repair — Las Vegas | Master Technician Since 1988</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #B71C1C;
+  --secondary: #E65100;
+  --accent: #FFC107;
+  --dark: #212121;
+  --light: #FAFAFA;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Open Sans', sans-serif; background: var(--light); color: var(--dark); }
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(145deg, #B71C1C 0%, #D32F2F 40%, #E65100 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 100px 24px; position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+.hero::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 200px; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23FAFAFA" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+  background-size: cover;
+}
+.hero-content { max-width: 700px; text-align: center; color: white; position: relative; z-index: 1; }
+h1 {
+  font-family: 'Roboto Condensed', sans-serif; font-size: clamp(42px, 7vw, 68px);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+  line-height: 1.1; margin-bottom: 16px;
+}
+.badge {
+  display: inline-block; background: var(--accent); color: var(--dark);
+  padding: 8px 20px; font-size: 14px; font-weight: 700;
+  margin-bottom: 24px;
+}
+.subtitle { font-size: 18px; margin-bottom: 32px; opacity: 0.95; }
+.cta-btn {
+  display: inline-block; background: var(--accent); color: var(--dark);
+  padding: 18px 40px; font-size: 16px; font-weight: 700;
+  text-decoration: none; text-transform: uppercase;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  transition: transform 0.3s;
+}
+.cta-btn:hover { transform: translateY(-2px); }
+.phone { font-size: 36px; font-weight: 700; color: var(--accent); margin-top: 32px; }
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-content">
+    <div class="badge">36 YEARS EXPERIENCE</div>
+    <h1>Joe's Appliance<br>Repair</h1>
+    <p class="subtitle">Las Vegas' trusted master technician. Same-day service. All major brands. Guaranteed repairs.</p>
+    <a href="tel:7025550100" class="cta-btn">Call Now</a>
+    <div class="phone">(702) 555-0100</div>
+  </div>
+</section>
+</body>
+</html>

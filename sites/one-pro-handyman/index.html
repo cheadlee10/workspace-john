@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Pro Handyman — Houston | 40 Years Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;700;800&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --steel: #455A64;
+  --steel-light: #607D8B;
+  --amber: #FFC107;
+  --concrete: #9E9E9E;
+  --dark: #263238;
+  --light: #ECEFF1;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Source Sans Pro', sans-serif; background: var(--light); color: var(--dark); }
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--steel) 0%, var(--steel-light) 50%, var(--concrete) 100%);
+  display: flex; align-items: center;
+  padding: 100px 24px;
+}
+.hero-grid {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+}
+.hero-content { color: white; }
+h1 {
+  font-family: 'Raleway', sans-serif; font-size: clamp(36px, 5vw, 56px);
+  font-weight: 800; line-height: 1.15; margin-bottom: 20px;
+}
+h1 span { color: var(--amber); }
+.tagline { font-size: 14px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; opacity: 0.8; }
+.subtitle { font-size: 17px; line-height: 1.6; margin-bottom: 32px; opacity: 0.9; }
+.cta-btn {
+  display: inline-block; background: var(--amber); color: var(--dark);
+  padding: 16px 36px; font-size: 15px; font-weight: 700;
+  text-decoration: none; border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.phone { font-size: 28px; font-weight: 700; color: var(--amber); margin-top: 24px; }
+.hero-visual {
+  background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+  border-radius: 16px; padding: 40px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.stat { font-size: 48px; font-weight: 800; color: var(--amber); }
+.stat-label { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; }
+@media (max-width: 768px) {
+  .hero-grid { grid-template-columns: 1fr; text-align: center; }
+}
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-content">
+      <div class="tagline">Houston's Most Experienced</div>
+      <h1>One Pro<br><span>Handyman</span></h1>
+      <p class="subtitle">40 years of fixing what others can't. Commercial & residential. Licensed, insured, and always on time.</p>
+      <a href="tel:7135550200" class="cta-btn">Get a Free Quote</a>
+      <div class="phone">(713) 555-0200</div>
+    </div>
+    <div class="hero-visual">
+      <div class="stat">40</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

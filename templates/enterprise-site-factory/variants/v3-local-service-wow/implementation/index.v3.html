@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apex Home Services | Fast Quotes in Seattle Metro</title>
+  <meta name="description" content="Premium local service team with rapid response, transparent pricing, and guaranteed workmanship." />
+  <style>
+    :root {
+      --bg:#050914; --surface:#0B1224; --surface2:#101A33; --line:#23314D; --text:#EAF0FF; --muted:#9EB0D1;
+      --primary:#31D0FF; --primaryHover:#17B9EC; --accent:#9CFF4F; --hot:#FF7A90;
+      --radius:20px; --button:14px;
+      --shadow:0 24px 64px rgba(4,8,18,.46);
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; padding:0; background:radial-gradient(1200px 700px at 85% -5%, rgba(49,208,255,.16), transparent 60%), var(--bg); color:var(--text); font-family:Inter,system-ui,sans-serif; }
+    .wrap { max-width:1120px; margin:0 auto; padding:0 20px; }
+    .utility { border-bottom:1px solid var(--line); background:rgba(11,18,36,.86); backdrop-filter:blur(6px); }
+    .utility .wrap { min-height:42px; display:flex; gap:10px; justify-content:space-between; align-items:center; font-size:.86rem; color:#c9d6f0; }
+    .header { position:sticky; top:0; z-index:20; backdrop-filter:blur(8px); background:rgba(5,9,20,.78); border-bottom:1px solid rgba(35,49,77,.8); }
+    .header .wrap { min-height:68px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .brand { font-weight:800; letter-spacing:.2px; }
+    .btn { min-height:48px; border-radius:var(--button); padding:0 16px; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; border:1px solid transparent; }
+    .btn-primary { background:var(--primary); color:#042033; }
+    .btn-primary:hover { background:var(--primaryHover); }
+    .btn-ghost { border-color:#36507A; color:var(--text); }
+
+    .hero { padding:42px 0 24px; }
+    .hero-grid { display:grid; grid-template-columns:1.08fr .92fr; gap:16px; }
+    .card { background:linear-gradient(155deg, rgba(16,26,51,.9), rgba(11,18,36,.95)); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
+    .hero-copy { padding:28px; }
+    h1 { font-family:Manrope,Inter,sans-serif; font-size:clamp(2rem,4vw,3.55rem); line-height:1.06; margin:.2em 0 .3em; }
+    h2 { margin:.1em 0 .65em; font-size:clamp(1.45rem,3vw,2.35rem); font-family:Manrope,Inter,sans-serif; }
+    p { margin:.4em 0; color:var(--muted); line-height:1.62; }
+    .chips { margin:16px 0 12px; display:flex; flex-wrap:wrap; gap:8px; }
+    .chip { border:1px solid #30496f; padding:8px 11px; border-radius:999px; font-size:.79rem; color:#d7e6ff; }
+    .micro { color:#bfd1f3; font-size:.84rem; }
+
+    .quick-form { padding:24px; }
+    .quick-form form { display:grid; gap:10px; }
+    input, textarea { width:100%; color:#fff; background:#0A1328; border:1px solid #2A3F64; border-radius:14px; min-height:48px; padding:12px; }
+    textarea { min-height:110px; resize:vertical; }
+
+    .proof { margin-top:14px; display:grid; gap:10px; grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .proof .item { background:#0C152B; border:1px solid var(--line); border-radius:16px; padding:14px; text-align:center; }
+    .proof b { display:block; font-size:1.2rem; }
+
+    section { padding:44px 0; }
+    .services-head { display:flex; justify-content:space-between; gap:8px; align-items:end; margin-bottom:14px; }
+    .service-track { display:grid; gap:12px; grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .service { padding:18px; border-radius:18px; border:1px solid var(--line); background:#0D172F; }
+    .service .eta { color:var(--accent); font-weight:700; font-size:.88rem; }
+
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .panel { padding:22px; border:1px solid var(--line); border-radius:18px; background:#0D172F; }
+    .kpis { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:10px; }
+    .kpi { background:#0A1328; border:1px solid #2B3F61; border-radius:14px; padding:10px; text-align:center; }
+
+    .timeline { display:grid; gap:10px; grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .step { border:1px solid var(--line); border-radius:16px; background:#0D172F; padding:14px; }
+    .step small { color:#a8bee4; }
+
+    .offer { border:1px solid #36523f; background:linear-gradient(145deg,#13261d,#1a2f26); padding:24px; border-radius:20px; }
+
+    details { border-top:1px solid var(--line); padding:10px 0; }
+    summary { cursor:pointer; font-weight:700; }
+
+    .final { display:grid; grid-template-columns:1fr .95fr; gap:14px; }
+    .stack { display:grid; gap:10px; }
+
+    .sticky-rail { display:none; }
+
+    @media (max-width:960px) {
+      .hero-grid, .split, .final { grid-template-columns:1fr; }
+      .timeline { grid-template-columns:1fr 1fr; }
+      .proof { grid-template-columns:1fr 1fr; }
+      .service-track { grid-auto-flow:column; grid-auto-columns:84%; overflow-x:auto; scroll-snap-type:x mandatory; }
+      .service-track .service { scroll-snap-align:start; }
+    }
+
+    @media (max-width:700px) {
+      .utility .wrap { flex-direction:column; align-items:flex-start; padding:8px 20px; }
+      .header .wrap { min-height:62px; }
+      .timeline, .proof { grid-template-columns:1fr; }
+      .sticky-rail {
+        display:grid; grid-template-columns:1fr 1fr; position:fixed; bottom:0; left:0; right:0; z-index:30;
+        border-top:1px solid var(--line); background:#081022; padding-bottom:max(10px, env(safe-area-inset-bottom));
+      }
+      .sticky-rail a { min-height:52px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-weight:900; }
+      .sticky-rail a:first-child { background:var(--primary); color:#042033; }
+      .sticky-rail a:last-child { color:#fff; border-left:1px solid var(--line); }
+      body { padding-bottom:70px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation:none !important; transition:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="utility">
+    <div class="wrap">
+      <span>⭐ 4.9 (412 reviews) · Licensed & Insured · 2-Hour Callback SLA</span>
+      <span>Serving Seattle · Bellevue · Kirkland · Redmond</span>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="wrap">
+      <div class="brand">Apex Home Services</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a class="btn btn-ghost" href="tel:+12065550199">Call (206) 555-0199</a>
+        <a class="btn btn-primary" href="#full-quote">Get Quote</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="wrap hero-grid">
+      <div class="card hero-copy">
+        <p>Trusted Local Team · Fast, Clean, Guaranteed</p>
+        <h1>High-Quality Service Work Without the Wait or Guesswork.</h1>
+        <p>Get rapid scheduling, transparent pricing, and clean execution from a crew known for showing up and finishing strong.</p>
+        <div class="chips">
+          <span class="chip">Same-Day Response</span>
+          <span class="chip">Warranty Backed</span>
+          <span class="chip">Clear Written Estimates</span>
+        </div>
+        <p class="micro">If we miss your confirmed arrival window, your next service call gets a service credit.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <a class="btn btn-primary" href="#quick-callback">Get Fast Callback</a>
+          <a class="btn btn-ghost" href="tel:+12065550199">Speak to a Pro</a>
+        </div>
+      </div>
+
+      <div class="card quick-form" id="quick-callback">
+        <h2>Get a 2-Hour Callback</h2>
+        <p>Start with two fields. We handle the rest with you live.</p>
+        <form>
+          <input placeholder="Full Name" required />
+          <input placeholder="Phone Number" inputmode="tel" required />
+          <button class="btn btn-primary" type="submit">Request Callback</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="wrap proof">
+      <div class="item"><b>2,900+</b><span>Projects Completed</span></div>
+      <div class="item"><b>14 yrs</b><span>Local Experience</span></div>
+      <div class="item"><b>2 hr</b><span>Avg Callback SLA</span></div>
+      <div class="item"><b>2 yrs</b><span>Workmanship Warranty</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="services-head">
+        <h2>Outcome-Focused Services</h2>
+        <a class="btn btn-ghost" href="#full-quote">Check Availability</a>
+      </div>
+      <div class="service-track">
+        <article class="service">
+          <h3>Install & Upgrade</h3>
+          <p>Replace outdated systems with efficient, long-life solutions.</p>
+          <p class="eta">Typical ETA: 1–2 days</p>
+        </article>
+        <article class="service">
+          <h3>Repair & Restore</h3>
+          <p>Fast diagnostics and high-confidence fixes that last.</p>
+          <p class="eta">Typical ETA: same-day to 24 hrs</p>
+        </article>
+        <article class="service">
+          <h3>Maintenance Plans</h3>
+          <p>Prevent expensive surprises with proactive service routing.</p>
+          <p class="eta">Typical ETA: weekly / monthly visits</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap split">
+      <div class="panel">
+        <h2>Before / After Impact</h2>
+        <p>Visual transformation + measurable performance gains from one coordinated service plan.</p>
+      </div>
+      <div class="panel">
+        <h3>Recent Project Results</h3>
+        <div class="kpis">
+          <div class="kpi"><b>-38%</b><div>Repeat issues</div></div>
+          <div class="kpi"><b>+54%</b><div>Efficiency</div></div>
+          <div class="kpi"><b>4.9★</b><div>Client rating</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Simple 4-Step Process</h2>
+      <div class="timeline">
+        <div class="step"><small>Step 1</small><h3>Request</h3><p>Tell us your issue and timeline.</p></div>
+        <div class="step"><small>Step 2</small><h3>Confirm</h3><p>Get written scope + schedule window.</p></div>
+        <div class="step"><small>Step 3</small><h3>Deliver</h3><p>On-time work with clean execution.</p></div>
+        <div class="step"><small>Step 4</small><h3>Follow Up</h3><p>Post-job check and warranty support.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap offer">
+      <h2>Spring Priority Slot Offer</h2>
+      <p>Book this week for expedited scheduling and a complimentary service health check.</p>
+      <p><strong>Guarantee:</strong> If we miss your confirmed window, you receive a service credit on your next visit.</p>
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-primary" href="#full-quote">Claim Priority Slot</a>
+        <a class="btn btn-ghost" href="tel:+12065550199">Ask a Question</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap card" style="padding:22px;">
+      <h2>Frequently Asked Questions</h2>
+      <details><summary>How quickly can you schedule us?</summary><p>Most inquiries get a callback within 2 hours and next-available scheduling options.</p></details>
+      <details><summary>Do you provide written pricing before work?</summary><p>Yes. Scope, timeline, and pricing are documented before approval.</p></details>
+      <details><summary>What areas do you cover?</summary><p>Seattle metro and surrounding service zones including Bellevue, Kirkland, and Redmond.</p></details>
+      <details><summary>What does your warranty include?</summary><p>Workmanship coverage terms are included in each estimate and invoice packet.</p></details>
+    </div>
+  </section>
+
+  <section id="full-quote">
+    <div class="wrap final">
+      <div class="card" style="padding:24px;">
+        <h2>Get Your Detailed Quote</h2>
+        <p>Tell us the project details and preferred timing. We’ll send a clear plan and next steps.</p>
+        <form class="stack">
+          <input placeholder="Full Name" required />
+          <input placeholder="Phone Number" inputmode="tel" required />
+          <input placeholder="Email Address" type="email" />
+          <input placeholder="Service Needed" />
+          <textarea placeholder="Project details"></textarea>
+          <button class="btn btn-primary" type="submit">Request Detailed Quote</button>
+        </form>
+      </div>
+      <div class="card" style="padding:24px;">
+        <h3>Service Area</h3>
+        <p>Seattle · Bellevue · Kirkland · Redmond · Shoreline · Renton</p>
+        <h3>Need Immediate Help?</h3>
+        <p>Call now for urgent scheduling and live dispatch.</p>
+        <a class="btn btn-ghost" href="tel:+12065550199">Call (206) 555-0199</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="sticky-rail">
+    <a href="#full-quote">Get Quote</a>
+    <a href="tel:+12065550199">Call Now</a>
+  </div>
+</body>
+</html>

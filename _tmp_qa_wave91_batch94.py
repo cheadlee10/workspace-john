@@ -1,0 +1,95 @@
+import re, json, csv
+from pathlib import Path
+
+root = Path(r"C:/Users/chead/.openclaw/workspace-john")
+wave = root / "sites" / "premium-v3-wave91"
+batch = root / "email-templates" / "next-queued-email-assets-2026-03-03-batch94.md"
+jsonl = root / "email-templates" / "send-queue-2026-03-02-next-batches.jsonl"
+csvp = root / "email-templates" / "send-queue-2026-03-02-next-batches-tracker.csv"
+
+site_results = []
+for d in sorted([p for p in wave.iterdir() if p.is_dir()]):
+    f = d / "index.html"
+    if not f.exists():
+        site_results.append((d.name, "FAIL", "missing index.html"))
+        continue
+
+    t = f.read_text(encoding="utf-8", errors="ignore")
+    errs = []
+
+    if re.search(r"\{\{[^}]+\}\}|\b(TODO|TBD|lorem ipsum|example\.com)\b", t, re.I):
+        errs.append("placeholder leakage")
+    if re.search(r"\b(guarantee|#1|number one|best in|top-rated|top rated|ranked|results guaranteed|instant results|double your|triple your)\b", t, re.I):
+        errs.append("prohibited claim language")
+    if re.search(r"\b555[-)\s]", t):
+        errs.append("fabricated phone pattern (555)")
+
+    forms = list(re.finditer(r"<form\b[^>]*>", t, re.I))
+    if len(forms) != 2:
+        errs.append(f"form count {len(forms)} !=2")
+    else:
+        for i, m in enumerate(forms, 1):
+            tag = m.group(0)
+            if not re.search(r"action\s*=\s*['\"]/contact['\"]", tag, re.I):
+                errs.append(f"form{i} action not /contact")
+            if not re.search(r"method\s*=\s*['\"]post['\"]", tag, re.I):
+                errs.append(f"form{i} method not post")
+
+        business_hidden = len(re.findall(r"type\s*=\s*['\"]hidden['\"][^>]*name\s*=\s*['\"]business['\"]", t, re.I))
+        source_hidden = len(re.findall(r"type\s*=\s*['\"]hidden['\"][^>]*name\s*=\s*['\"]source['\"]", t, re.I))
+        if business_hidden < 2:
+            errs.append("business hidden field missing on both forms")
+        if source_hidden < 2:
+            errs.append("source hidden field missing on both forms")
+
+    site_results.append((d.name, "FAIL" if errs else "PASS", "; ".join(errs)))
+
+text = batch.read_text(encoding="utf-8", errors="ignore")
+ids = []
+for i in re.findall(r"`([a-z]+-\d{3})`", text, re.I):
+    if i.lower() not in [x.lower() for x in ids]:
+        ids.append(i)
+
+body_blocks = re.findall(r"\*\*Email body\*\*[\s\S]*?(?=\n---\n|\Z)", text)
+email_err = []
+for bi, b in enumerate(body_blocks, 1):
+    if "{{live_url}}" not in b or "{{screenshot_url}}" not in b:
+        email_err.append(f"section{bi} missing required placeholders")
+    if re.search(r"[\u2018\u2019\u201c\u201d\u2013\u2014\u2026]", b):
+        email_err.append(f"section{bi} non-ascii punctuation")
+    if re.search(r"\b(guarantee|#1|number one|best in|top-rated|top rated|ranked|results guaranteed|instant results|double your|triple your)\b", b, re.I):
+        email_err.append(f"section{bi} prohibited claim language")
+
+json_ids = set()
+with jsonl.open(encoding="utf-8") as fh:
+    for line in fh:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            o = json.loads(line)
+        except Exception:
+            continue
+        lid = o.get("lead_id")
+        if lid:
+            json_ids.add(lid)
+
+csv_ids = set()
+with csvp.open(encoding="utf-8", newline="") as fh:
+    r = csv.DictReader(fh)
+    for row in r:
+        lid = row.get("lead_id")
+        if lid:
+            csv_ids.add(lid)
+
+missing_json = [i for i in ids if i not in json_ids]
+missing_csv = [i for i in ids if i not in csv_ids]
+
+print("SITES")
+for r in site_results:
+    print("\t".join(r))
+print("EMAIL_IDS", ids)
+print("EMAIL_BODY_COUNT", len(body_blocks))
+print("EMAIL_ERRORS", email_err)
+print("MISSING_JSON", missing_json)
+print("MISSING_CSV", missing_csv)

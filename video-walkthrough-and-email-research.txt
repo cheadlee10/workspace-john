@@ -1,0 +1,958 @@
+================================================================================
+RESEARCH: AUTOMATED VIDEO WEBSITE WALKTHROUGHS & HIGH-CONVERSION HTML EMAILS
+================================================================================
+Compiled: March 5, 2026
+
+
+################################################################################
+TOPIC 1: AUTOMATED VIDEO WEBSITE WALKTHROUGHS
+################################################################################
+
+================================================================================
+1A. APPROACH COMPARISON - WHICH TOOL TO USE
+================================================================================
+
+There are four main approaches to programmatically generating a scrolling video
+walkthrough of a website. Here is a ranked recommendation:
+
+RECOMMENDED: Puppeteer + puppeteer-screen-recorder
+  Why: Most mature, battle-tested, directly controls a real browser, supports
+  smooth scrolling via page.evaluate(), outputs MP4/WebM/AVI/MOV, and the
+  library auto-manages ffmpeg. This is the fastest path to a working solution.
+
+ALTERNATIVE: Playwright with built-in video recording
+  Why: Microsoft-backed, supports Chromium/Firefox/WebKit, built-in video via
+  browser context config. Slightly less flexible for custom recording but
+  excellent for automation.
+
+ADVANCED: Remotion (React-based video generation)
+  Why: Ideal if you want to add branded overlays, callouts, annotations, text,
+  and motion graphics ON TOP of the website walkthrough. Can embed a website
+  via <IFrame> component. Best for polished, branded videos.
+
+SPECIALIZED: Timecut + Timesnap
+  Why: Purpose-built for smooth animation capture. Overrides JavaScript timing
+  functions to capture frame-perfect video. Excellent for JS-animated sites.
+
+
+================================================================================
+1B. PUPPETEER + PUPPETEER-SCREEN-RECORDER (Primary Recommendation)
+================================================================================
+
+INSTALLATION:
+  npm install puppeteer puppeteer-screen-recorder
+
+CONFIGURATION OPTIONS:
+  {
+    followNewTab: true,        // Follow newly opened tabs
+    fps: 25,                   // Frames per second (default: 25)
+    ffmpeg_Path: null,         // Auto-installed if null
+    videoFrame: {
+      width: 1024,
+      height: 768
+    },
+    videoCrf: 18,              // Quality (0-51, lower = better)
+    videoCodec: 'libx264',     // Video codec
+    videoPreset: 'ultrafast',  // Encoding speed
+    videoBitrate: 1000,        // Bitrate in kbps
+    autopad: {
+      color: 'black'           // Background color
+    },
+    aspectRatio: '4:3',
+    recordDurationLimit: 120   // Max duration in seconds
+  }
+
+COMPLETE WORKING EXAMPLE - SMOOTH SCROLLING WALKTHROUGH:
+
+  const puppeteer = require("puppeteer");
+  const { PuppeteerScreenRecorder } = require("puppeteer-screen-recorder");
+
+  const wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  const smoothScroll = async (page) => {
+    // Wait for page to fully render
+    await wait(1500);
+
+    // Scroll down in smooth increments
+    await page.evaluate(() => {
+      window.scrollBy({ top: 500, left: 0, behavior: "smooth" });
+    });
+    await wait(1000);
+
+    await page.evaluate(() => {
+      window.scrollBy({ top: 500, left: 0, behavior: "smooth" });
+    });
+    await wait(1000);
+
+    await page.evaluate(() => {
+      window.scrollBy({ top: 500, left: 0, behavior: "smooth" });
+    });
+    await wait(1000);
+
+    await page.evaluate(() => {
+      window.scrollBy({ top: 500, left: 0, behavior: "smooth" });
+    });
+    await wait(1500);
+  };
+
+  (async () => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setViewport({
+      width: 1920,
+      height: 1080,
+      deviceScaleFactor: 2,
+    });
+
+    const recorder = new PuppeteerScreenRecorder(page, {
+      fps: 30,
+      videoFrame: { width: 1920, height: 1080 },
+      videoCrf: 18,
+      videoCodec: 'libx264',
+      videoPreset: 'ultrafast',
+    });
+
+    await page.goto("https://example-restaurant.com", {
+      waitUntil: 'networkidle0'
+    });
+
+    await recorder.start("./walkthrough.mp4");
+    await smoothScroll(page);
+    await recorder.stop();
+    await browser.close();
+  })();
+
+SUPPORTED OUTPUT FORMATS: MP4, AVI, MOV, WebM
+
+
+================================================================================
+1C. PLAYWRIGHT BUILT-IN VIDEO RECORDING
+================================================================================
+
+INSTALLATION:
+  npm install playwright
+
+EXAMPLE:
+
+  const { chromium } = require('playwright');
+
+  (async () => {
+    const browser = await chromium.launch();
+    const context = await browser.newContext({
+      recordVideo: {
+        dir: './videos/',
+        size: { width: 1280, height: 720 },
+      },
+    });
+
+    const page = await context.newPage();
+    await page.goto('https://example-restaurant.com');
+
+    // Smooth scroll
+    await page.evaluate(() => {
+      window.scrollBy({ top: 500, behavior: 'smooth' });
+    });
+    await page.waitForTimeout(1000);
+    await page.evaluate(() => {
+      window.scrollBy({ top: 500, behavior: 'smooth' });
+    });
+    await page.waitForTimeout(1000);
+
+    // Close context to finalize video
+    await context.close();
+    await browser.close();
+  })();
+
+OUTPUT FORMAT: WebM only (VP9 codec)
+NOTE: Less format flexibility than puppeteer-screen-recorder.
+
+
+================================================================================
+1D. PUPPETEER NATIVE page.screencast() API
+================================================================================
+
+  const puppeteer = require('puppeteer');
+
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto("https://example.com");
+
+  const recorder = await page.screencast({ path: 'recording.webm' });
+  // ... perform actions ...
+  await recorder.stop();
+  await browser.close();
+
+DEFAULT FORMAT: WebM (VP9 at 30fps)
+REQUIREMENT: ffmpeg must be installed
+LIMITATION: Only WebM output, no format options, no stream support.
+
+
+================================================================================
+1E. REMOTION (React-Based Video Generation)
+================================================================================
+
+Best for adding branded overlays, callouts, animations, and text on top of a
+website walkthrough.
+
+PRICING:
+  - Free: Individuals and small companies (even commercial use)
+  - $100/mo: Larger teams
+  - $500/mo: Enterprise
+
+HOW IT WORKS:
+  Remotion renders each frame as a React component. You can embed a website
+  via <IFrame> component and animate scrolling using interpolate() and
+  useCurrentFrame().
+
+IFRAME COMPONENT EXAMPLE:
+
+  import { IFrame } from 'remotion';
+
+  export const MyComp: React.FC = () => {
+    return <IFrame src="https://example-restaurant.com" />;
+  };
+
+  - Automatically wraps in delayRender() to ensure iframe loads before render
+  - WARNING: External animations not using useCurrentFrame() will flicker
+  - Not available for server-side rendering
+
+ADDING ANNOTATIONS/CALLOUTS:
+  Use Remotion's Spring and interpolate functions to animate overlays:
+
+  import { useCurrentFrame, interpolate, spring, useVideoConfig } from 'remotion';
+
+  export const Walkthrough: React.FC = () => {
+    const frame = useCurrentFrame();
+    const { fps } = useVideoConfig();
+
+    const scrollPosition = interpolate(frame, [0, 150], [0, 2000], {
+      extrapolateRight: 'clamp',
+    });
+
+    const calloutOpacity = spring({ frame: frame - 60, fps, config: { damping: 20 } });
+
+    return (
+      <div>
+        <IFrame
+          src="https://restaurant.com"
+          style={{ transform: `translateY(-${scrollPosition}px)` }}
+        />
+        <div style={{
+          position: 'absolute',
+          opacity: calloutOpacity,
+          top: 200, left: 100,
+          background: 'rgba(0,0,0,0.8)',
+          color: 'white',
+          padding: 20,
+          borderRadius: 8,
+        }}>
+          Beautiful responsive menu design
+        </div>
+      </div>
+    );
+  };
+
+RECOMMENDATION: Use Puppeteer for raw recording, then optionally use Remotion
+to composite the recording with branded overlays, callouts, and CTAs.
+
+
+================================================================================
+1F. TIMECUT + TIMESNAP (Smooth Animation Capture)
+================================================================================
+
+INSTALLATION:
+  npm install -g timecut
+
+PURPOSE: Records frame-perfect smooth video by overriding JavaScript timing
+functions. Great for capturing JS animations without frame drops.
+
+EXAMPLE (Node.js API):
+  const timecut = require('timecut');
+  timecut({
+    url: 'https://example.com',
+    viewport: { width: 1920, height: 1080 },
+    fps: 30,
+    duration: 10,
+    output: 'walkthrough.mp4'
+  }).then(() => console.log('Done!'));
+
+LIMITATION: Only overrides JavaScript timing, not CSS-only animations.
+
+
+================================================================================
+1G. ADDING HIGHLIGHTS, CALLOUTS, AND ANNOTATIONS
+================================================================================
+
+OPTION 1 - Puppeteer DOM Injection (During Recording):
+  Inject highlight overlays directly into the page before/during recording:
+
+  await page.evaluate(() => {
+    const highlight = document.createElement('div');
+    highlight.style.cssText = `
+      position: fixed; top: 100px; left: 50px;
+      width: 300px; padding: 15px;
+      background: rgba(255, 165, 0, 0.9);
+      color: white; font-size: 18px; font-weight: bold;
+      border-radius: 8px; z-index: 99999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: fadeIn 0.5s ease-in;
+    `;
+    highlight.textContent = 'Online Ordering System';
+    document.body.appendChild(highlight);
+  });
+
+OPTION 2 - Remotion Post-Production:
+  Composite callouts, arrows, and text overlays after recording using
+  Remotion's React component system (see section 1E).
+
+OPTION 3 - FFmpeg Text Overlay:
+  ffmpeg -i walkthrough.mp4 -vf "drawtext=text='Beautiful Menu Design':
+    fontsize=36:fontcolor=white:x=100:y=100:
+    enable='between(t,2,5)'" -codec:a copy output.mp4
+
+
+================================================================================
+1H. OPTIMAL VIDEO FORMAT, LENGTH, AND FILE SIZE FOR EMAIL
+================================================================================
+
+OPTIMAL VIDEO LENGTH:
+  - 30-60 seconds is the sweet spot for cold outreach
+  - State value proposition in first 10 seconds
+  - Shorter videos drive 42% more engagement
+  - Businesses using video see up to 3x higher response rates
+
+FORMAT RECOMMENDATIONS:
+  - MP4 (H.264): Most universally compatible, best for hosting
+  - WebM: Smaller files but less compatible
+  - GIF: For email preview thumbnails (see below)
+
+FILE SIZE TARGETS:
+  - Hosted MP4: 2-5 MB for 30-60 second walkthrough
+  - Animated GIF for email: Under 500KB (target 200KB)
+  - 1 MB is the absolute ceiling for email GIFs
+
+CONVERTING MP4 TO OPTIMIZED GIF FOR EMAIL:
+
+  Two-pass palette method (best quality at smallest size):
+
+  # Step 1: Generate palette
+  ffmpeg -i walkthrough.mp4 -vf "fps=8,scale=480:-1:flags=lanczos,palettegen" palette.png
+
+  # Step 2: Create GIF using palette
+  ffmpeg -i walkthrough.mp4 -i palette.png \
+    -lavfi "fps=8,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse" \
+    walkthrough.gif
+
+  For ultra-small GIFs (under 200KB):
+  - Use fps=6, scale=320:-1
+  - Trim to 3-4 seconds: add -ss 00:00:02 -t 4
+
+
+================================================================================
+1I. VIDEO HOSTING AND EMAIL EMBEDDING STRATEGY
+================================================================================
+
+KEY FACT: Gmail, Outlook, and Yahoo DO NOT support in-email video playback.
+You cannot embed a playing video in most email clients.
+
+RECOMMENDED APPROACH (Thumbnail + Hosted Video):
+  1. Record the full 30-60 second MP4 walkthrough
+  2. Generate an animated GIF preview (3-5 seconds, under 500KB)
+  3. Host the full video on a video platform
+  4. In the email, show the GIF/thumbnail with play button overlay
+  5. Link the image to the hosted video landing page
+
+PERFORMANCE DATA:
+  - Video thumbnail emails: 10.3% CTR vs 6.1% for static images
+  - Animated GIF emails: ROI jumps from $18 to $37 per dollar spent
+  - GIF support: All major clients EXCEPT Outlook 2007-2019 (shows first frame)
+
+VIDEO HOSTING OPTIONS:
+
+  Mux (Recommended for API-first approach):
+    - Free tier: 100K delivery minutes/month, 10 on-demand videos
+    - Auto-generates thumbnails and captions
+    - Pricing reduced 17-23% in July 2025
+    - API: https://www.mux.com
+
+  Cloudinary:
+    - Free tier available
+    - Auto-generates thumbnails from any frame
+    - Can generate animated GIF previews via URL transformation
+    - Extract thumbnail: change file extension from .mp4 to .jpg
+    - Generate GIF: use /e_preview transformation
+    - API: https://cloudinary.com
+
+  api.video:
+    - Free encoding, pay-as-you-go delivery
+    - Loom clone template available
+    - API: https://api.video
+
+  Simple alternatives:
+    - Upload to YouTube/Vimeo (unlisted) and link from email
+    - Host on your own S3/CDN bucket
+
+EMAIL-SAFE HTML FOR VIDEO THUMBNAIL WITH PLAY BUTTON:
+
+  <a href="https://your-video-hosting.com/walkthrough" target="_blank"
+     style="display:inline-block;position:relative;">
+    <img src="https://your-cdn.com/walkthrough-thumbnail.gif"
+         alt="Watch your website walkthrough"
+         width="560" height="315"
+         style="display:block;border:0;outline:none;max-width:100%;" />
+  </a>
+
+  For a static thumbnail with play button overlay (more email-client safe):
+
+  <a href="https://your-video-hosting.com/walkthrough" target="_blank">
+    <img src="https://your-cdn.com/thumbnail-with-play-button.jpg"
+         alt="Click to watch your website walkthrough"
+         width="560" height="315"
+         style="display:block;border:0;max-width:100%;border-radius:8px;" />
+  </a>
+
+  TIP: Use a tool like Parcel (parcel.io) to auto-generate play-button
+  thumbnails from any video URL. Or use Cloudinary's overlay transformation
+  to add a play button icon on top of a video thumbnail.
+
+CLOUD BROWSER SERVICES (for running Puppeteer at scale):
+  - Browserless: $50/mo+, REST API + WebSocket CDP, session replay
+  - Browserbase: AI-agent focused, Puppeteer/Playwright compatible
+  These let you run headless browser recordings in the cloud without
+  managing your own servers.
+
+
+################################################################################
+TOPIC 2: HIGH-CONVERSION HTML EMAIL DESIGN
+################################################################################
+
+================================================================================
+2A. PLAIN TEXT VS HTML VS HYBRID - CRITICAL FINDING
+================================================================================
+
+KEY INSIGHT: For cold outreach, plain text dramatically outperforms HTML.
+
+STATISTICS:
+  - Plain text generates 21-42% MORE clicks than HTML
+  - HTML emails with images see 23-37% DROP in open rates
+  - Plain text bypasses spam filters more effectively
+  - B2B plain text outperforms HTML by 4x-9x for reply rates
+
+RECOMMENDATION FOR RESTAURANT COLD OUTREACH:
+  Use a HYBRID approach:
+  - Primary email body: Plain text style (no heavy formatting)
+  - One visual element: The video thumbnail/GIF of their website walkthrough
+  - Minimal HTML: Just enough for the clickable thumbnail and a styled CTA button
+  - This gives the "personal email" feel while showcasing the visual proof
+
+WHY HYBRID WORKS:
+  - The video thumbnail IS the value proposition (seeing their new website)
+  - Pure text can't convey "look at this beautiful website I made for you"
+  - Keep HTML minimal: no header images, no footer banners, no columns
+  - Test deliverability carefully before scaling
+
+
+================================================================================
+2B. CONVERSION RATE BENCHMARKS FOR COLD OUTREACH
+================================================================================
+
+GENERAL COLD EMAIL BENCHMARKS (2025-2026):
+  - Average open rate: 20-25% (good), 30-40% (excellent)
+  - Average response rate: 4.0%
+  - Good conversion rate: 2-5%
+  - Meeting bookings: 0.5-2%
+  - Free trial signups: 8-10%
+  - Direct sales: 1-4%
+
+RESTAURANT INDUSTRY SPECIFIC:
+  - Email open rate: 43.6% (warm lists)
+  - Click-through rate: 1.13%
+  - Unsubscribe rate: 0.17%
+
+WHAT TO REALISTICALLY EXPECT (cold outreach to restaurants):
+  - Open rate: 25-35% (with good subject lines + domain warming)
+  - Click rate: 3-5% (with video thumbnail)
+  - Reply rate: 2-5%
+  - Meeting/demo booked: 0.5-2%
+  - For every 1000 cold emails, expect 5-20 booked demos
+
+FOLLOW-UP IMPACT:
+  - First follow-up boosts responses by 31-50%
+  - 4-7 email sequences achieve 27% reply rate vs 9% for 1-3 emails
+  - Second follow-up 7-10 days later adds 9% more responses
+
+
+================================================================================
+2C. SUBJECT LINES THAT GET OPENED BY RESTAURANT OWNERS
+================================================================================
+
+KEY PRINCIPLES:
+  - Personalized subject lines boost opens by 26-30%+
+  - Questions get ~10% higher open rates
+  - Numbers in subject lines get 45% higher open rates
+  - Keep under 50 characters
+  - Avoid spam trigger words: "free", "guarantee", "no obligation"
+
+HIGH-PERFORMING SUBJECT LINE TEMPLATES:
+
+  Personalized + Specific:
+    "I built something for {restaurant_name}"
+    "{first_name}, quick question about {restaurant_name}'s website"
+    "Idea for {restaurant_name} - 2 min"
+
+  Question Format:
+    "Is {restaurant_name} losing online orders?"
+    "Quick question about {restaurant_name}'s menu"
+    "Saw {restaurant_name} on Google - thoughts?"
+
+  Value/Curiosity:
+    "{restaurant_name} - your new website preview"
+    "30-second video: {restaurant_name}'s new look"
+    "Made this for {restaurant_name} (no strings attached)"
+
+  Social Proof:
+    "How {nearby_restaurant} increased orders by 40%"
+    "What {city} restaurants are doing differently"
+
+  Short + Direct:
+    "{restaurant_name} website"
+    "Quick idea for {first_name}"
+    "For {restaurant_name}"
+
+
+================================================================================
+2D. EMAIL DELIVERABILITY - SPF, DKIM, DMARC, DOMAIN WARMING
+================================================================================
+
+MANDATORY AUTHENTICATION (as of 2025-2026):
+  Google, Yahoo, and Microsoft Outlook ALL require:
+  - SPF (Sender Policy Framework): Specifies which servers can send for your domain
+  - DKIM (DomainKeys Identified Mail): Digital signature proving message integrity
+  - DMARC: Policy for what to do when auth fails
+
+  Bulk senders (>5000 emails/day) MUST have all three configured.
+
+SETUP CHECKLIST:
+  1. Add SPF record to DNS: v=spf1 include:_spf.google.com ~all
+     (adjust for your email provider)
+  2. Generate DKIM keys via your email provider and add to DNS
+  3. Add DMARC record: v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com
+     Start with p=none (monitor), then move to p=quarantine
+  4. Verify all records with MXToolbox or mail-tester.com
+
+DOMAIN WARMING STRATEGY:
+
+  CRITICAL: Use a SEPARATE domain for cold outreach.
+  Example: If your main domain is openclaw.com, use openclawsites.com or
+  getyourmenu.com for outreach. This protects your primary domain reputation.
+
+  Week 1-2: 5-10 emails per day to warm contacts, internal team, existing clients
+  Week 3-4: 15-25 emails per day, mix of warm and cold contacts
+  Week 5-6: 30-50 emails per day, start cold outreach
+  Week 7+: Scale gradually, never more than 50-100/day per inbox
+
+  CRITICAL LIMITS:
+  - Keep spam complaint rate below 0.1% (Gmail's threshold)
+  - Use multiple inboxes/domains to scale (e.g., 5 inboxes x 50/day = 250/day)
+  - Use email warm-up tools: Warmforge, Mailpool, TrulyInbox, Instantly
+
+BEST TIMING:
+  - Send on Tuesday or Wednesday
+  - Between 7:00 AM - 11:00 AM recipient's local time
+  - Wednesday has highest response rate at 5.8%
+  - Avoid weekends and Monday mornings
+
+
+================================================================================
+2E. EMAIL SENDING TOOLS - PRICING COMPARISON
+================================================================================
+
+RESEND (Recommended for developer experience + React Email):
+  - Free: 3,000 emails/month
+  - Pro: $20/mo for 50,000 emails
+  - Scale: $90/mo for 100,000 emails
+  - Dedicated IP: $30/mo add-on (Scale plan, requires >500 emails/day)
+  - Native React Email integration
+  - Webhooks for open/click tracking
+  - Modern DX, great documentation
+  - Best for: Developer-first teams using React Email
+
+AMAZON SES (Cheapest at scale):
+  - $0.10 per 1,000 emails
+  - 1,000,000 emails = ~$108 (vs SendGrid's $400)
+  - Managed dedicated IPs: $0.08/1K emails (0-10M volume)
+  - Most affordable option at any volume
+  - Minimal built-in tooling (no templates, basic dashboard)
+  - Best for: High volume, cost-sensitive, technical teams
+
+SENDGRID:
+  - Free: 100 emails/day
+  - Essentials: $19.95/mo for 50K emails
+  - Pro: $89.95/mo for 100K emails
+  - Dedicated IP: $30/mo
+  - Most mature, proven stability
+  - Good template editor and analytics
+  - Best for: Teams wanting a full-featured platform
+
+MAILGUN:
+  - Free: 100 emails/day for first month, then pay-as-you-go
+  - Foundation: $35/mo for 50K emails
+  - Good deliverability tools and analytics
+  - Best for: Teams needing strong deliverability features
+
+RECOMMENDATION FOR THIS USE CASE:
+  Start with Resend (free tier: 3,000 emails/month).
+  This gives you enough for initial outreach while you warm domains.
+  Upgrade to Pro ($20/mo) when you scale past 3K/month.
+  If you scale to 10K+/month and want cheapest option, consider Amazon SES.
+
+
+================================================================================
+2F. REACT EMAIL - BUILDING RESPONSIVE HTML EMAILS
+================================================================================
+
+INSTALLATION:
+  npm install react-email @react-email/components -E
+  npm install resend
+
+  Add to package.json scripts:
+  "email": "email dev --dir src/emails"
+
+AVAILABLE COMPONENTS:
+  Html, Head, Preview, Body, Container, Section, Row, Column,
+  Text, Heading, Link, Button, Img, Hr, Tailwind
+
+KEY FEATURE: Supports Tailwind CSS classes for styling emails!
+
+COMPLETE EMAIL TEMPLATE EXAMPLE:
+
+  // emails/RestaurantPitch.tsx
+  import * as React from "react";
+  import {
+    Body, Container, Head, Heading, Hr, Html,
+    Img, Link, Preview, Text, Button, Tailwind,
+  } from "@react-email/components";
+
+  interface PitchProps {
+    restaurantName: string;
+    ownerName: string;
+    videoUrl: string;
+    thumbnailUrl: string;
+  }
+
+  export const RestaurantPitch = ({
+    restaurantName, ownerName, videoUrl, thumbnailUrl
+  }: PitchProps) => {
+    return (
+      <Html>
+        <Head />
+        <Preview>I built a website preview for {restaurantName}</Preview>
+        <Tailwind>
+          <Body className="bg-white font-sans">
+            <Container className="mx-auto max-w-[600px] p-[20px]">
+              <Text className="text-[16px] text-gray-800 leading-[24px]">
+                Hi {ownerName},
+              </Text>
+              <Text className="text-[16px] text-gray-800 leading-[24px]">
+                I came across {restaurantName} and loved what you're doing.
+                I took a few minutes to create a website preview for you -
+                here's a quick look:
+              </Text>
+
+              <Link href={videoUrl}>
+                <Img
+                  src={thumbnailUrl}
+                  alt={`Watch ${restaurantName} website walkthrough`}
+                  width="560"
+                  height="315"
+                  className="rounded-lg mx-auto block"
+                  style={{ maxWidth: '100%', height: 'auto' }}
+                />
+              </Link>
+
+              <Text className="text-center text-sm text-gray-500 mt-2">
+                Click to watch the 30-second walkthrough
+              </Text>
+
+              <Button
+                href={videoUrl}
+                className="bg-orange-500 text-white font-bold
+                  py-3 px-6 rounded-lg block text-center mx-auto mt-4"
+              >
+                Watch Your Website Preview
+              </Button>
+
+              <Text className="text-[16px] text-gray-800 leading-[24px] mt-4">
+                No cost, no commitment - I just wanted to show you what's
+                possible. If you like it, I'd love to chat for 5 minutes.
+              </Text>
+
+              <Text className="text-[16px] text-gray-800">
+                Best,<br />
+                John
+              </Text>
+
+              <Hr className="border-gray-200 mt-8" />
+              <Text className="text-xs text-gray-400">
+                You're receiving this because I found {restaurantName}
+                online and thought you'd appreciate a free website preview.
+              </Text>
+            </Container>
+          </Body>
+        </Tailwind>
+      </Html>
+    );
+  };
+
+  export default RestaurantPitch;
+
+SENDING WITH RESEND:
+
+  import { Resend } from 'resend';
+  import RestaurantPitch from './emails/RestaurantPitch';
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const { data, error } = await resend.emails.send({
+    from: 'John <john@yourdomain.com>',
+    to: ['owner@restaurant.com'],
+    subject: `I built something for ${restaurantName}`,
+    react: RestaurantPitch({
+      restaurantName: "Mario's Italian Kitchen",
+      ownerName: "Mario",
+      videoUrl: "https://your-site.com/preview/marios",
+      thumbnailUrl: "https://your-cdn.com/thumbnails/marios-preview.gif",
+    }),
+  });
+
+DEVELOPMENT PREVIEW:
+  Run "npm run email" to preview templates in browser at localhost:3000.
+  Hot-reloads as you edit components.
+
+
+================================================================================
+2G. MJML ALTERNATIVE
+================================================================================
+
+If you prefer MJML over React Email:
+
+INSTALLATION:
+  npm install mjml
+
+EXAMPLE:
+  <mjml>
+    <mj-body>
+      <mj-section>
+        <mj-column>
+          <mj-text font-size="16px">Hi {{ownerName}},</mj-text>
+          <mj-text>I built a website preview for {{restaurantName}}:</mj-text>
+          <mj-image src="{{thumbnailUrl}}" href="{{videoUrl}}"
+            alt="Watch walkthrough" width="560px" />
+          <mj-button href="{{videoUrl}}" background-color="#F97316">
+            Watch Your Website Preview
+          </mj-button>
+        </mj-column>
+      </mj-section>
+    </mj-body>
+  </mjml>
+
+MJML automatically generates email-safe HTML with nested tables and inline CSS.
+React Email is generally recommended over MJML for new projects due to better
+DX and TypeScript support.
+
+
+================================================================================
+2H. CTA DESIGN AND PLACEMENT
+================================================================================
+
+KEY STATISTICS:
+  - Single CTA increases click-through rates by up to 371%
+  - Mobile-friendly buttons (44x44px minimum) improve tap rates by 40%+
+  - Over 70% of emails opened on mobile in 2025
+
+BEST PRACTICES:
+  1. ONE primary CTA button per email (not two, not three - ONE)
+  2. Place CTA above the fold for low-commitment actions
+  3. For cold outreach: Video thumbnail IS the primary CTA (clickable image)
+  4. Secondary text CTA below: "Reply to this email" or "Book a 5-min call"
+  5. Button sizing: minimum 44x44px, use percentage width for mobile
+  6. High contrast colors (orange, green, blue on white background)
+  7. Center the CTA button with margin from edges
+  8. Clear action text: "Watch Your Preview" not "Click Here"
+
+CTA COPY THAT WORKS FOR RESTAURANT OWNERS:
+  - "Watch Your Website Preview" (video link)
+  - "See Your New Menu Online"
+  - "Book a Free 5-Min Chat"
+  - "Reply with 'interested'"  (lowest friction)
+  - "Grab Your Free Website"
+
+
+================================================================================
+2I. MOBILE EMAIL RENDERING
+================================================================================
+
+STATISTICS:
+  - 60-70%+ of emails opened on mobile (2025)
+  - 80% of users delete non-mobile-friendly emails
+
+CHECKLIST:
+  1. Single column layout (max-width: 600px)
+  2. Font size: minimum 16px body, 22px+ headings
+  3. Button: minimum 44x44px touch target
+  4. Images: Use max-width: 100% and height: auto
+  5. Preview text: First 40-90 characters visible in mobile inbox
+  6. Keep email short: 50-125 words for cold outreach
+  7. Test in Litmus or Email on Acid before sending
+  8. React Email's Tailwind component handles responsive by default
+
+
+================================================================================
+2J. PERSONALIZATION TOKENS THAT INCREASE ENGAGEMENT
+================================================================================
+
+IMPACT DATA:
+  - Personalized subject lines: 26% higher open rates
+  - Personalized body: 29.3% open rate vs 22.2% non-personalized
+  - Personalized promotions: 27% higher unique click rates
+  - 82% of marketers report increased opens with personalization
+
+RECOMMENDED PERSONALIZATION VARIABLES:
+
+  High-Impact (use these):
+    {{first_name}}        - Owner's first name
+    {{restaurant_name}}   - Restaurant business name
+    {{city}}              - Restaurant's city/neighborhood
+    {{cuisine_type}}      - Type of cuisine (Italian, Mexican, etc.)
+    {{website_url}}       - Their current website (or "I noticed you
+                            don't have a website yet")
+
+  Medium-Impact (if available):
+    {{google_rating}}     - "I saw your 4.5-star reviews on Google"
+    {{yelp_review_count}} - "With 200+ Yelp reviews..."
+    {{nearby_landmark}}   - Local reference shows you did research
+    {{recent_event}}      - "Congrats on the expansion!"
+
+  Dynamic Content:
+    {{video_thumbnail}}   - Personalized walkthrough GIF
+    {{preview_url}}       - Link to their specific website preview
+
+  The key differentiator for this campaign: The video walkthrough itself
+  IS the ultimate personalization. You literally built them a website
+  and are showing it to them. That's 100x more powerful than just
+  using their first name.
+
+
+================================================================================
+2K. EMAIL SEQUENCE STRATEGY
+================================================================================
+
+RECOMMENDED 4-EMAIL SEQUENCE:
+
+  Email 1 (Day 0): The Hook
+    Subject: "I built something for {restaurant_name}"
+    Body: Short intro + video thumbnail + "no strings attached" CTA
+    Goal: Get them to watch the video
+
+  Email 2 (Day 3): The Follow-Up
+    Subject: "Did you see this, {first_name}?"
+    Body: "Just wanted to make sure you saw the website preview I made..."
+    Shorter, reference Email 1, same video link
+    Goal: Catch people who missed Email 1
+
+  Email 3 (Day 7): Social Proof
+    Subject: "How {nearby_restaurant} increased orders 40%"
+    Body: Quick case study or stat about restaurants with modern websites
+    Include the video link again
+    Goal: Build credibility
+
+  Email 4 (Day 14): Last Chance
+    Subject: "Should I remove {restaurant_name}'s preview?"
+    Body: "I built this preview for you and wanted to follow up one
+    last time before I take it down. If you're interested in a quick
+    5-min chat..."
+    Goal: Create urgency
+
+
+================================================================================
+2L. COMPLETE TECHNICAL PIPELINE
+================================================================================
+
+RECOMMENDED STACK:
+
+  1. VIDEO GENERATION:
+     - Puppeteer + puppeteer-screen-recorder for recording walkthroughs
+     - ffmpeg for MP4-to-GIF conversion (email thumbnails)
+     - Cloudinary or Mux for video hosting + thumbnail generation
+     - Optional: Remotion for adding branded overlays
+
+  2. EMAIL BUILDING:
+     - React Email + Tailwind for responsive templates
+     - TypeScript for type-safe personalization
+
+  3. EMAIL SENDING:
+     - Resend API ($0 to start, $20/mo at scale)
+     - Separate outreach domain with SPF/DKIM/DMARC configured
+     - Domain warming for 4-6 weeks before scaling
+
+  4. EMAIL INFRASTRUCTURE:
+     - Separate domain for outreach (protect main domain)
+     - Multiple inboxes to scale (50 emails/inbox/day)
+     - Warm-up tool (Instantly, Warmforge, or Mailpool)
+
+  5. TRACKING:
+     - Resend webhooks for open/click tracking
+     - Custom landing page per restaurant for video viewing
+     - Track: opens, clicks, video views, replies
+
+
+################################################################################
+SOURCES
+################################################################################
+
+Topic 1 - Video Walkthroughs:
+- https://github.com/prasanaworld/puppeteer-screen-recorder
+- https://screenshotone.com/blog/how-to-record-videos-with-puppeteer/
+- https://pptr.dev/api/puppeteer.page.screencast
+- https://www.remotion.dev/docs/iframe
+- https://www.remotion.dev/docs/the-fundamentals
+- https://www.remotion.dev/docs/license
+- https://github.com/tungs/timecut
+- https://github.com/tungs/timesnap
+- https://playwright.dev/docs/videos
+- https://www.mux.com/pricing
+- https://cloudinary.com/guides/video-effects/video-thumbnails
+- https://api.video/pricing/
+- https://www.browserless.io/
+- https://www.browserbase.com/
+- https://shotstack.io/learn/convert-video-gif-ffmpeg/
+- https://www.mux.com/articles/create-gifs-from-video-clips-with-ffmpeg
+
+Topic 2 - Email Design & Outreach:
+- https://www.warmforge.ai/blog/plain-text-vs-html-in-cold-emails
+- https://www.cleverly.co/blog/cold-email-outreach-best-practices
+- https://smartreach.io/blog/cold-email-conversion-rate/
+- https://www.breakcold.com/blog/cold-email-conversion-rate
+- https://snov.io/blog/cold-email-statistics/
+- https://react.email/docs/introduction
+- https://resend.com/pricing
+- https://www.freecodecamp.org/news/create-and-send-email-templates-using-react-email-and-resend-in-nextjs/
+- https://mjml.io/
+- https://swarmify.com/blog/how-to-embed-video-in-email/
+- https://mailtrap.io/blog/video-in-email-marketing/
+- https://www.litmus.com/blog/video-in-email
+- https://sproutvideo.com/blog/embed-video-in-email.html
+- https://www.mailforge.ai/blog/domain-warming-best-practices
+- https://saleshive.com/blog/dkim-dmarc-spf-best-practices-email-security-deliverability/
+- https://www.egenconsulting.com/blog/email-deliverability-2026.html
+- https://martal.ca/cta-best-practices-lb/
+- https://moosend.com/blog/email-cta/
+- https://www.brafton.com/blog/email-marketing/20-cold-email-subject-lines-that-actually-get-responses/
+- https://www.yesware.com/blog/cold-email-subject-lines/
+- https://getwpfunnels.com/cold-email-subject-lines/
+- https://www.vidyard.com/blog/video-length/
+- https://blog.sendspark.com/maximizing-cold-outreach-success-best-practices-for-using-video-in-email-campaigns
+- https://abmatic.ai/blog/benefits-of-personalization-tokens-in-email-campaigns
+- https://deliciousbrains.com/ses-vs-mailgun-vs-sendgrid/
+- https://medium.com/@nermeennasim/email-apis-in-2025-sendgrid-vs-resend-vs-aws-ses-a-developers-journey-8db7b5545233
+- https://customer.io/learn/message-composing/email-video-thumbnails

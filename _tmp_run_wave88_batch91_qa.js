@@ -1,0 +1,73 @@
+const fs=require('fs');
+const path=require('path');
+const cwd=process.cwd();
+
+function latestWave(){
+  return fs.readdirSync(path.join(cwd,'sites'))
+    .filter(n=>/^premium-v3-wave\d+$/.test(n))
+    .map(n=>({name:n,num:Number(n.match(/wave(\d+)/)[1])}))
+    .sort((a,b)=>b.num-a.num)[0].name;
+}
+function latestBatch(){
+  return fs.readdirSync(path.join(cwd,'email-templates'))
+    .filter(f=>/^next-queued-email-assets-\d{4}-\d{2}-\d{2}-batch\d+\.md$/.test(f))
+    .map(f=>({name:f,num:Number(f.match(/batch(\d+)/)[1])}))
+    .sort((a,b)=>b.num-a.num)[0].name;
+}
+
+const wave=latestWave();
+const waveDir=path.join(cwd,'sites',wave);
+const slugs=fs.readdirSync(waveDir,{withFileTypes:true}).filter(d=>d.isDirectory()).map(d=>d.name);
+const siteResults=[];
+for(const slug of slugs){
+  const file=path.join(waveDir,slug,'index.html');
+  const c=fs.readFileSync(file,'utf8');
+  const forms=[...c.matchAll(/<form\b[^>]*>/gi)].map(m=>m[0]);
+  const issues=[];
+  if(/\{\{[^}]+\}\}|TODO|TBD|lorem ipsum|example\.com/i.test(c)) issues.push('placeholder_token');
+  if(forms.length!==2) issues.push(`form_count_${forms.length}`);
+  for(const fm of forms){
+    if(!/action=['\"]\/contact['\"]/i.test(fm) || !/method=['\"]post['\"]/i.test(fm)) issues.push('form_action_method');
+  }
+  const hiddenBusiness=(c.match(/name=['\"]business['\"]/g)||[]).length;
+  const hiddenSource=(c.match(/name=['\"]source['\"]/g)||[]).length;
+  if(hiddenBusiness<2 || hiddenSource<2) issues.push('hidden_fields');
+
+  const visibleText=c.replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<[^>]+>/g,' ');
+  if(/guarantee|top-rated|double your|increase\s+[0-9]+%|rank\s*#?1|\bROI\b/i.test(visibleText)) issues.push('non_compliant_claim');
+  const phones=visibleText.match(/\(?\d{3}\)?[-\s]?\d{3}[-\s]?\d{4}/g)||[];
+  if(phones.some(p=>/555|123-456-7890|000/.test(p))) issues.push('fabricated_phone');
+
+  if(!(/<label[^>]+for=['\"]name['\"]/i.test(c) && /id=['\"]name['\"]/i.test(c))) issues.push('missing_name_label_quick');
+  if(!(/<label[^>]+for=['\"]phone['\"]/i.test(c) && /id=['\"]phone['\"]/i.test(c))) issues.push('missing_phone_label_quick');
+  if(!(/<label[^>]+for=['\"]qname['\"]/i.test(c) && /id=['\"]qname['\"]/i.test(c))) issues.push('missing_name_label_quote');
+  if(!(/<label[^>]+for=['\"]qphone['\"]/i.test(c) && /id=['\"]qphone['\"]/i.test(c))) issues.push('missing_phone_label_quote');
+  if(!(/<label[^>]+for=['\"]qdetails['\"]/i.test(c) && /id=['\"]qdetails['\"]/i.test(c))) issues.push('missing_details_label_quote');
+
+  siteResults.push({slug,issues});
+}
+
+const batch=latestBatch();
+const ePath=path.join(cwd,'email-templates',batch);
+const e=fs.readFileSync(ePath,'utf8');
+const sections=e.split(/\n---\n/).filter(s=>/^##\s+\d+\)/m.test(s));
+const emailIssues=[];
+sections.forEach((sec,idx)=>{
+  const id=(sec.match(/`(wave\d+-\d+)`/)||[])[1]||`section_${idx+1}`;
+  const body=(sec.split('**Email body**')[1]||'');
+  if(!body.includes('{{live_url}}')) emailIssues.push({id,issue:'missing_live_url'});
+  if(!body.includes('{{screenshot_url}}')) emailIssues.push({id,issue:'missing_screenshot_url'});
+  if(/[\u2018\u2019\u201C\u201D\u2013\u2014\u2026]/.test(sec)) emailIssues.push({id,issue:'non_ascii_punctuation'});
+  const visible=sec.replace(/`[^`]+`/g,' ');
+  if(/guarantee|top-rated|double your|increase\s+[0-9]+%|rank\s*#?1|\bROI\b/i.test(visible)) emailIssues.push({id,issue:'non_compliant_claim'});
+});
+
+const ids=[...new Set([...e.matchAll(/`(wave\d+-\d+)`/g)].map(m=>m[1]))];
+const queueJsonl=fs.readdirSync(path.join(cwd,'email-templates')).filter(f=>/^send-queue-.*\.jsonl$/.test(f)).sort().slice(-1)[0];
+const queueCsv=fs.readdirSync(path.join(cwd,'email-templates')).filter(f=>/^send-queue-.*\.csv$/.test(f)).sort().slice(-1)[0];
+const qj=queueJsonl?fs.readFileSync(path.join(cwd,'email-templates',queueJsonl),'utf8'):'';
+const qc=queueCsv?fs.readFileSync(path.join(cwd,'email-templates',queueCsv),'utf8'):'';
+const missingJsonl=ids.filter(id=>!qj.includes(id));
+const missingCsv=ids.filter(id=>!qc.includes(id));
+
+console.log(JSON.stringify({wave,batch,siteResults,email:{sectionCount:sections.length,emailIssues,ids,queueJsonl,queueCsv,missingJsonl,missingCsv}},null,2));

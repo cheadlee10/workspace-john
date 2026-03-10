@@ -1,0 +1,40 @@
+{
+  "id": "biz_8",
+  "name": "Test Business 8",
+  "category": "plumbing services",
+  "location": "Portland, OR",
+  "phone": "(206) 555-1007",
+  "rating": 4.5,
+  "reviews_count": 120,
+  "industry_stats": {
+    "avg_revenue_increase": "45%",
+    "trust_factor": "92% of consumers research online first"
+  },
+  "competitors_with_websites": 8,
+  "website": {
+    "preview_url": "https://test-business-8.prebuilt-sites.com",
+    "local_path": "built_websites\\test-business-8",
+    "build_time": 2.5,
+    "pages": 3,
+    "features": [
+      "Responsive",
+      "SEO Optimized",
+      "Contact Form",
+      "Service Pages"
+    ],
+    "ready": true
+  },
+  "contacts": {
+    "email": "info@testbusiness8.com",
+    "phone": "(206) 555-1007",
+    "facebook": null,
+    "instagram": null,
+    "method": "pattern_generated"
+  },
+  "pitch": {
+    "subject": "I built a website for Test Business 8",
+    "body": "Hi there,\n\nI noticed Test Business 8 doesn't have a website yet, so I went ahead and built one for you.\n\n\ud83d\udc49 Preview it here: https://test-business-8.prebuilt-sites.com\n\nHere's why this matters:\n\n\u2022 45% average revenue increase for plumbing services businesses with websites\n\u2022 92% of consumers research online first research businesses online before contacting them\n\u2022 Your competitors are getting the customers who search online\n\nI built this specifically for Test Business 8 - it's already customized with your services, contact info, and optimized for local search.\n\n**Pricing:**\n\u2022 $250 one-time (website ownership transfers to you)\n\u2022 First month hosting FREE\n\u2022 $7/month hosting after that (optional - no maintenance included)\n\nIf you like it, claim it here: [PAYMENT_LINK]\n\nIf not, no worries - I'll remove it in 7 days.\n\nQuestions? Just reply to this email or call me at (555) 123-4567.\n\nBest regards,\nJohn @ NorthStar Synergy\n\nP.S. - 8 other plumbing services businesses in Portland, OR already have websites. Don't let them capture all the online customers.",
+    "preview_url": "https://test-business-8.prebuilt-sites.com",
+    "payment_link": "https://pay.northstarsynergy.com/test-business-8"
+  }
+}

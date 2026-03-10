@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valle Landscaping | Premium Demo</title>
+  <style>:root{--bg:#0a1226;--panel:#121f3f;--text:#eef4ff;--muted:#b7c8ef;--line:#2a3f75;--cta:#67d3ff;--cta2:#79ffbf}*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);background:radial-gradient(1200px 700px at 20% -10%,#1c2f5d 0%,#0a1226 55%)}.wrap{max-width:1080px;margin:auto;padding:26px 16px}.grid{display:grid;gap:14px}.hero{grid-template-columns:1.2fr .8fr}.services{grid-template-columns:1fr 1fr}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}.chips span{display:inline-block;margin:0 8px 8px 0;padding:6px 10px;border-radius:999px;border:1px solid #3a5699;background:#15264d;color:#cfe0ff;font-size:12px}.btn{display:inline-block;padding:12px 16px;border-radius:10px;font-weight:700;text-decoration:none}.primary{background:linear-gradient(90deg,var(--cta),var(--cta2));color:#04202d}.ghost{border:1px solid #4765ab;color:var(--text)}label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid #3a5699;background:#0c1734;color:var(--text)}textarea{min-height:92px}ul{padding-left:18px;margin:8px 0 0}li{margin:7px 0;color:#dce7ff}.foot{color:var(--muted);font-size:13px;margin-top:10px}@media(max-width:860px){.hero,.services{grid-template-columns:1fr}}</style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="grid hero">
+      <article class="card">
+        <p class="eyebrow">wave67-005 ? Phoenix, AZ</p>
+        <h1>Valle Landscaping</h1>
+        <h2 style="margin-top:8px">Premium landscape demo for recurring maintenance and upgrade project lead flow</h2>
+        <p>Intent-matched landing page concept for Phoenix homeowners requesting dependable weekly yard service.</p>
+        <p>
+          <a class="btn primary" href="#quote">Get My Quote</a>
+          <span class="btn ghost">Call for quote</span>
+        </p>
+        <div class="chips">
+          <span>High-Intent Conversion UX</span><span>Fast Quote Funnel</span><span>Owner-Ready Messaging</span>
+        </div>
+      </article>
+      <aside class="card">
+        <h2 style="margin-top:0">Quick Callback Request</h2>
+        <form action="/contact" method="post">
+          <input type="hidden" name="business" value="valle-landscaping-phoenix-az" />
+          <input type="hidden" name="source" value="quick_callback" />
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" required />
+          <label for="phone">Phone Number</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" required />
+          <button class="btn primary" type="submit">Request Callback</button>
+        </form>
+      </aside>
+    </section>
+
+    <section class="grid services" style="margin-top:14px">
+      <article class="card">
+        <h2 style="margin-top:0">What this premium demo is built to do</h2>
+        <ul>
+          <li>Surface urgent service intent in the first screen with clear primary CTA hierarchy.</li>
+          <li>Move visitors into structured quote capture instead of low-context call-only traffic.</li>
+          <li>Pre-qualify submissions with project scope fields for faster owner follow-up.</li>
+          <li>Keep trust and clarity high with modern layout and mobile-first readability.</li>
+        </ul>
+      </article>
+      <article class="card" id="quote">
+        <h2 style="margin-top:0">Detailed Quote Request</h2>
+        <form action="/contact" method="post">
+          <input type="hidden" name="business" value="valle-landscaping-phoenix-az" />
+          <input type="hidden" name="source" value="detailed_quote" />
+          <label for="qname">Full Name</label>
+          <input id="qname" name="name" type="text" autocomplete="name" required />
+          <label for="qphone">Phone Number</label>
+          <input id="qphone" name="phone" type="tel" autocomplete="tel" required />
+          <label for="service">Service Needed</label>
+          <input id="service" name="service" type="text" required />
+          <label for="details">Project Details</label>
+          <textarea id="details" name="details" required></textarea>
+          <button class="btn primary" type="submit">Send Quote Request</button>
+        </form>
+        <p class="foot">Phone available on request ? Demo form posts to secure /contact intake.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

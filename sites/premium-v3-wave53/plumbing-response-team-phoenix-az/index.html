@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'/>
+  <meta name='viewport' content='width=device-width, initial-scale=1'/>
+  <title>Plumbing Response Team | Premium Demo</title>
+  <style>
+    :root{--bg:#081226;--card:#101f3d;--text:#edf3ff;--muted:#b8c6e8;--pri:#59c6ff;--pri2:#72ffbf}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 10% 0%,#12254f 0,#081226 60%);color:var(--text)}
+    .wrap{max-width:1120px;margin:auto;padding:30px 18px} .grid{display:grid;gap:14px} .hero{grid-template-columns:1.3fr .9fr}
+    .card{background:var(--card);border:1px solid #28447a;border-radius:16px;padding:20px} h1{line-height:1.15}
+    .chips span{display:inline-block;background:#16305d;border:1px solid #2f4f89;color:var(--muted);padding:6px 10px;border-radius:999px;margin:0 8px 8px 0;font-size:12px}
+    .btn{display:inline-block;text-decoration:none;font-weight:700;padding:12px 16px;border-radius:10px} .pri{background:linear-gradient(90deg,var(--pri),var(--pri2));color:#051321;border:none;cursor:pointer}
+    .sec{border:1px solid #3b5ea3;color:var(--text)} form{display:grid;gap:9px} label{font-size:13px;color:var(--muted)}
+    input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #3b5ea3;background:#0b1833;color:var(--text)} textarea{min-height:92px}
+    ul{margin:8px 0 0 18px} li{margin:7px 0;color:#dbe7ff} @media(max-width:860px){.hero,.services{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class='wrap'>
+    <div class='grid hero'>
+      <section class='card'>
+        <p style='margin-top:0;color:var(--muted)'>Phoenix, AZ</p>
+        <h1 style='margin:.2rem 0'>Plumbing Response Team Premium Demo Designed to Convert More Residential Plumbing Leads</h1>
+        <p>High-intent service page concept built to increase inbound quote requests and improve booked-job quality.</p>
+        <p><a class='btn pri' href='#quote'>Get My Quote</a> <span class='btn sec'>Call for same-day service</span></p>
+        <div class='chips'><span>Emergency-Ready CTA</span><span>Trust-Driven Layout</span><span>Qualified Lead Intake</span></div>
+      </section>
+      <section class='card'>
+        <h2 style='margin-top:0'>Request a Quick Callback</h2>
+        <form action='/contact' method='post'>
+          <input type='hidden' name='business' value='plumbing-response-team-phoenix-az'/>
+          <input type='hidden' name='source' value='quick_callback'/>
+          <label for='name'>Full Name</label>
+          <input aria-label='Full Name' id='name' name='name' type='text' required autocomplete='name'/>
+          <label for='phone'>Phone Number</label>
+          <input aria-label='Phone Number' id='phone' name='phone' type='tel' required autocomplete='tel'/>
+          <button class='btn pri' type='submit'>Request Callback</button>
+        </form>
+      </section>
+    </div>
+
+    <div class='grid services' style='margin-top:12px;grid-template-columns:1fr 1fr'>
+      <section class='card'>
+        <h2 style='margin-top:0'>Core Conversion Blocks</h2>
+        <ul><li>Conversion-first hero speaks directly to homeowners needing quick plumbing response and reliable callbacks</li><li>Core offers include leak repairs, fixture installs, drain work, and emergency service routing</li><li>Credibility section reinforces family-owned positioning and dependable communication throughout the job</li><li>Detailed form captures issue symptoms and preferred appointment windows for qualified leads</li></ul>
+      </section>
+      <section class='card' id='quote'>
+        <h2 style='margin-top:0'>Detailed Quote Request</h2>
+        <form action='/contact' method='post'>
+          <input type='hidden' name='business' value='plumbing-response-team-phoenix-az'/>
+          <input type='hidden' name='source' value='detailed_quote'/>
+          <label for='qname'>Full Name</label>
+          <input aria-label='Full Name' id='qname' name='name' type='text' required autocomplete='name'/>
+          <label for='qphone'>Phone Number</label>
+          <input aria-label='Phone Number' id='qphone' name='phone' type='tel' required autocomplete='tel'/>
+          <label for='qdetails'>Project details</label>
+          <textarea aria-label='Project details' id='qdetails' name='details' required></textarea>
+          <button class='btn pri' type='submit'>Send My Quote Request</button>
+        </form>
+        <p>Call for same-day service<br/><small>Demo form routes to secure contact intake endpoint.</small></p>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

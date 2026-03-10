@@ -1,0 +1,23 @@
+{
+  "id": "evt_test_001",
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_001",
+      "payment_status": "paid",
+      "amount_total": 29900,
+      "currency": "usd",
+      "created": 1772448000,
+      "client_reference_id": "job_2026_03_02_001",
+      "customer_details": {
+        "name": "Acme Co",
+        "email": "ops@acme.co"
+      },
+      "metadata": {
+        "service": "Excel Audit",
+        "tier": "Better",
+        "source": "website_checkout"
+      }
+    }
+  }
+}

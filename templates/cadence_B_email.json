@@ -1,0 +1,14 @@
+{
+  "segment":"SMBOps-SegB",
+  "cadence_id":"8-touch-B",
+  "touches": [
+    {"step":1, "channel":"email", "subject":"Boost plumbing/HVAC projects with ROI-driven automation (case study) ", "body":"Hi {{name}}, at {{company}} we help home-services pros like plumbers, HVAC techs, electricians, and remodelers fast-track quotes and dashboards. See how we slashed reporting time by 65% for a mid-size contractor. Would you be open to a 15-minute chat this week? Best, John"},
+    {"step":2, "channel":"LinkedIn", "text":"Hi {{name}} — we empower home-services teams to automate quotes and project dashboards. Happy to share a brief case study." , "delay_days":2},
+    {"step":3, "channel":"sms", "text":"Hi {{name}}, it’s John. We help trade pros win more bids by automating estimates and progress reports in days. 10-min chat this week?"},
+    {"step":4, "channel":"email", "subject":"Case study: How we cut project admin time for contractors like you", "body":"Hi {{name}}, here’s the case study showing a 65% reduction in admin tasks for a contractor. If it resonates, we can map a 90-min session to scope next steps. Free for a quick call? - John"},
+    {"step":5, "channel":"LinkedIn", "text":"Following up: tailoring a blueprint for {{company}} to win more bids with automation."},
+    {"step":6, "channel":"email", "subject":"ROI-focused proposal for {{company}}", "body":"Hi {{name}}, I’ve drafted a 3- tier ROI-driven plan focused on quick wins (estimate automation, dashboarding, and delivery timelines). Want me to send a lightweight scope?"},
+    {"step":7, "channel":"sms", "text":"John here—want to lock a 15-min discovery call to see if this aligns with your goals?"},
+    {"step":8, "channel":"LinkedIn", "text":"Last attempt: I can draft a contractor-specific roadmap for {{company}} and share it if you’re open to a quick chat."}
+  ]
+}
