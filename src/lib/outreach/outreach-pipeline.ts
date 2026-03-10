@@ -24,6 +24,7 @@ import {
   generateFinalEmail,
   type EmailContext,
 } from "./email-templates";
+import { isOnDnc } from "./dnc-store";
 
 // Pipeline stages
 export type PipelineStage =
@@ -96,6 +97,17 @@ export async function runPipeline(config: PipelineConfig): Promise<PipelineProsp
     const prospects = await discoverProspects(scrapeConfig);
 
     for (const prospect of prospects) {
+      // DNC check: skip if contact is on the Do Not Contact list
+      const dncHit = await isOnDnc(
+        prospect.restaurant.email,
+        prospect.restaurant.phone,
+        prospect.restaurant.address
+      );
+      if (dncHit) {
+        console.warn(`[Pipeline] Skipping ${prospect.restaurant.name} — on DNC list (${dncHit.reason})`);
+        continue;
+      }
+
       // Step 2: Generate website configuration
       const siteConfig = generateRestaurantConfig(prospect.restaurant);
 
@@ -162,6 +174,18 @@ export async function processFollowUps(
     if (!prospect.nextAction) continue;
     if (new Date(prospect.nextAction.scheduledFor) > now) continue;
     if (prospect.stage === "closed_won" || prospect.stage === "closed_lost" || prospect.stage === "unsubscribed") continue;
+
+    // DNC check before every follow-up touch
+    const dncHit = await isOnDnc(
+      prospect.restaurant.email,
+      prospect.restaurant.phone,
+      prospect.restaurant.address
+    );
+    if (dncHit) {
+      console.warn(`[Pipeline] Skipping follow-up for ${prospect.restaurant.name} — on DNC list`);
+      prospect.nextAction = undefined;
+      continue;
+    }
 
     switch (prospect.nextAction.type) {
       case "followup":
