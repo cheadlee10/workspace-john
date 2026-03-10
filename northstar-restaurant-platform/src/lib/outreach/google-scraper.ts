@@ -13,6 +13,7 @@
  */
 
 import type { ScrapedRestaurantData } from "@/lib/site-generator";
+import { getAllLeads } from "@/lib/crm/lead-store";
 
 export interface ScrapeConfig {
   query: string; // "restaurants in Seattle WA"
@@ -132,8 +133,74 @@ export async function discoverProspects(config: ScrapeConfig): Promise<ProspectR
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
+  // Dedup: remove prospects already in the pipeline
+  const dedupedProspects = await deduplicateProspects(prospects);
+
   // Sort by prospect score (best prospects first)
-  return prospects.sort((a, b) => b.prospectScore - a.prospectScore);
+  return dedupedProspects.sort((a, b) => b.prospectScore - a.prospectScore);
+}
+
+/**
+ * Remove prospects that already exist in the leads table.
+ * Matches by name+city, phone, or address.
+ * Skips leads in any active stage; allows re-contact if closed_lost > 90 days ago.
+ */
+async function deduplicateProspects(prospects: ProspectResult[]): Promise<ProspectResult[]> {
+  let existingLeads;
+  try {
+    existingLeads = await getAllLeads();
+  } catch {
+    // If lead store is unavailable, skip dedup
+    return prospects;
+  }
+
+  if (existingLeads.length === 0) return prospects;
+
+  const ninetyDaysAgo = Date.now() - 90 * 24 * 60 * 60 * 1000;
+
+  return prospects.filter((prospect) => {
+    const r = prospect.restaurant;
+    const nameNorm = r.name.toLowerCase().trim();
+    const cityNorm = (r.city || "").toLowerCase().trim();
+    const phoneNorm = (r.phone || "").replace(/\D/g, "");
+    const addressNorm = (r.address || "").toLowerCase().trim();
+
+    for (const lead of existingLeads) {
+      // Allow re-contact if closed_lost more than 90 days ago
+      if (lead.stage === "churned") {
+        const updatedAt = new Date(lead.updatedAt).getTime();
+        if (updatedAt < ninetyDaysAgo) continue;
+      }
+
+      // Match by name + city
+      const leadNameNorm = lead.restaurantName.toLowerCase().trim();
+      const leadCityNorm = lead.city.toLowerCase().trim();
+      if (nameNorm === leadNameNorm && cityNorm === leadCityNorm) {
+        console.warn(`[Scraper] Dedup: skipping "${r.name}" (${r.city}) — already in pipeline as ${lead.stage}`);
+        return false;
+      }
+
+      // Match by phone
+      if (phoneNorm && lead.phone) {
+        const leadPhoneNorm = lead.phone.replace(/\D/g, "");
+        if (phoneNorm === leadPhoneNorm) {
+          console.warn(`[Scraper] Dedup: skipping "${r.name}" — phone ${r.phone} matches lead ${lead.id}`);
+          return false;
+        }
+      }
+
+      // Match by address
+      if (addressNorm && lead.address) {
+        const leadAddrNorm = lead.address.toLowerCase().trim();
+        if (addressNorm === leadAddrNorm) {
+          console.warn(`[Scraper] Dedup: skipping "${r.name}" — address matches lead ${lead.id}`);
+          return false;
+        }
+      }
+    }
+
+    return true;
+  });
 }
 
 interface GoogleReview {
