@@ -2,26 +2,32 @@
 
 import type { Restaurant } from "@/types/restaurant";
 import { formatTime } from "@/lib/utils";
+import { useDesign } from "@/components/design/DesignProvider";
 
 interface FooterProps {
   restaurant: Restaurant;
 }
 
 export function Footer({ restaurant }: FooterProps) {
-  const { name, contact, location, hours, branding, features, socialMedia } = restaurant;
+  const { name, contact, location, hours, features, socialMedia } = restaurant;
   const year = new Date().getFullYear();
+  const design = useDesign();
+  const { palette } = design;
+
+  const mutedColor = `${palette.footerText}99`;
+  const hoverColor = palette.footerText;
 
   return (
     <footer
-      className="pb-24 pt-16 text-white md:pb-16"
-      style={{ backgroundColor: branding.primaryColor || "#1a1a2e" }}
+      className="pb-24 pt-16 md:pb-16"
+      style={{ backgroundColor: palette.footerBackground, color: palette.footerText }}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <h3 className="mb-4 text-xl font-bold">{name}</h3>
-            <p className="mb-4 text-sm leading-relaxed text-white/70">
+            <h3 className="mb-4 text-xl font-bold" style={{ color: palette.footerText }}>{name}</h3>
+            <p className="mb-4 text-sm leading-relaxed" style={{ color: mutedColor }}>
               {restaurant.tagline || restaurant.description.slice(0, 120) + "..."}
             </p>
             {/* Social Icons */}
@@ -31,7 +37,10 @@ export function Footer({ restaurant }: FooterProps) {
                   href={socialMedia.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/50 transition-colors hover:text-white"
+                  className="transition-colors"
+                  style={{ color: mutedColor }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = mutedColor; }}
                   aria-label="Instagram"
                 >
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -44,7 +53,10 @@ export function Footer({ restaurant }: FooterProps) {
                   href={socialMedia.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/50 transition-colors hover:text-white"
+                  className="transition-colors"
+                  style={{ color: mutedColor }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = mutedColor; }}
                   aria-label="Facebook"
                 >
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -57,50 +69,55 @@ export function Footer({ restaurant }: FooterProps) {
 
           {/* Quick Links */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/50">
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider" style={{ color: mutedColor }}>
               Quick Links
             </h4>
             <nav className="flex flex-col gap-2.5">
-              <a href="#menu" className="text-sm text-white/70 transition-colors hover:text-white">
-                Menu
-              </a>
-              {features.onlineOrdering && (
-                <a href="#order" className="text-sm text-white/70 transition-colors hover:text-white">
-                  Order Online
-                </a>
-              )}
-              {features.reservations && (
-                <a href="#reservations" className="text-sm text-white/70 transition-colors hover:text-white">
-                  Reservations
-                </a>
-              )}
-              <a href="#about" className="text-sm text-white/70 transition-colors hover:text-white">
-                About Us
-              </a>
-              {features.cateringPortal && (
-                <a href="#catering" className="text-sm text-white/70 transition-colors hover:text-white">
-                  Catering
-                </a>
-              )}
-              {features.giftCards && (
-                <a href="#gift-cards" className="text-sm text-white/70 transition-colors hover:text-white">
-                  Gift Cards
-                </a>
-              )}
+              {[
+                { href: "#menu", label: "Menu", show: true },
+                { href: "#order", label: "Order Online", show: features.onlineOrdering },
+                { href: "#reservations", label: "Reservations", show: features.reservations },
+                { href: "#about", label: "About Us", show: true },
+                { href: "#catering", label: "Catering", show: features.cateringPortal },
+                { href: "#gift-cards", label: "Gift Cards", show: features.giftCards },
+              ]
+                .filter((l) => l.show)
+                .map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm transition-colors"
+                    style={{ color: mutedColor }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = mutedColor; }}
+                  >
+                    {link.label}
+                  </a>
+                ))}
             </nav>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/50">
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider" style={{ color: mutedColor }}>
               Contact
             </h4>
-            <div className="flex flex-col gap-2.5 text-sm text-white/70">
-              <a href={`tel:${contact.phone}`} className="transition-colors hover:text-white">
+            <div className="flex flex-col gap-2.5 text-sm" style={{ color: mutedColor }}>
+              <a
+                href={`tel:${contact.phone}`}
+                className="transition-colors"
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = mutedColor; }}
+              >
                 {contact.phone}
               </a>
               {contact.email && (
-                <a href={`mailto:${contact.email}`} className="transition-colors hover:text-white">
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="transition-colors"
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = mutedColor; }}
+                >
                   {contact.email}
                 </a>
               )}
@@ -114,10 +131,10 @@ export function Footer({ restaurant }: FooterProps) {
 
           {/* Hours */}
           <div>
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/50">
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider" style={{ color: mutedColor }}>
               Hours
             </h4>
-            <div className="flex flex-col gap-1.5 text-sm text-white/70">
+            <div className="flex flex-col gap-1.5 text-sm" style={{ color: mutedColor }}>
               {hours
                 .sort(
                   (a, b) =>
@@ -135,8 +152,8 @@ export function Footer({ restaurant }: FooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t border-white/10 pt-6">
-          <div className="flex flex-col items-center justify-between gap-2 text-xs text-white/40 sm:flex-row">
+        <div className="mt-12 border-t pt-6" style={{ borderColor: `${palette.footerText}15` }}>
+          <div className="flex flex-col items-center justify-between gap-2 text-xs sm:flex-row" style={{ color: `${palette.footerText}66` }}>
             <p>
               &copy; {year} {name}. All rights reserved.
             </p>
@@ -146,7 +163,10 @@ export function Footer({ restaurant }: FooterProps) {
                 href="https://northstarsynergy.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-white/60 transition-colors hover:text-white"
+                className="font-medium transition-colors"
+                style={{ color: `${palette.footerText}99` }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = `${palette.footerText}99`; }}
               >
                 NorthStar Synergy
               </a>

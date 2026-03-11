@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import type { MenuItem } from "@/types/restaurant";
 import { formatPrice } from "@/lib/utils";
+import { useDesign } from "@/components/design/DesignProvider";
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -29,13 +30,16 @@ const dietaryLabels: Record<string, { label: string; emoji: string }> = {
 
 function MenuItemCardInner({
   item,
-  accentColor = "#D4A574",
+  accentColor,
   showImage = true,
   enableOrdering = false,
   onAddToCart,
 }: MenuItemCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const design = useDesign();
+  const { palette } = design;
+  const accent = accentColor || palette.accent;
 
   const handleAddToCart = () => {
     onAddToCart?.(item.id, quantity);
@@ -45,10 +49,15 @@ function MenuItemCardInner({
 
   return (
     <motion.article
-      className={`group relative flex w-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-lg ${
+      className={`group relative flex w-full flex-col overflow-hidden border shadow-sm transition-shadow hover:shadow-lg ${
         item.isSoldOut ? "opacity-60" : ""
       }`}
-      whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+      style={{
+        backgroundColor: palette.menuCardBg,
+        borderColor: palette.menuCardBorder,
+        borderRadius: design.layout.cornerRadius,
+      }}
+      whileHover={{ scale: design.effects.menuItemHoverScale, transition: { duration: 0.2 } }}
       role="article"
       aria-label={`${item.name} - ${formatPrice(item.price)}`}
     >
@@ -61,6 +70,7 @@ function MenuItemCardInner({
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+            style={{ filter: design.effects.imageFilter !== "none" ? design.effects.imageFilter : undefined }}
             loading="lazy"
           />
           {/* Badges */}
@@ -68,7 +78,7 @@ function MenuItemCardInner({
             {item.isPopular && (
               <span
                 className="rounded-full px-2.5 py-0.5 text-xs font-semibold text-white shadow-sm"
-                style={{ backgroundColor: accentColor }}
+                style={{ backgroundColor: accent }}
               >
                 Popular
               </span>
@@ -98,14 +108,16 @@ function MenuItemCardInner({
       <div className="flex flex-1 flex-col p-4">
         <div className="mb-2 flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-lg font-semibold leading-tight text-gray-900">{item.name}</h3>
+            <h3 className="text-lg font-semibold leading-tight" style={{ color: palette.text }}>
+              {item.name}
+            </h3>
           </div>
-          <span className="shrink-0 text-lg font-bold" style={{ color: accentColor }}>
+          <span className="shrink-0 text-lg font-bold" style={{ color: accent }}>
             {formatPrice(item.price)}
           </span>
         </div>
 
-        <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-gray-500">
+        <p className="mb-3 line-clamp-2 text-sm leading-relaxed" style={{ color: palette.textMuted }}>
           {item.description}
         </p>
 
@@ -117,7 +129,13 @@ function MenuItemCardInner({
               return (
                 <span
                   key={tag}
-                  className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600"
+                  className="inline-flex items-center border px-2 py-0.5 text-xs font-medium"
+                  style={{
+                    borderColor: palette.menuCardBorder,
+                    backgroundColor: palette.surfaceAlt,
+                    color: palette.textMuted,
+                    borderRadius: "6px",
+                  }}
                   title={info?.label || tag}
                 >
                   {info?.emoji || tag}
@@ -136,18 +154,19 @@ function MenuItemCardInner({
           </div>
         )}
 
-        {/* Allergen Info (expandable) */}
+        {/* Allergen Info */}
         {item.allergens.length > 0 && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="mb-2 text-xs text-gray-400 underline decoration-dotted underline-offset-2 transition-colors hover:text-gray-600"
+            className="mb-2 text-xs underline decoration-dotted underline-offset-2 transition-colors hover:opacity-80"
+            style={{ color: palette.textMuted }}
             aria-expanded={isExpanded}
           >
             Contains: {item.allergens.join(", ")}
           </button>
         )}
 
-        {/* Order Button — mt-auto wrapper pins to card bottom */}
+        {/* Order Button */}
         {enableOrdering && !item.isSoldOut && (
           <div className="mt-auto pt-2">
             <AnimatePresence mode="wait">
@@ -158,31 +177,39 @@ function MenuItemCardInner({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setIsExpanded(true)}
-                  className="w-full rounded-lg py-2.5 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
-                  style={{ backgroundColor: accentColor }}
+                  className="w-full py-2.5 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
+                  style={{
+                    backgroundColor: accent,
+                    borderRadius: design.layout.cornerRadius,
+                  }}
                 >
                   Add to Order
                 </motion.button>
               ) : (
-                <motion.div
-                  key="qty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
+                <motion.div key="qty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center rounded-lg border border-gray-200">
+                    <div
+                      className="flex items-center border"
+                      style={{
+                        borderColor: palette.menuCardBorder,
+                        borderRadius: design.layout.cornerRadius,
+                      }}
+                    >
                       <button
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="px-3 py-2 text-gray-500 transition-colors hover:text-gray-700"
+                        className="px-3 py-2 transition-colors hover:opacity-80"
+                        style={{ color: palette.textMuted }}
                         aria-label="Decrease quantity"
                       >
                         -
                       </button>
-                      <span className="min-w-[2rem] text-center text-sm font-medium">{quantity}</span>
+                      <span className="min-w-[2rem] text-center text-sm font-medium" style={{ color: palette.text }}>
+                        {quantity}
+                      </span>
                       <button
                         onClick={() => setQuantity(quantity + 1)}
-                        className="px-3 py-2 text-gray-500 transition-colors hover:text-gray-700"
+                        className="px-3 py-2 transition-colors hover:opacity-80"
+                        style={{ color: palette.textMuted }}
                         aria-label="Increase quantity"
                       >
                         +
@@ -190,8 +217,11 @@ function MenuItemCardInner({
                     </div>
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 rounded-lg py-2.5 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
-                      style={{ backgroundColor: accentColor }}
+                      className="flex-1 py-2.5 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
+                      style={{
+                        backgroundColor: accent,
+                        borderRadius: design.layout.cornerRadius,
+                      }}
                     >
                       Add {formatPrice(item.price * quantity)}
                     </button>

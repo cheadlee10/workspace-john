@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { MenuSection as MenuSectionType, DietaryTag } from "@/types/restaurant";
 import { MenuItemCard } from "./MenuItemCard";
+import { useDesign } from "@/components/design/DesignProvider";
 
 interface MenuSectionProps {
   sections: MenuSectionType[];
@@ -27,11 +28,15 @@ const DIETARY_FILTERS: { value: DietaryTag; label: string }[] = [
 
 export function MenuDisplay({
   sections,
-  accentColor = "#D4A574",
+  accentColor,
   showImages = true,
   enableOrdering = false,
   onAddToCart,
 }: MenuSectionProps) {
+  const design = useDesign();
+  const { palette } = design;
+  const accent = accentColor || palette.accent;
+
   const activeSections = sections.filter((s) => s.isActive);
   const [activeSection, setActiveSection] = useState(activeSections[0]?.id || "");
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,18 +54,14 @@ export function MenuDisplay({
   const filteredItems = (currentSection?.items || []).filter((item) => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      const matchesName = item.name.toLowerCase().includes(query);
-      const matchesDesc = item.description.toLowerCase().includes(query);
-      if (!matchesName && !matchesDesc) return false;
+      if (!item.name.toLowerCase().includes(query) && !item.description.toLowerCase().includes(query)) return false;
     }
     if (activeDietaryFilters.length > 0) {
-      const hasAllFilters = activeDietaryFilters.every((f) => item.dietary.includes(f));
-      if (!hasAllFilters) return false;
+      if (!activeDietaryFilters.every((f) => item.dietary.includes(f))) return false;
     }
     return true;
   });
 
-  // For search across all sections
   const allFilteredItems =
     searchQuery || activeDietaryFilters.length > 0
       ? activeSections.flatMap((section) =>
@@ -68,11 +69,7 @@ export function MenuDisplay({
             .filter((item) => {
               if (searchQuery) {
                 const query = searchQuery.toLowerCase();
-                if (
-                  !item.name.toLowerCase().includes(query) &&
-                  !item.description.toLowerCase().includes(query)
-                )
-                  return false;
+                if (!item.name.toLowerCase().includes(query) && !item.description.toLowerCase().includes(query)) return false;
               }
               if (activeDietaryFilters.length > 0) {
                 if (!activeDietaryFilters.every((f) => item.dietary.includes(f))) return false;
@@ -82,6 +79,8 @@ export function MenuDisplay({
             .map((item) => ({ ...item, sectionName: section.name }))
         )
       : null;
+
+  const animDelay = design.effects.animationSpeed === "energetic" ? 0.06 : design.effects.animationSpeed === "subtle" ? 0.15 : 0.1;
 
   return (
     <section id="menu" className="py-16 md:py-24" aria-label="Restaurant Menu">
@@ -94,10 +93,12 @@ export function MenuDisplay({
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl">Our Menu</h2>
+          <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl" style={{ color: palette.text }}>
+            Our Menu
+          </h2>
           <div
             className="mx-auto mb-6 h-1 w-16 rounded-full"
-            style={{ backgroundColor: accentColor }}
+            style={{ backgroundColor: accent }}
           />
         </motion.div>
 
@@ -105,40 +106,42 @@ export function MenuDisplay({
         <div className="mx-auto mb-8 max-w-md">
           <div className="relative">
             <svg
-              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2"
+              style={{ color: palette.textMuted }}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
               type="text"
               placeholder="Search our menu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-gray-200 bg-white py-3 pl-10 pr-4 text-sm shadow-sm transition-shadow focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-100"
+              className="w-full py-3 pl-10 pr-4 text-sm shadow-sm transition-shadow focus:outline-none focus:ring-2"
+              style={{
+                backgroundColor: palette.surface,
+                borderColor: palette.menuCardBorder,
+                color: palette.text,
+                borderWidth: "1px",
+                borderStyle: "solid",
+                borderRadius: design.layout.cornerRadius,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                ["--tw-ring-color" as any]: `${accent}40`,
+              }}
               aria-label="Search menu items"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-80"
+                style={{ color: palette.textMuted }}
                 aria-label="Clear search"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             )}
@@ -149,22 +152,18 @@ export function MenuDisplay({
         <div className="mb-8 text-center">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+            className="inline-flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+            style={{ color: palette.textMuted }}
             aria-expanded={showFilters}
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
             Dietary Filters
             {activeDietaryFilters.length > 0 && (
               <span
                 className="inline-flex h-5 w-5 items-center justify-center rounded-full text-xs text-white"
-                style={{ backgroundColor: accentColor }}
+                style={{ backgroundColor: accent }}
               >
                 {activeDietaryFilters.length}
               </span>
@@ -186,12 +185,13 @@ export function MenuDisplay({
                       <button
                         key={filter.value}
                         onClick={() => toggleDietaryFilter(filter.value)}
-                        className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
-                          isActive
-                            ? "text-white shadow-md"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
-                        style={isActive ? { backgroundColor: accentColor } : {}}
+                        className="px-4 py-1.5 text-sm font-medium transition-all"
+                        style={{
+                          borderRadius: design.layout.cornerRadius,
+                          ...(isActive
+                            ? { backgroundColor: accent, color: "#ffffff", boxShadow: "0 1px 3px rgba(0,0,0,0.15)" }
+                            : { backgroundColor: palette.surfaceAlt, color: palette.textMuted }),
+                        }}
                         aria-pressed={isActive}
                       >
                         {filter.label}
@@ -212,7 +212,7 @@ export function MenuDisplay({
           </AnimatePresence>
         </div>
 
-        {/* Category Tabs (hidden when searching across all) */}
+        {/* Category Tabs */}
         {!allFilteredItems && (
           <div className="mb-10 overflow-x-auto" role="tablist" aria-label="Menu categories">
             <div className="flex justify-center gap-1 md:gap-2">
@@ -222,12 +222,13 @@ export function MenuDisplay({
                   role="tab"
                   aria-selected={activeSection === section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
-                    activeSection === section.id
-                      ? "text-white shadow-md"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  style={activeSection === section.id ? { backgroundColor: accentColor } : {}}
+                  className="whitespace-nowrap px-5 py-2.5 text-sm font-medium transition-all"
+                  style={{
+                    borderRadius: design.layout.cornerRadius,
+                    ...(activeSection === section.id
+                      ? { backgroundColor: accent, color: "#ffffff", boxShadow: "0 1px 3px rgba(0,0,0,0.15)" }
+                      : { backgroundColor: palette.surfaceAlt, color: palette.textMuted }),
+                  }}
                 >
                   {section.name}
                 </button>
@@ -253,12 +254,12 @@ export function MenuDisplay({
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  transition={{ duration: 0.3, delay: index * animDelay }}
                   className="flex"
                 >
                   <MenuItemCard
                     item={item}
-                    accentColor={accentColor}
+                    accentColor={accent}
                     showImage={showImages}
                     enableOrdering={enableOrdering}
                     onAddToCart={onAddToCart}
@@ -272,7 +273,8 @@ export function MenuDisplay({
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="py-12 text-center text-gray-500"
+              className="py-12 text-center"
+              style={{ color: palette.textMuted }}
             >
               No items match your search
               {activeDietaryFilters.length > 0 ? " and filters" : ""}.

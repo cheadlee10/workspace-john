@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import type { Restaurant } from "@/types/restaurant";
 import { isOpen } from "@/lib/utils";
+import { useDesign } from "@/components/design/DesignProvider";
 
 interface RestaurantHeroProps {
   restaurant: Restaurant;
@@ -12,6 +13,10 @@ interface RestaurantHeroProps {
 export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
   const { branding, name, tagline, contact, hours, features } = restaurant;
   const openStatus = isOpen(hours);
+  const design = useDesign();
+  const { palette, effects } = design;
+
+  const animDuration = effects.animationSpeed === "subtle" ? 1.0 : effects.animationSpeed === "energetic" ? 0.6 : 0.8;
 
   return (
     <section className="relative min-h-[85vh] overflow-hidden" aria-label={`${name} hero`}>
@@ -25,17 +30,21 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           sizes="100vw"
           className="object-cover"
           quality={85}
+          style={{ filter: effects.imageFilter !== "none" ? effects.imageFilter : undefined }}
         />
       )}
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+      {/* Gradient Overlay — uses design engine palette */}
+      <div
+        className="absolute inset-0"
+        style={{ background: palette.heroOverlay }}
+      />
 
       {/* Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: animDuration, ease: "easeOut" }}
         className="relative z-10 flex min-h-[85vh] flex-col items-center justify-end px-4 pb-16 text-center sm:px-6"
       >
         {/* Logo */}
@@ -43,7 +52,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: animDuration * 0.75 }}
             className="mb-6"
           >
             <Image
@@ -61,9 +70,8 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          transition={{ duration: animDuration * 0.75, delay: 0.1 }}
           className="mb-4 text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl"
-          style={{ fontFamily: branding.fontHeading || "inherit" }}
         >
           {name}
         </motion.h1>
@@ -73,7 +81,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: animDuration * 0.75, delay: 0.2 }}
             className="mb-6 max-w-lg text-lg font-light text-white/90 sm:text-xl"
           >
             {tagline}
@@ -84,7 +92,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: animDuration * 0.75, delay: 0.3 }}
           className="mb-8"
         >
           <div
@@ -108,13 +116,16 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: animDuration * 0.75, delay: 0.4 }}
           className="flex flex-col gap-3 sm:flex-row sm:gap-4"
         >
           <a
             href="#menu"
-            className="inline-flex items-center justify-center rounded-full px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110 active:scale-[0.98]"
-            style={{ backgroundColor: branding.accentColor || "#D4A574" }}
+            className="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110 active:scale-[0.98]"
+            style={{
+              backgroundColor: palette.accent,
+              borderRadius: design.layout.cornerRadius,
+            }}
           >
             View Menu
           </a>
@@ -124,8 +135,11 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
               href="#order"
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-flex items-center justify-center rounded-full px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110"
-              style={{ backgroundColor: branding.accentColor || "#D4A574" }}
+              className="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110"
+              style={{
+                backgroundColor: palette.accent,
+                borderRadius: design.layout.cornerRadius,
+              }}
             >
               Order Now
             </motion.a>
@@ -134,7 +148,8 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           {features.reservations && (
             <a
               href="#reservations"
-              className="inline-flex items-center justify-center rounded-full border-2 border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              className="inline-flex items-center justify-center border-2 border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              style={{ borderRadius: design.layout.cornerRadius }}
             >
               Reserve a Table
             </a>
@@ -142,7 +157,8 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
 
           <a
             href={`tel:${contact.phone}`}
-            className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+            className="inline-flex items-center justify-center gap-2 border-2 border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+            style={{ borderRadius: design.layout.cornerRadius }}
             aria-label={`Call ${name} at ${contact.phone}`}
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

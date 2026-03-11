@@ -3,11 +3,13 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import type { ReviewSummary } from "@/types/restaurant";
+import { useDesign } from "@/components/design/DesignProvider";
 
 interface ReviewsSectionProps {
   reviews: ReviewSummary;
   restaurantName: string;
   accentColor?: string;
+  googlePlaceId?: string;
 }
 
 function StarRating({ rating, size = "md" }: { rating: number; size?: "sm" | "md" | "lg" }) {
@@ -51,10 +53,21 @@ function StarRating({ rating, size = "md" }: { rating: number; size?: "sm" | "md
 export function ReviewsSection({
   reviews,
   restaurantName,
-  accentColor = "#D4A574",
+  accentColor,
+  googlePlaceId,
 }: ReviewsSectionProps) {
+  const design = useDesign();
+  const { palette } = design;
+  const accent = accentColor || palette.accent;
+  const animDelay = design.effects.animationSpeed === "energetic" ? 0.1 : design.effects.animationSpeed === "subtle" ? 0.2 : 0.15;
+
   return (
-    <section id="reviews" className="bg-gray-50 py-16 md:py-24" aria-label="Customer Reviews">
+    <section
+      id="reviews"
+      className="py-16 md:py-24"
+      style={{ backgroundColor: palette.reviewSectionBg }}
+      aria-label="Customer Reviews"
+    >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Header */}
         <motion.div
@@ -64,12 +77,12 @@ export function ReviewsSection({
           transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
-          <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl" style={{ color: palette.text }}>
             What People Say
           </h2>
           <div
             className="mx-auto mb-6 h-1 w-16 rounded-full"
-            style={{ backgroundColor: accentColor }}
+            style={{ backgroundColor: accent }}
           />
         </motion.div>
 
@@ -80,39 +93,37 @@ export function ReviewsSection({
           viewport={{ once: true }}
           className="mb-12 flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-12"
         >
-          {/* Overall Rating */}
           <div className="text-center">
-            <div className="mb-1 text-5xl font-bold text-gray-900">
+            <div className="mb-1 text-5xl font-bold" style={{ color: palette.text }}>
               {reviews.averageRating.toFixed(1)}
             </div>
             <StarRating rating={reviews.averageRating} size="lg" />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm" style={{ color: palette.textMuted }}>
               {reviews.totalReviews.toLocaleString()} reviews
             </p>
           </div>
 
-          {/* Platform Badges */}
           <div className="flex gap-6">
             {reviews.googleRating && (
               <div className="text-center">
-                <div className="mb-1 text-sm font-medium text-gray-500">Google</div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="mb-1 text-sm font-medium" style={{ color: palette.textMuted }}>Google</div>
+                <div className="text-2xl font-bold" style={{ color: palette.text }}>
                   {reviews.googleRating.toFixed(1)}
                 </div>
                 <StarRating rating={reviews.googleRating} size="sm" />
-                <p className="mt-0.5 text-xs text-gray-400">
+                <p className="mt-0.5 text-xs" style={{ color: palette.textMuted }}>
                   {reviews.googleReviewCount} reviews
                 </p>
               </div>
             )}
             {reviews.yelpRating && (
               <div className="text-center">
-                <div className="mb-1 text-sm font-medium text-gray-500">Yelp</div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="mb-1 text-sm font-medium" style={{ color: palette.textMuted }}>Yelp</div>
+                <div className="text-2xl font-bold" style={{ color: palette.text }}>
                   {reviews.yelpRating.toFixed(1)}
                 </div>
                 <StarRating rating={reviews.yelpRating} size="sm" />
-                <p className="mt-0.5 text-xs text-gray-400">
+                <p className="mt-0.5 text-xs" style={{ color: palette.textMuted }}>
                   {reviews.yelpReviewCount} reviews
                 </p>
               </div>
@@ -128,40 +139,46 @@ export function ReviewsSection({
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm"
+              transition={{ delay: index * animDelay }}
+              className="border p-6 shadow-sm"
+              style={{
+                backgroundColor: palette.surface,
+                borderColor: palette.menuCardBorder,
+                borderRadius: design.layout.cornerRadius,
+              }}
             >
               <div className="mb-3 flex items-center justify-between">
                 <StarRating rating={review.rating} size="sm" />
-                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium capitalize text-gray-500">
+                <span
+                  className="px-2.5 py-0.5 text-xs font-medium capitalize"
+                  style={{
+                    backgroundColor: palette.surfaceAlt,
+                    color: palette.textMuted,
+                    borderRadius: design.layout.cornerRadius,
+                  }}
+                >
                   {review.source}
                 </span>
               </div>
-              <p className="mb-4 text-sm leading-relaxed text-gray-600">
+              <p className="mb-4 text-sm leading-relaxed" style={{ color: palette.textMuted }}>
                 &ldquo;{review.text}&rdquo;
               </p>
               <div className="flex items-center gap-3">
                 {review.photoUrl ? (
-                  <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-200">
-                    <Image
-                      src={review.photoUrl}
-                      alt={review.author}
-                      fill
-                      sizes="32px"
-                      className="object-cover"
-                    />
+                  <div className="relative h-8 w-8 overflow-hidden rounded-full" style={{ backgroundColor: palette.surfaceAlt }}>
+                    <Image src={review.photoUrl} alt={review.author} fill sizes="32px" className="object-cover" />
                   </div>
                 ) : (
                   <div
                     className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold text-white"
-                    style={{ backgroundColor: accentColor }}
+                    style={{ backgroundColor: accent }}
                   >
                     {review.author.charAt(0).toUpperCase()}
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{review.author}</p>
-                  <p className="text-xs text-gray-400">{review.date}</p>
+                  <p className="text-sm font-medium" style={{ color: palette.text }}>{review.author}</p>
+                  <p className="text-xs" style={{ color: palette.textMuted }}>{review.date}</p>
                 </div>
               </div>
             </motion.div>
@@ -175,14 +192,16 @@ export function ReviewsSection({
           viewport={{ once: true }}
           className="mt-10 text-center"
         >
-          <p className="text-sm text-gray-500">
+          <p className="text-sm" style={{ color: palette.textMuted }}>
             Love {restaurantName}?{" "}
             <a
-              href={reviews.googleRating ? `https://search.google.com/local/writereview?placeid=PLACE_ID` : `https://www.yelp.com/biz/${restaurantName.toLowerCase().replace(/\s+/g, "-")}`}
+              href={reviews.googleRating && googlePlaceId
+                ? `https://search.google.com/local/writereview?placeid=${googlePlaceId}`
+                : `https://www.yelp.com/biz/${restaurantName.toLowerCase().replace(/\s+/g, "-")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium underline underline-offset-2 transition-colors hover:text-gray-700"
-              style={{ color: accentColor }}
+              className="font-medium underline underline-offset-2 transition-colors hover:opacity-80"
+              style={{ color: accent }}
             >
               Leave us a review
             </a>

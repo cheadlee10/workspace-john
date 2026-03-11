@@ -2,13 +2,16 @@
 
 import { motion } from "framer-motion";
 import type { Restaurant } from "@/types/restaurant";
+import { useDesign } from "@/components/design/DesignProvider";
 
 interface AboutSectionProps {
   restaurant: Restaurant;
 }
 
 export function AboutSection({ restaurant }: AboutSectionProps) {
-  const { name, description, branding, cuisine, socialMedia } = restaurant;
+  const { name, description, cuisine, socialMedia } = restaurant;
+  const design = useDesign();
+  const { palette } = design;
 
   const socialLinks = [
     { key: "instagram", url: socialMedia.instagram, label: "Instagram" },
@@ -19,19 +22,26 @@ export function AboutSection({ restaurant }: AboutSectionProps) {
   ].filter((s) => s.url);
 
   return (
-    <section id="about" className="bg-gray-50 py-16 md:py-24" aria-label={`About ${name}`}>
+    <section
+      id="about"
+      className="py-16 md:py-24"
+      style={{ backgroundColor: palette.surfaceAlt }}
+      aria-label={`About ${name}`}
+    >
       <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl">Our Story</h2>
+          <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl" style={{ color: palette.text }}>
+            Our Story
+          </h2>
           <div
             className="mx-auto mb-8 h-1 w-16 rounded-full"
-            style={{ backgroundColor: branding.accentColor }}
+            style={{ backgroundColor: palette.accent }}
           />
-          <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-gray-600">
+          <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed" style={{ color: palette.textMuted }}>
             {description}
           </p>
 
@@ -41,10 +51,11 @@ export function AboutSection({ restaurant }: AboutSectionProps) {
               {cuisine.map((c) => (
                 <span
                   key={c}
-                  className="rounded-full border px-4 py-1.5 text-sm font-medium capitalize"
+                  className="border px-4 py-1.5 text-sm font-medium capitalize"
                   style={{
-                    borderColor: branding.accentColor,
-                    color: branding.accentColor,
+                    borderColor: palette.accent,
+                    color: palette.accent,
+                    borderRadius: design.layout.cornerRadius,
                   }}
                 >
                   {c}
@@ -62,13 +73,15 @@ export function AboutSection({ restaurant }: AboutSectionProps) {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-600 transition-all hover:text-white"
-                  style={{ "--hover-bg": branding.accentColor } as React.CSSProperties}
+                  className="flex h-10 w-10 items-center justify-center rounded-full transition-all hover:text-white"
+                  style={{ backgroundColor: palette.surface, color: palette.textMuted }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.backgroundColor = branding.accentColor;
+                    (e.currentTarget as HTMLElement).style.backgroundColor = palette.accent;
+                    (e.currentTarget as HTMLElement).style.color = "#ffffff";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.backgroundColor = "";
+                    (e.currentTarget as HTMLElement).style.backgroundColor = palette.surface;
+                    (e.currentTarget as HTMLElement).style.color = palette.textMuted;
                   }}
                   aria-label={`Visit us on ${social.label}`}
                 >
