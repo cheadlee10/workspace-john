@@ -88,9 +88,10 @@ export function MenuDisplay({
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
           <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl">Our Menu</h2>
@@ -250,8 +251,9 @@ export function MenuDisplay({
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
                   className="flex"
                 >
                   <MenuItemCard

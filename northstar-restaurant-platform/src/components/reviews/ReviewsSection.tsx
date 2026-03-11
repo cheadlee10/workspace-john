@@ -58,9 +58,10 @@ export function ReviewsSection({
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="mb-12 text-center"
         >
           <h2 className="mb-3 text-4xl font-bold tracking-tight md:text-5xl">
@@ -127,7 +128,7 @@ export function ReviewsSection({
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.15 }}
               className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm"
             >
               <div className="mb-3 flex items-center justify-between">
