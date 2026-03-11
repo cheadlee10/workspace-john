@@ -58,7 +58,14 @@ export function StickyNav({ restaurant }: StickyNavProps) {
         aria-label="Main navigation"
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-          <a href="#" className="text-lg font-bold" style={{ color: dark ? "#ffffff" : palette.accent }}>
+          <a href="#" className="flex items-center gap-2 text-lg font-bold" style={{ color: dark ? "#ffffff" : palette.accent }}>
+            {restaurant.branding.logo && (
+              <img
+                src={restaurant.branding.logo}
+                alt={`${name} logo`}
+                className="h-8 w-auto object-contain"
+              />
+            )}
             {name}
           </a>
 
