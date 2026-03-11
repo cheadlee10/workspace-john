@@ -24,6 +24,7 @@ import {
   generateFinalEmail,
   type EmailContext,
 } from "./email-templates";
+import { sendPostcard as lobSendPostcard, type PostcardConfig } from "./postcard-mailer";
 import { isOnDnc } from "./dnc-store";
 import { canSendToday, recordSend } from "./send-throttle";
 
@@ -250,13 +251,44 @@ export async function processFollowUps(
 // --- Implementation stubs (will be connected to real APIs) ---
 
 async function deployPreview(
-  _siteConfig: ReturnType<typeof generateRestaurantConfig>,
-  _vercelToken: string
+  siteConfig: ReturnType<typeof generateRestaurantConfig>,
+  vercelToken: string
 ): Promise<string> {
-  // In production: Use Vercel API to deploy the site
-  // POST https://api.vercel.com/v13/deployments
-  // Returns the preview URL
-  return `https://${_siteConfig.slug}.northstar-preview.vercel.app`;
+  console.warn(`[Pipeline] Deploying preview site for ${siteConfig.name} (${siteConfig.slug})`);
+
+  const response = await fetch("https://api.vercel.com/v13/deployments", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${vercelToken}`,
+    },
+    body: JSON.stringify({
+      name: `northstar-${siteConfig.slug}`,
+      target: "preview",
+      files: [
+        {
+          file: "config.json",
+          data: JSON.stringify(siteConfig),
+        },
+      ],
+      projectSettings: {
+        framework: "nextjs",
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Vercel deploy failed for ${siteConfig.slug}: ${response.status} ${err}`);
+  }
+
+  const data = await response.json();
+  const previewUrl: string = data.url
+    ? `https://${data.url}`
+    : `https://${siteConfig.slug}.northstar-preview.vercel.app`;
+
+  console.warn(`[Pipeline] Deployed: ${previewUrl}`);
+  return previewUrl;
 }
 
 async function recordWalkthrough(
@@ -291,11 +323,22 @@ async function sendPitchEmail(
 
   const email = generateInitialPitchEmail(emailCtx);
 
-  // In production: Send via Resend API
-  // POST https://api.resend.com/emails
-  // { from: config.senderEmail, to: prospect.restaurant.restaurant.email, subject, text }
   console.warn(`[Pipeline] Sending initial email to ${prospect.restaurant.restaurant.name}`);
   console.warn(`  Subject: ${email.subject}`);
+
+  const recipientEmail = prospect.restaurant.restaurant.email;
+  if (!recipientEmail) {
+    console.warn(`[Pipeline] No email address for ${prospect.restaurant.restaurant.name} — skipping email`);
+    return;
+  }
+
+  await sendViaResend({
+    apiKey: config.resendApiKey,
+    from: `${config.senderName} <${config.senderEmail}>`,
+    to: recipientEmail,
+    subject: email.subject,
+    text: email.body,
+  });
 }
 
 async function sendFollowUpEmail(
@@ -321,6 +364,17 @@ async function sendFollowUpEmail(
   const email = generateFollowUpEmail(emailCtx);
   console.warn(`[Pipeline] Sending follow-up email to ${prospect.restaurant.restaurant.name}`);
   console.warn(`  Subject: ${email.subject}`);
+
+  const recipientEmail = prospect.restaurant.restaurant.email;
+  if (!recipientEmail) return;
+
+  await sendViaResend({
+    apiKey: config.resendApiKey,
+    from: `${config.senderName} <${config.senderEmail}>`,
+    to: recipientEmail,
+    subject: email.subject,
+    text: email.body,
+  });
 }
 
 async function sendFinalEmail(
@@ -346,18 +400,53 @@ async function sendFinalEmail(
   const email = generateFinalEmail(emailCtx);
   console.warn(`[Pipeline] Sending final email to ${prospect.restaurant.restaurant.name}`);
   console.warn(`  Subject: ${email.subject}`);
+
+  const recipientEmail = prospect.restaurant.restaurant.email;
+  if (!recipientEmail) return;
+
+  await sendViaResend({
+    apiKey: config.resendApiKey,
+    from: `${config.senderName} <${config.senderEmail}>`,
+    to: recipientEmail,
+    subject: email.subject,
+    text: email.body,
+  });
 }
 
 async function sendPostcard(
   prospect: PipelineProspect,
-  _config: PipelineConfig
+  config: PipelineConfig
 ): Promise<void> {
-  // In production: Use Lob.com API
-  // POST https://api.lob.com/v1/postcards
-  // Front: Beautiful restaurant website screenshot
-  // Back: "We built you a website. Check it out at {previewUrl}"
   console.warn(`[Pipeline] Queuing postcard to ${prospect.restaurant.restaurant.name}`);
   console.warn(`  Address: ${prospect.restaurant.restaurant.address}, ${prospect.restaurant.restaurant.city}`);
+
+  const r = prospect.restaurant.restaurant;
+  if (!r.address || !r.city || !r.state || !r.zip) {
+    console.warn(`[Pipeline] Incomplete address for ${r.name} — skipping postcard`);
+    return;
+  }
+
+  // Parse company address: "123 Main St, Seattle, WA 98101"
+  const fromParts = config.companyAddress.split(",").map((s) => s.trim());
+
+  const postcardConfig: PostcardConfig = {
+    lobApiKey: config.lobApiKey,
+    restaurantName: r.name,
+    restaurantAddress: r.address,
+    restaurantCity: r.city,
+    restaurantState: r.state,
+    restaurantZip: r.zip,
+    previewUrl: prospect.previewUrl || "",
+    websiteScreenshotUrl: `${prospect.previewUrl}/og-image.png`,
+    fromName: config.senderName,
+    fromAddress: fromParts[0] || "",
+    fromCity: fromParts[1] || "",
+    fromState: (fromParts[2] || "").replace(/\s*\d{5}.*/, "").trim(),
+    fromZip: (fromParts[2] || "").match(/\d{5}/)?.[0] || "",
+  };
+
+  const result = await lobSendPostcard(postcardConfig);
+  console.warn(`[Pipeline] Postcard queued: ${result.id}, expected delivery: ${result.expectedDelivery}`);
 }
 
 async function makeVoiceCall(
@@ -374,6 +463,38 @@ async function makeVoiceCall(
   // - Graceful exit if not interested
   console.warn(`[Pipeline] Scheduling voice call to ${prospect.restaurant.restaurant.name}`);
   console.warn(`  Phone: ${prospect.restaurant.restaurant.phone}`);
+}
+
+// --- Resend email sender ---
+
+async function sendViaResend(params: {
+  apiKey: string;
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
+}): Promise<void> {
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${params.apiKey}`,
+    },
+    body: JSON.stringify({
+      from: params.from,
+      to: [params.to],
+      subject: params.subject,
+      text: params.text,
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Resend API error: ${response.status} ${err}`);
+  }
+
+  const data = await response.json();
+  console.warn(`[Pipeline] Email sent via Resend: ${data.id}`);
 }
 
 /**

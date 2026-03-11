@@ -28,6 +28,7 @@ export interface EmailContext {
   companyName: string;
   companyAddress: string; // Required by CAN-SPAM
   unsubscribeUrl: string;
+  bookingUrl?: string;
 }
 
 export function generateInitialPitchEmail(ctx: EmailContext): {
@@ -72,6 +73,8 @@ There's no cost to preview. If you like it, plans start at $49/mo - a fraction o
 
 Would you be open to a quick 5-minute chat this week? I'd love to hear what you think.
 
+Want to see a quick walkthrough? Book 5 minutes here: ${ctx.bookingUrl ?? "[cal link]"}
+
 Best,
 ${ctx.senderName}
 ${ctx.senderTitle}
@@ -112,6 +115,8 @@ A few things I think you'd find valuable:
 
 I know you're busy running a restaurant, so I'll keep this brief. If there's any interest, I'm happy to jump on a quick call at whatever time works for you.
 
+Want to see a quick walkthrough? Book 5 minutes here: ${ctx.bookingUrl ?? "[cal link]"}
+
 Either way, no pressure at all. Just thought it was worth sharing.
 
 Best,
@@ -144,6 +149,8 @@ I built a website for ${ctx.restaurantName} because I genuinely think it could h
 ${ctx.previewUrl}
 
 If the timing isn't right, I completely understand. I'll keep the preview up for another 30 days in case you change your mind.
+
+If you want a quick walkthrough before deciding: ${ctx.bookingUrl ?? "[cal link]"}
 
 Wishing you and the team at ${ctx.restaurantName} all the best.
 
