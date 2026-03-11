@@ -8,6 +8,7 @@ import {
 } from "@/lib/orders/order-store";
 import { sendOrderConfirmation } from "@/lib/notifications/email";
 import { sendOrderSMS } from "@/lib/notifications/sms";
+import { sendRestaurantAlert } from "@/lib/notifications/restaurant-alerts";
 import { processPayment as processSquarePayment } from "@/lib/integrations/square-pos";
 import { rateLimit, getRateLimitHeaders } from "@/lib/security/rate-limit";
 import { verifySession } from "@/lib/auth/session";
@@ -248,6 +249,24 @@ export async function POST(request: NextRequest) {
       estimatedTime,
       total: serverTotal,
     }).catch((err) => console.error("[Orders] SMS notification failed:", err));
+
+    // Alert the restaurant owner (fire and forget)
+    sendRestaurantAlert({
+      orderId: order.id,
+      restaurantName: restaurantName || "Restaurant",
+      items: items.map((item: { menuItem: { name: string; price: number }; quantity: number }) => ({
+        name: item.menuItem.name,
+        quantity: item.quantity,
+        price: item.menuItem.price * item.quantity,
+      })),
+      orderType: orderType || "pickup",
+      scheduledTime,
+      total: serverTotal,
+      customerName: sanitizedCustomer.name,
+      customerPhone: sanitizedCustomer.phone,
+      customerEmail: sanitizedCustomer.email,
+      customerAddress: sanitizedCustomer.address,
+    }).catch((err) => console.error("[Orders] Restaurant alert failed:", err));
 
     const responseBody = {
       order: {
