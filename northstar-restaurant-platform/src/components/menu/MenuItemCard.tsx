@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import type { MenuItem } from "@/types/restaurant";
 import { formatPrice } from "@/lib/utils";
-import { useDesign } from "@/components/design/DesignProvider";
+import { useDesign, isDarkMood } from "@/components/design/DesignProvider";
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -40,6 +40,7 @@ function MenuItemCardInner({
   const [isHovered, setIsHovered] = useState(false);
   const design = useDesign();
   const { palette } = design;
+  const dark = isDarkMood(design);
   const accent = accentColor || palette.accent;
 
   const handleAddToCart = () => {
@@ -50,13 +51,16 @@ function MenuItemCardInner({
 
   return (
     <motion.article
-      className={`group relative flex w-full flex-col overflow-hidden border shadow-sm transition-shadow hover:shadow-lg ${
+      className={`group relative flex w-full flex-col overflow-hidden border transition-shadow ${
         item.isSoldOut ? "opacity-60" : ""
       }`}
       style={{
         backgroundColor: palette.menuCardBg,
-        borderColor: palette.menuCardBorder,
+        borderColor: dark ? "rgba(255,255,255,0.1)" : palette.menuCardBorder,
         borderRadius: design.layout.cornerRadius,
+        boxShadow: dark
+          ? "0 1px 3px rgba(0,0,0,0.3)"
+          : "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
       }}
       whileHover={{ scale: design.effects.menuItemHoverScale, transition: { duration: 0.2 } }}
       onMouseEnter={() => setIsHovered(true)}

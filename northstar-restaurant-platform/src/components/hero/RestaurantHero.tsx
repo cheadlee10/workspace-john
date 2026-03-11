@@ -25,7 +25,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
   const stagger = (i: number) => ({ delay: i * 0.25 });
 
   return (
-    <section className="relative min-h-[85vh] overflow-hidden" aria-label={`${name} hero`}>
+    <section className="relative min-h-[70vh] overflow-hidden md:min-h-screen" aria-label={`${name} hero`}>
       {/* #11 Loading Shimmer */}
       {branding.heroImage && !imageLoaded && (
         <div className="hero-shimmer absolute inset-0" style={{ backgroundColor: palette.background }} />
@@ -55,32 +55,13 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
       />
 
       {/* Content — #6 staggered reveals */}
-      <div className="relative z-10 flex min-h-[85vh] flex-col items-center justify-end px-4 pb-16 text-center sm:px-6">
-        {/* Logo — stagger 0 */}
-        {branding.logo && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: animDuration * 0.75, ...stagger(0) }}
-            className="mb-6"
-          >
-            <Image
-              src={branding.logo}
-              alt={`${name} logo`}
-              width={120}
-              height={120}
-              priority
-              className="drop-shadow-2xl"
-            />
-          </motion.div>
-        )}
-
-        {/* #5 Gradient Text on Hero Heading — stagger 1 */}
+      <div className="relative z-10 flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6 md:min-h-screen">
+        {/* Restaurant name as large typeset wordmark — stagger 0 */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, ...stagger(1) }}
-          className="mb-4 text-4xl font-bold tracking-tight drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl"
+          transition={{ duration: animDuration * 0.75, ...stagger(0) }}
+          className="mb-2 text-5xl font-bold tracking-tight drop-shadow-lg sm:text-6xl md:text-7xl lg:text-8xl"
           style={dark ? {
             background: `linear-gradient(135deg, #ffffff 0%, ${palette.accent} 100%)`,
             WebkitBackgroundClip: "text",
@@ -91,24 +72,24 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           {name}
         </motion.h1>
 
-        {/* Tagline — stagger 2 */}
+        {/* Tagline — stagger 1 */}
         {tagline && (
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: animDuration * 0.75, ...stagger(2) }}
-            className="mb-6 max-w-lg text-lg font-light text-white/90 sm:text-xl"
+            transition={{ duration: animDuration * 0.75, ...stagger(1) }}
+            className="mb-4 max-w-lg text-lg font-light text-white/90 sm:text-xl"
           >
             {tagline}
           </motion.p>
         )}
 
-        {/* Open/Closed Badge — stagger 2.5 */}
+        {/* Open/Closed Badge — stagger 1.5 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, ...stagger(2.5) }}
-          className="mb-8"
+          transition={{ duration: animDuration * 0.75, ...stagger(1.5) }}
+          className="mb-6"
         >
           <div
             className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium backdrop-blur-sm ${
@@ -127,11 +108,11 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           </div>
         </motion.div>
 
-        {/* CTA Buttons — stagger 3 + #9 CTA glow */}
+        {/* CTA Buttons — stagger 2 + #9 CTA glow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, ...stagger(3) }}
+          transition={{ duration: animDuration * 0.75, ...stagger(2) }}
           className="flex flex-col gap-3 sm:flex-row sm:gap-4"
         >
           <a
@@ -188,7 +169,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         </motion.div>
       </div>
 
-      {/* Scroll Indicator — stagger 4 */}
+      {/* Scroll Indicator — stagger 3 */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

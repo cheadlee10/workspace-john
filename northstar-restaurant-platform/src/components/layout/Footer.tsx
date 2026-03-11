@@ -26,6 +26,13 @@ export function Footer({ restaurant }: FooterProps) {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
+            {restaurant.branding.logo && (
+              <img
+                src={restaurant.branding.logo}
+                alt={`${name} logo`}
+                className="mb-3 h-10 w-auto object-contain brightness-0 invert"
+              />
+            )}
             <h3 className="mb-4 text-xl font-bold" style={{ color: palette.footerText }}>{name}</h3>
             <p className="mb-4 text-sm leading-relaxed" style={{ color: mutedColor }}>
               {restaurant.tagline || restaurant.description.slice(0, 120) + "..."}
