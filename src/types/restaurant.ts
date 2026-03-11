@@ -16,6 +16,7 @@ export interface Restaurant {
   socialMedia: SocialMedia;
   features: PlatformFeatures;
   reviews?: ReviewSummary;
+  designOverrides?: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }
@@ -113,6 +114,7 @@ export interface SocialMedia {
   twitter?: string;
   yelp?: string;
   googleBusinessUrl?: string;
+  googlePlaceId?: string;
 }
 
 // --- Menu Types ---
