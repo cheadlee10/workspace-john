@@ -2,8 +2,10 @@
  * Outreach Email Templates
  *
  * Research finding: Plain text outperforms HTML 4x-9x for cold B2B email.
- * We use plain text for cold outreach but include a GIF thumbnail linking
- * to their video walkthrough.
+ * All outreach is plain text — no HTML, no images, no tracking pixels.
+ *
+ * Pitch angle: These restaurants have NO website. They're invisible online.
+ * The pitch is visibility and being found, not commission savings.
  *
  * Multi-touch cadence:
  * Day 1: Initial pitch with live website preview
@@ -23,7 +25,7 @@ export interface EmailContext {
   googleRating?: number;
   reviewCount?: number;
   cuisineType: string;
-  senderName: string; // "John" or configured name
+  senderName: string;
   senderTitle: string;
   companyName: string;
   companyAddress: string; // Required by CAN-SPAM
@@ -39,52 +41,34 @@ export function generateInitialPitchEmail(ctx: EmailContext): {
     ? `Hi ${ctx.ownerName},`
     : `Hi there,`;
 
-  // A/B test subjects - use whichever performs better
-  const subjects = [
-    `I built ${ctx.restaurantName} a website (it's free to preview)`,
-    `${ctx.restaurantName}'s new website is ready to preview`,
-    `Quick question about ${ctx.restaurantName}`,
-  ];
-
-  const subject = subjects[0];
+  const subject = subjectLineVariants.initial[0](ctx.restaurantName);
 
   const ratingLine = ctx.googleRating
-    ? `\nI noticed ${ctx.restaurantName} has a ${ctx.googleRating}-star rating with ${ctx.reviewCount} reviews on Google - your customers clearly love what you do.`
+    ? ` ${ctx.googleRating}-star rating, ${ctx.reviewCount} reviews — your customers love you.`
     : "";
 
   const body = `${greeting}
 
-I came across ${ctx.restaurantName} while looking for great ${ctx.cuisineType} restaurants in ${ctx.city}, and I was genuinely impressed.${ratingLine}
+I was looking for ${ctx.cuisineType} in ${ctx.city} and came across ${ctx.restaurantName} on Google.${ratingLine}
 
-I took the liberty of building you a website to see what it could look like:
+But when I looked for your website, there wasn't one.
 
-${ctx.previewUrl}
+So I built you one: ${ctx.previewUrl}
 
-Here's a quick 30-second walkthrough: ${ctx.videoUrl}
+It has your full menu (works great on phones), your Google reviews, your hours and location, and a button for customers to call you or get directions.
 
-The site includes:
-- Your full menu (searchable, filterable, mobile-optimized)
-- Online ordering (no DoorDash/UberEats commissions)
-- Your Google reviews front and center
-- SEO so people searching "${ctx.cuisineType} near me" find YOU first
-- Everything works on any phone, tablet, or computer
+77% of people check a restaurant's website before deciding where to eat. Right now, those people are finding your competitors instead.
 
-There's no cost to preview. If you like it, plans start at $49/mo - a fraction of what you'd pay anywhere else, and we handle everything.
+The site is yours if you want it. $99/month, no setup fee, no contract. Takes 30 minutes to go live.
 
-Would you be open to a quick 5-minute chat this week? I'd love to hear what you think.
+Want to see a quick walkthrough? Book 5 minutes: ${ctx.bookingUrl ?? "[cal link]"}
 
-Want to see a quick walkthrough? Book 5 minutes here: ${ctx.bookingUrl ?? "[cal link]"}
-
-Best,
 ${ctx.senderName}
-${ctx.senderTitle}
-${ctx.companyName}
+NorthStar Synergy
 ${ctx.companyAddress}
 
-P.S. - 77% of diners check a restaurant's website before visiting. The ones that don't have one are leaving money on the table.
-
 ---
-Not interested? No worries at all: ${ctx.unsubscribeUrl}`;
+Not interested? No worries: ${ctx.unsubscribeUrl}`;
 
   return { subject, body };
 }
@@ -101,31 +85,22 @@ export function generateFollowUpEmail(ctx: EmailContext): {
 
   const body = `${greeting}
 
-Just wanted to follow up on the website I built for ${ctx.restaurantName}. Wanted to make sure you had a chance to see it:
+Just following up — your preview site is still live:
 
 ${ctx.previewUrl}
 
-A few things I think you'd find valuable:
+I built it with your actual menu, your real Google reviews, and your hours. It's not a template — it's YOUR restaurant.
 
-1. Every dish on your menu gets its own page on Google. When someone searches "best ${ctx.cuisineType} in ${ctx.city}", your dishes show up individually.
+If there's anything you'd want changed, I'm happy to tweak it. Menu items, photos, colors — whatever makes it feel right.
 
-2. Online ordering goes directly to you - no 25-30% fees to DoorDash or UberEats.
+$99/month. No contract. Cancel anytime.
 
-3. Your ${ctx.googleRating}-star Google reviews display automatically, building trust before people even walk in.
-
-I know you're busy running a restaurant, so I'll keep this brief. If there's any interest, I'm happy to jump on a quick call at whatever time works for you.
-
-Want to see a quick walkthrough? Book 5 minutes here: ${ctx.bookingUrl ?? "[cal link]"}
-
-Either way, no pressure at all. Just thought it was worth sharing.
-
-Best,
 ${ctx.senderName}
-${ctx.companyName}
+NorthStar Synergy
 ${ctx.companyAddress}
 
 ---
-Not interested? ${ctx.unsubscribeUrl}`;
+${ctx.unsubscribeUrl}`;
 
   return { subject, body };
 }
@@ -142,20 +117,16 @@ export function generateFinalEmail(ctx: EmailContext): {
 
   const body = `${greeting}
 
-This will be my last email - I don't want to be a pest.
+Last email from me — I don't want to be a pest.
 
-I built a website for ${ctx.restaurantName} because I genuinely think it could help bring in more customers. The preview is still live if you want to check it out:
+Your preview site is still up for 30 days: ${ctx.previewUrl}
 
-${ctx.previewUrl}
+If the timing isn't right, totally understand. But every day without a website, the people searching for ${ctx.cuisineType} in ${ctx.city} are finding someone else.
 
-If the timing isn't right, I completely understand. I'll keep the preview up for another 30 days in case you change your mind.
-
-If you want a quick walkthrough before deciding: ${ctx.bookingUrl ?? "[cal link]"}
-
-Wishing you and the team at ${ctx.restaurantName} all the best.
+Wishing you and the team all the best.
 
 ${ctx.senderName}
-${ctx.companyName}
+NorthStar Synergy
 ${ctx.companyAddress}
 
 ---
@@ -169,16 +140,13 @@ ${ctx.unsubscribeUrl}`;
  */
 export const subjectLineVariants = {
   initial: [
-    (name: string) => `I built ${name} a website (it's free to preview)`,
-    (name: string) => `${name}'s new website is ready to preview`,
-    (name: string) => `Quick question about ${name}`,
-    (name: string) => `A gift for ${name}`,
-    (name: string) => `${name} deserves a better website`,
+    (name: string) => `I built ${name} a website — take a look`,
+    (name: string) => `${name} deserves to be found online`,
+    (name: string) => `Your next customer just Googled "${name}" near me`,
   ],
   followUp: [
     (name: string) => `Re: ${name}'s website`,
-    (name: string) => `Did you see ${name}'s new website?`,
-    (name: string) => `Following up - ${name}`,
+    (name: string) => `Your preview site is still live — ${name}`,
   ],
   final: [
     (name: string) => `Last note about ${name}`,
