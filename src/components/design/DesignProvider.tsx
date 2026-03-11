@@ -58,6 +58,12 @@ export function useDesign(): DesignConfig {
   return ctx || DEFAULT_CONFIG;
 }
 
+/** Check if current design uses a dark background */
+export function isDarkMood(config: DesignConfig): boolean {
+  const mood = config.vibe.mood;
+  return mood === "dark-moody" || mood === "bold-energetic" || mood === "minimal-elegant";
+}
+
 interface DesignProviderProps {
   config: DesignConfig;
   children: ReactNode;

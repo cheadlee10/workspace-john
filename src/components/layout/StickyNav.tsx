@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Restaurant } from "@/types/restaurant";
-import { useDesign } from "@/components/design/DesignProvider";
+import { useDesign, isDarkMood } from "@/components/design/DesignProvider";
 
 interface StickyNavProps {
   restaurant: Restaurant;
@@ -15,6 +15,7 @@ export function StickyNav({ restaurant }: StickyNavProps) {
   const { name, features, contact } = restaurant;
   const design = useDesign();
   const { palette } = design;
+  const dark = isDarkMood(design);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 100);
@@ -32,46 +33,53 @@ export function StickyNav({ restaurant }: StickyNavProps) {
     ...(features.cateringPortal ? [{ href: "#catering", label: "Catering" }] : []),
   ];
 
+  // #4 Glassmorphism for dark themes
+  const navStyle: React.CSSProperties = dark
+    ? {
+        backgroundColor: "rgba(0,0,0,0.4)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        borderColor: "rgba(255,255,255,0.1)",
+      }
+    : {
+        backgroundColor: palette.navBackground,
+        borderColor: palette.menuCardBorder,
+      };
+
   return (
     <>
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: isScrolled ? 0 : -100 }}
         transition={{ duration: 0.3 }}
-        className="fixed left-0 right-0 top-0 z-50 border-b shadow-sm backdrop-blur-md"
-        style={{
-          backgroundColor: palette.navBackground,
-          borderColor: palette.menuCardBorder,
-        }}
+        className="fixed left-0 right-0 top-0 z-50 border-b shadow-sm"
+        style={navStyle}
         role="navigation"
         aria-label="Main navigation"
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-          {/* Logo / Name */}
-          <a href="#" className="text-lg font-bold" style={{ color: palette.accent }}>
+          <a href="#" className="text-lg font-bold" style={{ color: dark ? "#ffffff" : palette.accent }}>
             {name}
           </a>
 
-          {/* Desktop Nav */}
           <div className="hidden items-center gap-6 md:flex">
             {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 className="text-sm font-medium transition-colors hover:opacity-80"
-                style={{ color: palette.textMuted }}
+                style={{ color: dark ? "rgba(255,255,255,0.7)" : palette.textMuted }}
               >
                 {item.label}
               </a>
             ))}
           </div>
 
-          {/* CTA Buttons */}
           <div className="hidden items-center gap-3 md:flex">
             <a
               href={`tel:${contact.phone}`}
               className="transition-colors hover:opacity-80"
-              style={{ color: palette.textMuted }}
+              style={{ color: dark ? "rgba(255,255,255,0.7)" : palette.textMuted }}
               aria-label={`Call ${name}`}
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -81,25 +89,25 @@ export function StickyNav({ restaurant }: StickyNavProps) {
             {features.onlineOrdering && (
               <a
                 href="#order"
-                className="px-5 py-2 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
+                className="cta-glow px-5 py-2 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
                 style={{
                   backgroundColor: palette.accent,
                   borderRadius: design.layout.cornerRadius,
-                }}
+                  "--glow-color": palette.accent,
+                } as React.CSSProperties}
               >
                 Order Now
               </a>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden"
             aria-label="Toggle menu"
             aria-expanded={isMobileMenuOpen}
           >
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style={{ color: palette.text }}>
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" style={{ color: dark ? "#ffffff" : palette.text }}>
               {isMobileMenuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -109,7 +117,6 @@ export function StickyNav({ restaurant }: StickyNavProps) {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
@@ -117,7 +124,7 @@ export function StickyNav({ restaurant }: StickyNavProps) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden border-t md:hidden"
-              style={{ borderColor: palette.menuCardBorder }}
+              style={{ borderColor: dark ? "rgba(255,255,255,0.1)" : palette.menuCardBorder }}
             >
               <div className="flex flex-col gap-1 px-4 py-4">
                 {navItems.map((item) => (
@@ -126,7 +133,7 @@ export function StickyNav({ restaurant }: StickyNavProps) {
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="rounded-lg px-4 py-3 text-sm font-medium transition-colors hover:opacity-80"
-                    style={{ color: palette.text }}
+                    style={{ color: dark ? "#ffffff" : palette.text }}
                   >
                     {item.label}
                   </a>
