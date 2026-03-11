@@ -5,6 +5,8 @@
  * when a new order comes in. Uses Twilio for SMS and Resend for email.
  */
 
+import { registerOrderAlert } from "@/app/api/webhooks/twilio/route";
+
 interface OrderAlertData {
   orderId: string;
   restaurantName: string;
@@ -33,6 +35,7 @@ export async function sendRestaurantAlert(
   const promises: Promise<unknown>[] = [];
 
   if (alertPhone) {
+    registerOrderAlert(alertPhone, data.orderId);
     promises.push(sendAlertSMS(data, alertPhone));
   }
   if (alertEmail) {
