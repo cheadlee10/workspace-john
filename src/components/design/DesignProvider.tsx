@@ -82,6 +82,13 @@ export function DesignProvider({ config, children }: DesignProviderProps) {
   const headingFont = `'${config.fonts.heading}', ${config.fonts.style === "serif" ? "Georgia, serif" : "system-ui, sans-serif"}`;
   const bodyFont = `'${config.fonts.body}', system-ui, sans-serif`;
 
+  // Map vibe mood to texture class
+  const textureClass =
+    config.vibe.mood === "dark-moody" ? "texture-noise" :
+    config.vibe.mood === "warm-cozy" ? "texture-linen" :
+    config.vibe.mood === "rustic-earthy" ? "texture-organic" :
+    "";
+
   return (
     <DesignContext.Provider value={config}>
       <div
@@ -90,7 +97,7 @@ export function DesignProvider({ config, children }: DesignProviderProps) {
           color: config.palette.text,
           fontFamily: bodyFont,
         }}
-        className="min-h-screen"
+        className={`min-h-screen ${textureClass}`}
         data-design-mood={config.vibe.mood}
       >
         <style
