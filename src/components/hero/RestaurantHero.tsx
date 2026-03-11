@@ -32,7 +32,12 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[85vh] flex-col items-center justify-end px-4 pb-16 text-center sm:px-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative z-10 flex min-h-[85vh] flex-col items-center justify-end px-4 pb-16 text-center sm:px-6"
+      >
         {/* Logo */}
         {branding.logo && (
           <motion.div
@@ -115,12 +120,15 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           </a>
 
           {features.onlineOrdering && (
-            <a
+            <motion.a
               href="#order"
-              className="inline-flex items-center justify-center rounded-full border-2 border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-flex items-center justify-center rounded-full px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110"
+              style={{ backgroundColor: branding.accentColor || "#D4A574" }}
             >
-              Order Online
-            </a>
+              Order Now
+            </motion.a>
           )}
 
           {features.reservations && (
@@ -148,7 +156,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
             Call Us
           </a>
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Scroll Indicator */}
       <motion.div

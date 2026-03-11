@@ -45,9 +45,10 @@ function MenuItemCardInner({
 
   return (
     <motion.article
-      className={`group relative flex w-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md ${
+      className={`group relative flex w-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-lg ${
         item.isSoldOut ? "opacity-60" : ""
       }`}
+      whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
       role="article"
       aria-label={`${item.name} - ${formatPrice(item.price)}`}
     >
@@ -59,7 +60,7 @@ function MenuItemCardInner({
             alt={item.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
             loading="lazy"
           />
           {/* Badges */}
