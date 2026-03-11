@@ -1,6 +1,5 @@
 import { Fragment } from "react";
-import { headers } from "next/headers";
-import { resolveRestaurant } from "@/lib/tenant/restaurant-store";
+import { getRestaurantBySlug } from "@/lib/tenant/restaurant-store";
 import { generateRestaurantSchema } from "@/lib/schema";
 import { generateDesignConfig } from "@/lib/design/design-engine";
 import { DesignProvider } from "@/components/design/DesignProvider";
@@ -13,24 +12,37 @@ import { AboutSection } from "@/components/layout/AboutSection";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawerWrapper } from "@/components/ordering/CartDrawerWrapper";
-import { FloatingOrderCTA } from "@/components/ordering/FloatingOrderCTA";
-import { CommissionSavingsCalc } from "@/components/demo/CommissionSavingsCalc";
 import { SectionDivider } from "@/components/design/SectionDivider";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Live Demo | NorthStar Synergy - See What Your Restaurant Gets",
-  description:
-    "Explore a fully functional restaurant website with online ordering, menu, reviews, and more. This is exactly what your restaurant will get.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const restaurant = await getRestaurantBySlug(slug);
+  if (!restaurant) {
+    return { title: "Restaurant", description: "Restaurant website" };
+  }
 
-export default async function DemoPage() {
-  const headersList = await headers();
-  const host = headersList.get("host") || undefined;
-  const restaurant = await resolveRestaurant(host);
+  const title = `${restaurant.name} | ${restaurant.tagline || `${restaurant.cuisine.join(", ")} in ${restaurant.location.city}`}`;
+  const description = restaurant.description || `${restaurant.name} in ${restaurant.location.city}, ${restaurant.location.state}.`;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
+
+export default async function DemoBySlugPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const restaurant = await getRestaurantBySlug(slug);
+  if (!restaurant) notFound();
+
   const schema = generateRestaurantSchema(restaurant);
   const design = generateDesignConfig(restaurant);
 
+  // Build section map for dynamic ordering
   const sectionMap: Record<string, React.ReactNode> = {
     hero: <RestaurantHero key="hero" restaurant={restaurant} />,
     menu: <ConnectedMenuDisplay key="menu" restaurant={restaurant} />,
@@ -60,29 +72,8 @@ export default async function DemoPage() {
 
   return (
     <DesignProvider config={design}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
-
-      {/* Demo banner */}
-      <div className="sticky top-0 z-50 flex items-center justify-center gap-3 bg-gray-900 px-4 py-2.5 text-center text-sm text-white">
-        <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider">
-          Live Demo
-        </span>
-        <span className="text-white/80">
-          This is what your restaurant website will look like
-        </span>
-        <a
-          href="/"
-          className="ml-2 rounded-full bg-white px-4 py-1 text-xs font-bold text-gray-900 transition-colors hover:bg-gray-100"
-        >
-          Get Yours
-        </a>
-      </div>
-
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       <StickyNav restaurant={restaurant} />
-
       <main>
         {design.layout.sectionOrder.map((sectionId, index) => (
           <Fragment key={sectionId}>
@@ -93,13 +84,8 @@ export default async function DemoPage() {
           </Fragment>
         ))}
       </main>
-
       <CartDrawerWrapper restaurant={restaurant} />
-      <CommissionSavingsCalc accentColor={design.palette.accent} />
       <Footer restaurant={restaurant} />
-
-      <div className="h-20 md:hidden" />
-      <FloatingOrderCTA accentColor={design.palette.accent} />
     </DesignProvider>
   );
 }

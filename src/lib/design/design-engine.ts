@@ -793,28 +793,26 @@ function generateVibeDescription(
 
 // ─── Deep Merge Utility ─────────────────────────────────────────────────────
 
-function deepMerge<T extends Record<string, unknown>>(
-  base: T,
-  overrides: Partial<T>
-): T {
-  const result = { ...base };
-  for (const key in overrides) {
-    const val = overrides[key];
-    if (val !== undefined) {
-      if (
-        typeof val === "object" &&
-        val !== null &&
-        !Array.isArray(val)
-      ) {
-        result[key] = deepMerge(
-          (base[key] || {}) as Record<string, unknown>,
-          val as Record<string, unknown>
-        ) as T[typeof key];
-      } else {
-        result[key] = val as T[typeof key];
-      }
+function deepMerge<T extends object>(base: T, overrides: Partial<T>): T {
+  const result: T = { ...base };
+  const resultRecord = result as Record<string, unknown>;
+  const baseRecord = base as Record<string, unknown>;
+  const overridesRecord = overrides as Record<string, unknown>;
+
+  for (const key of Object.keys(overridesRecord)) {
+    const val = overridesRecord[key];
+    if (val === undefined) continue;
+
+    if (typeof val === "object" && val !== null && !Array.isArray(val)) {
+      resultRecord[key] = deepMerge(
+        (baseRecord[key] as object) || {},
+        val as Record<string, unknown>
+      );
+    } else {
+      resultRecord[key] = val;
     }
   }
+
   return result;
 }
 
