@@ -56,47 +56,43 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
 
       {/* Content — #6 staggered reveals */}
       <div className="relative z-10 flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6 md:min-h-screen">
-        {/* Logo — no container, floats directly on hero image */}
-        {branding.logo && (
+        {/* Branding: logo OR text wordmark, never both */}
+        {branding.logo ? (
           <motion.img
             src={branding.logo}
-            alt={`${name} logo`}
+            alt={name}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: animDuration * 0.75, ...stagger(0) }}
-            className="mb-4 h-auto w-[100px] max-w-[60vw] object-contain drop-shadow-lg sm:w-[130px] md:w-[150px]"
+            className="mb-4 h-auto w-[220px] max-w-[70vw] object-contain sm:w-[280px] md:w-[340px]"
             style={{
               mixBlendMode: dark ? "screen" : "multiply",
-              background: "transparent",
-              border: "none",
-              boxShadow: "none",
-              padding: 0,
+              filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
             }}
           />
+        ) : (
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: animDuration * 0.75, ...stagger(0) }}
+            className="mb-2 text-5xl font-bold tracking-tight drop-shadow-lg sm:text-6xl md:text-7xl lg:text-8xl"
+            style={dark ? {
+              background: `linear-gradient(135deg, #ffffff 0%, ${palette.accent} 100%)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            } : { color: "#ffffff" }}
+          >
+            {name}
+          </motion.h1>
         )}
-
-        {/* Restaurant name as large typeset wordmark */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, ...stagger(branding.logo ? 1 : 0) }}
-          className="mb-2 text-5xl font-bold tracking-tight drop-shadow-lg sm:text-6xl md:text-7xl lg:text-8xl"
-          style={dark ? {
-            background: `linear-gradient(135deg, #ffffff 0%, ${palette.accent} 100%)`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          } : { color: "#ffffff" }}
-        >
-          {name}
-        </motion.h1>
 
         {/* Tagline */}
         {tagline && (
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: animDuration * 0.75, ...stagger(branding.logo ? 2 : 1) }}
+            transition={{ duration: animDuration * 0.75, ...stagger(1) }}
             className="mb-4 max-w-lg text-lg font-light text-white/90 sm:text-xl"
           >
             {tagline}
@@ -107,7 +103,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, ...stagger(branding.logo ? 2.5 : 1.5) }}
+          transition={{ duration: animDuration * 0.75, ...stagger(1.5) }}
           className="mb-6"
         >
           <div
@@ -131,7 +127,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, ...stagger(branding.logo ? 3 : 2) }}
+          transition={{ duration: animDuration * 0.75, ...stagger(2) }}
           className="flex flex-col gap-3 sm:flex-row sm:gap-4"
         >
           <a
