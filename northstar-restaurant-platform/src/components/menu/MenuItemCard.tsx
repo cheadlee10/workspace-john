@@ -37,6 +37,7 @@ function MenuItemCardInner({
 }: MenuItemCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [isHovered, setIsHovered] = useState(false);
   const design = useDesign();
   const { palette } = design;
   const accent = accentColor || palette.accent;
@@ -58,10 +59,12 @@ function MenuItemCardInner({
         borderRadius: design.layout.cornerRadius,
       }}
       whileHover={{ scale: design.effects.menuItemHoverScale, transition: { duration: 0.2 } }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       role="article"
       aria-label={`${item.name} - ${formatPrice(item.price)}`}
     >
-      {/* Image */}
+      {/* #8 Food Photo Hover Zoom — masked container */}
       {showImage && item.image && (
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
@@ -69,7 +72,7 @@ function MenuItemCardInner({
             alt={item.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.08]"
             style={{ filter: design.effects.imageFilter !== "none" ? design.effects.imageFilter : undefined }}
             loading="lazy"
           />
@@ -107,7 +110,31 @@ function MenuItemCardInner({
       {/* Content */}
       <div className="flex flex-1 flex-col p-4">
         <div className="mb-2 flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            {/* #3 Image Peek — circular preview on hover (no-image cards only) */}
+            {!showImage && item.image && (
+              <AnimatePresence>
+                {isHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10, scale: 0.8 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -10, scale: 0.8 }}
+                    transition={{ duration: 0.2 }}
+                    className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full"
+                    style={{ border: `2px solid ${palette.menuCardBorder}` }}
+                  >
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                      loading="lazy"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
             <h3 className="text-lg font-semibold leading-tight" style={{ color: palette.text }}>
               {item.name}
             </h3>

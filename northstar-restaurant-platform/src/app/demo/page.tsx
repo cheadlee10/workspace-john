@@ -16,6 +16,8 @@ import { CartDrawerWrapper } from "@/components/ordering/CartDrawerWrapper";
 import { FloatingOrderCTA } from "@/components/ordering/FloatingOrderCTA";
 import { CommissionSavingsCalc } from "@/components/demo/CommissionSavingsCalc";
 import { SectionDivider } from "@/components/design/SectionDivider";
+import { SectionReveal } from "@/components/design/SectionReveal";
+import { FooterWave } from "@/components/design/FooterWave";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -86,7 +88,11 @@ export default async function DemoPage() {
       <main>
         {design.layout.sectionOrder.map((sectionId, index) => (
           <Fragment key={sectionId}>
-            {sectionMap[sectionId]}
+            {sectionId === "hero" ? (
+              sectionMap[sectionId]
+            ) : (
+              <SectionReveal>{sectionMap[sectionId]}</SectionReveal>
+            )}
             {index < design.layout.sectionOrder.length - 1 && sectionId !== "hero" && (
               <SectionDivider />
             )}
@@ -96,6 +102,7 @@ export default async function DemoPage() {
 
       <CartDrawerWrapper restaurant={restaurant} />
       <CommissionSavingsCalc accentColor={design.palette.accent} />
+      <FooterWave />
       <Footer restaurant={restaurant} />
 
       <div className="h-20 md:hidden" />

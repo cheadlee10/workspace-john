@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import type { Restaurant } from "@/types/restaurant";
 import { isOpen } from "@/lib/utils";
-import { useDesign } from "@/components/design/DesignProvider";
+import { useDesign, isDarkMood } from "@/components/design/DesignProvider";
 
 interface RestaurantHeroProps {
   restaurant: Restaurant;
@@ -15,44 +16,52 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
   const openStatus = isOpen(hours);
   const design = useDesign();
   const { palette, effects } = design;
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const dark = isDarkMood(design);
 
   const animDuration = effects.animationSpeed === "subtle" ? 1.0 : effects.animationSpeed === "energetic" ? 0.6 : 0.8;
 
+  // #6 Staggered hero elements
+  const stagger = (i: number) => ({ delay: i * 0.25 });
+
   return (
     <section className="relative min-h-[85vh] overflow-hidden" aria-label={`${name} hero`}>
-      {/* Background Image */}
-      {branding.heroImage && (
-        <Image
-          src={branding.heroImage}
-          alt={`${name} restaurant`}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-          quality={85}
-          style={{ filter: effects.imageFilter !== "none" ? effects.imageFilter : undefined }}
-        />
+      {/* #11 Loading Shimmer */}
+      {branding.heroImage && !imageLoaded && (
+        <div className="hero-shimmer absolute inset-0" style={{ backgroundColor: palette.background }} />
       )}
 
-      {/* Gradient Overlay — uses design engine palette */}
+      {/* #1 Ken Burns Background Image */}
+      {branding.heroImage && (
+        <div className="absolute inset-0 hero-ken-burns">
+          <Image
+            src={branding.heroImage}
+            alt={`${name} restaurant`}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+            quality={85}
+            style={{ filter: effects.imageFilter !== "none" ? effects.imageFilter : undefined }}
+            onLoad={() => setImageLoaded(true)}
+          />
+        </div>
+      )}
+
+      {/* Gradient Overlay */}
       <div
         className="absolute inset-0"
         style={{ background: palette.heroOverlay }}
       />
 
-      {/* Content */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: animDuration, ease: "easeOut" }}
-        className="relative z-10 flex min-h-[85vh] flex-col items-center justify-end px-4 pb-16 text-center sm:px-6"
-      >
-        {/* Logo */}
+      {/* Content — #6 staggered reveals */}
+      <div className="relative z-10 flex min-h-[85vh] flex-col items-center justify-end px-4 pb-16 text-center sm:px-6">
+        {/* Logo — stagger 0 */}
         {branding.logo && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: animDuration * 0.75 }}
+            transition={{ duration: animDuration * 0.75, ...stagger(0) }}
             className="mb-6"
           >
             <Image
@@ -66,33 +75,39 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           </motion.div>
         )}
 
-        {/* Restaurant Name */}
+        {/* #5 Gradient Text on Hero Heading — stagger 1 */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, delay: 0.1 }}
-          className="mb-4 text-4xl font-bold tracking-tight text-white drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl"
+          transition={{ duration: animDuration * 0.75, ...stagger(1) }}
+          className="mb-4 text-4xl font-bold tracking-tight drop-shadow-lg sm:text-5xl md:text-6xl lg:text-7xl"
+          style={dark ? {
+            background: `linear-gradient(135deg, #ffffff 0%, ${palette.accent} 100%)`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          } : { color: "#ffffff" }}
         >
           {name}
         </motion.h1>
 
-        {/* Tagline */}
+        {/* Tagline — stagger 2 */}
         {tagline && (
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: animDuration * 0.75, delay: 0.2 }}
+            transition={{ duration: animDuration * 0.75, ...stagger(2) }}
             className="mb-6 max-w-lg text-lg font-light text-white/90 sm:text-xl"
           >
             {tagline}
           </motion.p>
         )}
 
-        {/* Open/Closed Badge */}
+        {/* Open/Closed Badge — stagger 2.5 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, delay: 0.3 }}
+          transition={{ duration: animDuration * 0.75, ...stagger(2.5) }}
           className="mb-8"
         >
           <div
@@ -112,11 +127,11 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           </div>
         </motion.div>
 
-        {/* CTA Buttons */}
+        {/* CTA Buttons — stagger 3 + #9 CTA glow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, delay: 0.4 }}
+          transition={{ duration: animDuration * 0.75, ...stagger(3) }}
           className="flex flex-col gap-3 sm:flex-row sm:gap-4"
         >
           <a
@@ -131,18 +146,17 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           </a>
 
           {features.onlineOrdering && (
-            <motion.a
+            <a
               href="#order"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110"
+              className="cta-glow inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110 active:scale-[0.98]"
               style={{
                 backgroundColor: palette.accent,
                 borderRadius: design.layout.cornerRadius,
-              }}
+                "--glow-color": palette.accent,
+              } as React.CSSProperties}
             >
               Order Now
-            </motion.a>
+            </a>
           )}
 
           {features.reservations && (
@@ -172,13 +186,13 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
             Call Us
           </a>
         </motion.div>
-      </motion.div>
+      </div>
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator — stagger 4 */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.6 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
         className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2"
       >
         <motion.div

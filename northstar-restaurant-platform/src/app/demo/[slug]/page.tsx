@@ -13,6 +13,8 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawerWrapper } from "@/components/ordering/CartDrawerWrapper";
 import { SectionDivider } from "@/components/design/SectionDivider";
+import { SectionReveal } from "@/components/design/SectionReveal";
+import { FooterWave } from "@/components/design/FooterWave";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -77,7 +79,11 @@ export default async function DemoBySlugPage({ params }: { params: Promise<{ slu
       <main>
         {design.layout.sectionOrder.map((sectionId, index) => (
           <Fragment key={sectionId}>
-            {sectionMap[sectionId]}
+            {sectionId === "hero" ? (
+              sectionMap[sectionId]
+            ) : (
+              <SectionReveal>{sectionMap[sectionId]}</SectionReveal>
+            )}
             {index < design.layout.sectionOrder.length - 1 && sectionId !== "hero" && (
               <SectionDivider />
             )}
@@ -85,6 +91,7 @@ export default async function DemoBySlugPage({ params }: { params: Promise<{ slu
         ))}
       </main>
       <CartDrawerWrapper restaurant={restaurant} />
+      <FooterWave />
       <Footer restaurant={restaurant} />
     </DesignProvider>
   );

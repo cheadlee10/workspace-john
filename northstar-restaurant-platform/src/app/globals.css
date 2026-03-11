@@ -183,3 +183,45 @@
   position: relative;
   z-index: 1;
 }
+
+/* ─── #10 Smooth Scroll with Nav Offset ──────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+/* ─── #1 Ken Burns Hero Effect ───────────────────────────────────────────── */
+@keyframes kenBurns {
+  from { transform: scale(1) translate(0, 0); }
+  to { transform: scale(1.1) translate(-2%, -1%); }
+}
+.hero-ken-burns {
+  animation: kenBurns 20s ease-in-out infinite alternate;
+}
+
+/* ─── #11 Loading Shimmer ────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.hero-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ─── #9 CTA Glow Pulse ─────────────────────────────────────────────────── */
+@keyframes ctaGlow {
+  0%, 100% { box-shadow: 0 0 20px color-mix(in srgb, var(--glow-color, #f59e0b) 30%, transparent); }
+  50% { box-shadow: 0 0 25px color-mix(in srgb, var(--glow-color, #f59e0b) 45%, transparent); }
+}
+.cta-glow {
+  animation: ctaGlow 2s ease-in-out infinite;
+}

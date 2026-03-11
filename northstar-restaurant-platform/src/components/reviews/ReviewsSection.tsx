@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 import type { ReviewSummary } from "@/types/restaurant";
 import { useDesign } from "@/components/design/DesignProvider";
@@ -10,6 +11,39 @@ interface ReviewsSectionProps {
   restaurantName: string;
   accentColor?: string;
   googlePlaceId?: string;
+}
+
+// #2 Animated number counter hook
+function useAnimatedNumber(target: number, decimals: number, inView: boolean) {
+  const [display, setDisplay] = useState(0);
+  const rafRef = useRef<number>(0);
+
+  const animate = useCallback(() => {
+    const duration = 1500;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(parseFloat((target * eased).toFixed(decimals)));
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [target, decimals]);
+
+  useEffect(() => {
+    if (!inView) return;
+    const cleanup = animate();
+    return cleanup;
+  }, [inView, animate]);
+
+  return display;
 }
 
 function StarRating({ rating, size = "md" }: { rating: number; size?: "sm" | "md" | "lg" }) {
@@ -61,6 +95,12 @@ export function ReviewsSection({
   const accent = accentColor || palette.accent;
   const animDelay = design.effects.animationSpeed === "energetic" ? 0.1 : design.effects.animationSpeed === "subtle" ? 0.2 : 0.15;
 
+  // #2 Counter animation
+  const counterRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(counterRef, { once: true, margin: "-100px" });
+  const animatedRating = useAnimatedNumber(reviews.averageRating, 1, inView);
+  const animatedCount = useAnimatedNumber(reviews.totalReviews, 0, inView);
+
   return (
     <section
       id="reviews"
@@ -86,20 +126,21 @@ export function ReviewsSection({
           />
         </motion.div>
 
-        {/* Aggregate Rating */}
+        {/* Aggregate Rating — #2 animated counters */}
         <motion.div
+          ref={counterRef}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mb-12 flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-12"
         >
           <div className="text-center">
-            <div className="mb-1 text-5xl font-bold" style={{ color: palette.text }}>
-              {reviews.averageRating.toFixed(1)}
+            <div className="mb-1 text-5xl font-bold tabular-nums" style={{ color: palette.text }}>
+              {animatedRating.toFixed(1)}
             </div>
             <StarRating rating={reviews.averageRating} size="lg" />
             <p className="mt-1 text-sm" style={{ color: palette.textMuted }}>
-              {reviews.totalReviews.toLocaleString()} reviews
+              {animatedCount.toLocaleString()} reviews
             </p>
           </div>
 
@@ -131,9 +172,11 @@ export function ReviewsSection({
           </div>
         </motion.div>
 
-        {/* Featured Reviews */}
+        {/* Featured Reviews (demo-safe: 4+ stars only) */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {reviews.featuredReviews.map((review, index) => (
+          {reviews.featuredReviews
+            .filter((review) => review.rating >= 4)
+            .map((review, index) => (
             <motion.div
               key={`${review.source}-${review.author}-${index}`}
               initial={{ opacity: 0, y: 20 }}
