@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const r = await resolveRestaurant(host);
 
   const title = `${r.name} | ${r.tagline || r.cuisine.join(", ")} in ${r.location.city}`;
-  const description = r.description || `${r.cuisine.join(", ")} in ${r.location.city}, ${r.location.state}. Order online or reserve a table.`;
+  const description = r.description || `${r.cuisine.join(", ")} in ${r.location.city}, ${r.location.state}. ${r.features.reservations ? "Order online or reserve a table." : "Order online for pickup or delivery."}`;
 
   return {
     title,
@@ -45,6 +45,8 @@ export default async function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://maps.googleapis.com" />
       </head>
