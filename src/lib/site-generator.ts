@@ -100,7 +100,7 @@ export function generateRestaurantConfig(data: ScrapedRestaurantData): Restauran
       tier: "growth",
       onlineOrdering: true,
       loyaltyProgram: false,
-      reservations: restaurantType !== "food-truck" && restaurantType !== "fast-casual",
+      reservations: restaurantType === "fine-dining" || restaurantType === "casual-dining", // default off for most outreach demos
       giftCards: false,
       emailMarketing: false,
       smsMarketing: false,
@@ -161,83 +161,88 @@ function detectRestaurantType(data: ScrapedRestaurantData): RestaurantType {
   return "casual-dining";
 }
 
+/**
+ * Cuisine-specific theme mapping.
+ * Auto-detects from cuisine type and applies unique branding.
+ */
+export interface CuisineTheme {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  fontHeading: string;
+}
+
+export const cuisineThemes: Record<string, CuisineTheme> = {
+  mediterranean: { primaryColor: "#D97706", secondaryColor: "#C2410C", accentColor: "#D97706", fontHeading: "Georgia, serif" },
+  french:        { primaryColor: "#D97706", secondaryColor: "#C2410C", accentColor: "#D97706", fontHeading: "Georgia, serif" },
+  japanese:      { primaryColor: "#1a1a2e", secondaryColor: "#DC2626", accentColor: "#DC2626", fontHeading: "system-ui, sans-serif" },
+  korean:        { primaryColor: "#1a1a2e", secondaryColor: "#DC2626", accentColor: "#DC2626", fontHeading: "system-ui, sans-serif" },
+  chinese:       { primaryColor: "#1a1a2e", secondaryColor: "#DC2626", accentColor: "#DC2626", fontHeading: "system-ui, sans-serif" },
+  vietnamese:    { primaryColor: "#1a1a2e", secondaryColor: "#DC2626", accentColor: "#DC2626", fontHeading: "system-ui, sans-serif" },
+  thai:          { primaryColor: "#581C87", secondaryColor: "#D97706", accentColor: "#D97706", fontHeading: "system-ui, sans-serif" },
+  indian:        { primaryColor: "#581C87", secondaryColor: "#D97706", accentColor: "#D97706", fontHeading: "system-ui, sans-serif" },
+  mexican:       { primaryColor: "#B45309", secondaryColor: "#065F46", accentColor: "#B45309", fontHeading: "system-ui, sans-serif" },
+  italian:       { primaryColor: "#991B1B", secondaryColor: "#FFFBEB", accentColor: "#991B1B", fontHeading: "Georgia, serif" },
+  bbq:           { primaryColor: "#292524", secondaryColor: "#EA580C", accentColor: "#EA580C", fontHeading: "'Oswald', system-ui, sans-serif" },
+  american:      { primaryColor: "#292524", secondaryColor: "#EA580C", accentColor: "#EA580C", fontHeading: "'Oswald', system-ui, sans-serif" },
+  seafood:       { primaryColor: "#0F766E", secondaryColor: "#374151", accentColor: "#0F766E", fontHeading: "system-ui, sans-serif" },
+  vegan:         { primaryColor: "#065F46", secondaryColor: "#374151", accentColor: "#065F46", fontHeading: "system-ui, sans-serif" },
+  fusion:        { primaryColor: "#0F766E", secondaryColor: "#374151", accentColor: "#0F766E", fontHeading: "system-ui, sans-serif" },
+  other:         { primaryColor: "#0F766E", secondaryColor: "#374151", accentColor: "#0F766E", fontHeading: "system-ui, sans-serif" },
+};
+
+/**
+ * Resolve cuisine theme from a cuisine type string.
+ */
+export function getCuisineTheme(cuisine: string): CuisineTheme {
+  return cuisineThemes[cuisine] || cuisineThemes.other;
+}
+
 function generateBranding(
   cuisine: CuisineType,
   type: RestaurantType,
   priceLevel?: number
 ): Restaurant["branding"] {
-  // Color palettes optimized for appetite and cuisine type
-  const palettes: Record<string, Partial<Restaurant["branding"]>> = {
-    japanese: {
-      primaryColor: "#1a1a2e",
-      secondaryColor: "#16213e",
-      accentColor: "#c0392b",
-    },
-    italian: {
-      primaryColor: "#2c1810",
-      secondaryColor: "#4a2c1a",
-      accentColor: "#c0392b",
-    },
-    mexican: {
-      primaryColor: "#1a1a2e",
-      secondaryColor: "#2d3436",
-      accentColor: "#e17055",
-    },
-    thai: {
-      primaryColor: "#2d3436",
-      secondaryColor: "#1e272e",
-      accentColor: "#f39c12",
-    },
-    indian: {
-      primaryColor: "#2c1810",
-      secondaryColor: "#3d2317",
-      accentColor: "#e67e22",
-    },
-    mediterranean: {
-      primaryColor: "#1a3a4a",
-      secondaryColor: "#2d5a6a",
-      accentColor: "#3498db",
-    },
-    bbq: {
-      primaryColor: "#1a1a1a",
-      secondaryColor: "#2d2d2d",
-      accentColor: "#d35400",
-    },
-    vegan: {
-      primaryColor: "#1a3a2a",
-      secondaryColor: "#2d4a3a",
-      accentColor: "#27ae60",
-    },
-    default: {
-      primaryColor: "#1a1a2e",
-      secondaryColor: "#2d3436",
-      accentColor: "#D4A574",
-    },
-  };
+  const theme = getCuisineTheme(cuisine);
 
-  const palette = palettes[cuisine] || palettes.default;
-
-  // Fine dining gets dark, elegant treatment
+  // Fine dining gets dark, elegant treatment with serif headings
   if (type === "fine-dining" || (priceLevel && priceLevel >= 3)) {
     return {
-      ...palette,
       primaryColor: "#0a0a0a",
+      secondaryColor: theme.secondaryColor,
+      accentColor: theme.accentColor,
       backgroundColor: "#ffffff",
       textColor: "#0a0a0a",
       fontHeading: "Georgia, 'Times New Roman', serif",
       fontBody: "system-ui, sans-serif",
       template: type,
-    } as Restaurant["branding"];
+    };
+  }
+
+  // Cafe/bakery gets warm cream background
+  if (type === "cafe-bakery") {
+    return {
+      primaryColor: theme.primaryColor,
+      secondaryColor: theme.secondaryColor,
+      accentColor: "#d97706",
+      backgroundColor: "#FDF6EC",
+      textColor: "#3c2415",
+      fontHeading: "'Lora', Georgia, serif",
+      fontBody: "system-ui, sans-serif",
+      template: type,
+    };
   }
 
   return {
-    ...palette,
+    primaryColor: theme.primaryColor,
+    secondaryColor: theme.secondaryColor,
+    accentColor: theme.accentColor,
     backgroundColor: "#ffffff",
     textColor: "#1a1a2e",
-    fontHeading: "system-ui, sans-serif",
+    fontHeading: theme.fontHeading,
     fontBody: "system-ui, sans-serif",
     template: type,
-  } as Restaurant["branding"];
+  };
 }
 
 function generateTagline(name: string, cuisine: CuisineType, city: string): string {

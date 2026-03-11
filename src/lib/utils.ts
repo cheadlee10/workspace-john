@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatPrice(price: number): string {
-  return `$${price.toFixed(2)}`;
+  return price.toFixed(2);
 }
 
 export function slugify(text: string): string {
