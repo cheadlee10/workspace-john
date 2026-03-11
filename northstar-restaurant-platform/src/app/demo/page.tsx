@@ -11,6 +11,7 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawerWrapper } from "@/components/ordering/CartDrawerWrapper";
 import { FloatingOrderCTA } from "@/components/ordering/FloatingOrderCTA";
+import { CommissionSavingsCalc } from "@/components/demo/CommissionSavingsCalc";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -78,6 +79,10 @@ export default async function DemoPage() {
       </main>
 
       <CartDrawerWrapper restaurant={restaurant} />
+
+      {/* Commission savings calculator — demo/prospect pages only */}
+      <CommissionSavingsCalc accentColor={restaurant.branding.accentColor} />
+
       <Footer restaurant={restaurant} />
 
       {/* Bottom padding for floating mobile CTA */}
