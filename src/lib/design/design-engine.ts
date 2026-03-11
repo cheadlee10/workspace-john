@@ -116,19 +116,23 @@ interface VibeKeywords {
   isStreet: boolean;
   isCoffee: boolean;
   isBakery: boolean;
+  isSweetBakery: boolean;
 }
 
 function detectVibeKeywords(restaurant: Restaurant): VibeKeywords {
   const text = `${restaurant.name} ${restaurant.description}`.toLowerCase();
+  const isBakery = /\b(bakery|baker|pastry|cinnamon|donut|bread|cake|cupcake|patisserie|croissant|roll co)\b/.test(text);
+  const isSweetBakery = /\b(cinnamon|donut|cupcake|cookie|candy|sweet|roll co|sugar)\b/.test(text);
   return {
     isCozy: /\b(cozy|warm|homey|comfort|intimate|snug)\b/.test(text),
     isUpscale: /\b(upscale|premium|elegant|sophisticated|luxury|fine)\b/.test(text),
     isFamily: /\b(family|kids|friendly|casual|neighborhood)\b/.test(text),
     isCraft: /\b(craft|artisan|handmade|hand-crafted|small-batch|curated)\b/.test(text),
     isFast: /\b(fast|quick|express|grab)\b/.test(text),
-    isStreet: /\b(street|cart|stall|stand)\b/.test(text),
+    isStreet: /\b(street|streetfood|cart|stall|stand)\b/.test(text),
     isCoffee: /\b(coffee|espresso|roast|latte|brew|café|cafe)\b/.test(text),
-    isBakery: /\b(bakery|baker|pastry|cinnamon|donut|bread|cake|cupcake|patisserie|croissant|roll co)\b/.test(text),
+    isBakery,
+    isSweetBakery,
   };
 }
 
@@ -289,6 +293,28 @@ function generatePalette(
     }
 
     case "warm-cozy": {
+      // Sweet bakery (cinnamon rolls, donuts, cupcakes) — peachy warmth
+      if (keywords.isSweetBakery) {
+        return {
+          background: "#FFF5F0",
+          surface: "#FFFFFF",
+          surfaceAlt: "#FFEDE4",
+          text: "#4a2012",
+          textMuted: "#9B7A6B",
+          accent: "#E8734A",
+          accentHover: "#D4613A",
+          heroOverlay:
+            "linear-gradient(to top, rgba(74,32,18,0.88), rgba(74,32,18,0.4), rgba(74,32,18,0.1))",
+          navBackground: "rgba(255,245,240,0.95)",
+          footerBackground: "#4a2012",
+          footerText: "#F5D6C8",
+          menuCardBg: "#FFFFFF",
+          menuCardBorder: "#F0DDD4",
+          reviewSectionBg: "#FFEDE4",
+        };
+      }
+
+      // Artisan bakery / cafe — cream warmth
       if (keywords.isBakery || type === "cafe-bakery") {
         return {
           background: "#FDF6EC",
@@ -576,6 +602,16 @@ function generateFonts(
     };
   }
 
+  if (keywords.isSweetBakery) {
+    return {
+      heading: "Fraunces",
+      body: "Nunito",
+      menu: "Nunito",
+      weight: { heading: 600, body: 400 },
+      style: "serif",
+    };
+  }
+
   if (keywords.isBakery || type === "cafe-bakery") {
     return {
       heading: "Playfair Display",
@@ -699,7 +735,8 @@ function generateLayout(
 
   // Corner radius
   let cornerRadius = "8px";
-  if (keywords.isBakery || type === "cafe-bakery") cornerRadius = "16px";
+  if (keywords.isSweetBakery) cornerRadius = "20px";
+  else if (keywords.isBakery || type === "cafe-bakery") cornerRadius = "16px";
   else if (priceLevel >= 4) cornerRadius = "0px";
   else if (priceLevel === 3) cornerRadius = "4px";
 
