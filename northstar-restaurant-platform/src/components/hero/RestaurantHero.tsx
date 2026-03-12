@@ -59,15 +59,16 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         {/* Branding: logo OR text wordmark, never both */}
         {branding.logo ? (
           <motion.img
-            src={branding.logo}
+            src={branding.logo.includes("res.cloudinary.com")
+              ? branding.logo.replace("/image/upload/", "/image/upload/e_background_removal/")
+              : branding.logo}
             alt={name}
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: animDuration * 0.75, ...stagger(0) }}
             className="mb-4 h-auto w-[220px] max-w-[70vw] object-contain sm:w-[280px] md:w-[340px]"
             style={{
-              mixBlendMode: dark ? "screen" : "multiply",
-              filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.4))",
+              filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
             }}
           />
         ) : (
