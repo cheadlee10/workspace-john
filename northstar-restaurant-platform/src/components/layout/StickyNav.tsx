@@ -65,7 +65,7 @@ export function StickyNav({ restaurant }: StickyNavProps) {
                   ? restaurant.branding.logo.replace("/image/upload/", "/image/upload/e_background_removal/")
                   : restaurant.branding.logo}
                 alt={`${name} logo`}
-                className="h-8 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
             )}
             {name}

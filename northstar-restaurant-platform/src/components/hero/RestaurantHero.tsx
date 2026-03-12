@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import type { Restaurant } from "@/types/restaurant";
 import { isOpen } from "@/lib/utils";
-import { useDesign, isDarkMood } from "@/components/design/DesignProvider";
+import { useDesign } from "@/components/design/DesignProvider";
 
 interface RestaurantHeroProps {
   restaurant: Restaurant;
@@ -17,21 +17,18 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
   const design = useDesign();
   const { palette, effects } = design;
   const [imageLoaded, setImageLoaded] = useState(false);
-  const dark = isDarkMood(design);
 
   const animDuration = effects.animationSpeed === "subtle" ? 1.0 : effects.animationSpeed === "energetic" ? 0.6 : 0.8;
-
-  // #6 Staggered hero elements
   const stagger = (i: number) => ({ delay: i * 0.25 });
 
   return (
     <section className="relative min-h-[70vh] overflow-hidden md:min-h-screen" aria-label={`${name} hero`}>
-      {/* #11 Loading Shimmer */}
+      {/* Loading Shimmer */}
       {branding.heroImage && !imageLoaded && (
         <div className="hero-shimmer absolute inset-0" style={{ backgroundColor: palette.background }} />
       )}
 
-      {/* #1 Ken Burns Background Image */}
+      {/* Ken Burns Background Image */}
       {branding.heroImage && (
         <div className="absolute inset-0 hero-ken-burns">
           <Image
@@ -48,45 +45,24 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         </div>
       )}
 
-      {/* Gradient Overlay */}
-      <div
-        className="absolute inset-0"
-        style={{ background: palette.heroOverlay }}
-      />
+      {/* Dark overlay — solid enough for white text to read on any photo */}
+      <div className="absolute inset-0 bg-black/55" />
 
-      {/* Content — #6 staggered reveals */}
+      {/* Content */}
       <div className="relative z-10 flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6 md:min-h-screen">
-        {/* Branding: logo OR text wordmark, never both */}
-        {branding.logo ? (
-          <motion.img
-            src={branding.logo.includes("res.cloudinary.com")
-              ? branding.logo.replace("/image/upload/", "/image/upload/e_background_removal/")
-              : branding.logo}
-            alt={name}
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: animDuration * 0.75, ...stagger(0) }}
-            className="mb-4 h-auto w-[220px] max-w-[70vw] object-contain sm:w-[280px] md:w-[340px]"
-            style={{
-              filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.5))",
-            }}
-          />
-        ) : (
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: animDuration * 0.75, ...stagger(0) }}
-            className="mb-2 text-5xl font-bold tracking-tight drop-shadow-lg sm:text-6xl md:text-7xl lg:text-8xl"
-            style={dark ? {
-              background: `linear-gradient(135deg, #ffffff 0%, ${palette.accent} 100%)`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            } : { color: "#ffffff" }}
-          >
-            {name}
-          </motion.h1>
-        )}
+        {/* Restaurant name — large styled text wordmark, no logo image */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: animDuration * 0.75, ...stagger(0) }}
+          className="mb-2 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+          style={{
+            color: "#ffffff",
+            textShadow: "0 2px 20px rgba(0,0,0,0.5)",
+          }}
+        >
+          {name}
+        </motion.h1>
 
         {/* Tagline */}
         {tagline && (
@@ -124,7 +100,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           </div>
         </motion.div>
 
-        {/* CTA Buttons + #9 CTA glow */}
+        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -185,7 +161,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         </motion.div>
       </div>
 
-      {/* Scroll Indicator — stagger 3 */}
+      {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

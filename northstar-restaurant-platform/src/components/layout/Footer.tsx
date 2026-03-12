@@ -28,9 +28,11 @@ export function Footer({ restaurant }: FooterProps) {
           <div>
             {restaurant.branding.logo && (
               <img
-                src={restaurant.branding.logo}
+                src={restaurant.branding.logo.includes("res.cloudinary.com")
+                  ? restaurant.branding.logo.replace("/image/upload/", "/image/upload/e_background_removal/")
+                  : restaurant.branding.logo}
                 alt={`${name} logo`}
-                className="mb-3 h-10 w-auto object-contain brightness-0 invert"
+                className="mb-3 h-20 w-auto object-contain brightness-0 invert"
               />
             )}
             <h3 className="mb-4 text-xl font-bold" style={{ color: palette.footerText }}>{name}</h3>
