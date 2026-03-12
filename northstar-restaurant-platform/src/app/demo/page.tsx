@@ -18,6 +18,7 @@ import { CommissionSavingsCalc } from "@/components/demo/CommissionSavingsCalc";
 import { SectionDivider } from "@/components/design/SectionDivider";
 import { SectionReveal } from "@/components/design/SectionReveal";
 import { FooterWave } from "@/components/design/FooterWave";
+import { BrandBar } from "@/components/design/BrandBar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -89,7 +90,10 @@ export default async function DemoPage() {
         {design.layout.sectionOrder.map((sectionId, index) => (
           <Fragment key={sectionId}>
             {sectionId === "hero" ? (
-              sectionMap[sectionId]
+              <>
+                {sectionMap[sectionId]}
+                <BrandBar logoUrl={restaurant.branding.logo} />
+              </>
             ) : (
               <SectionReveal>{sectionMap[sectionId]}</SectionReveal>
             )}

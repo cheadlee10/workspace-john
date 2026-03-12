@@ -15,6 +15,7 @@ import { CartDrawerWrapper } from "@/components/ordering/CartDrawerWrapper";
 import { SectionDivider } from "@/components/design/SectionDivider";
 import { SectionReveal } from "@/components/design/SectionReveal";
 import { FooterWave } from "@/components/design/FooterWave";
+import { BrandBar } from "@/components/design/BrandBar";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -80,7 +81,10 @@ export default async function DemoBySlugPage({ params }: { params: Promise<{ slu
         {design.layout.sectionOrder.map((sectionId, index) => (
           <Fragment key={sectionId}>
             {sectionId === "hero" ? (
-              sectionMap[sectionId]
+              <>
+                {sectionMap[sectionId]}
+                <BrandBar logoUrl={restaurant.branding.logo} />
+              </>
             ) : (
               <SectionReveal>{sectionMap[sectionId]}</SectionReveal>
             )}
