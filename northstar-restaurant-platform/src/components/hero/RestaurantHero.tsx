@@ -1,11 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import type { Restaurant } from "@/types/restaurant";
 import { isOpen } from "@/lib/utils";
 import { useDesign } from "@/components/design/DesignProvider";
+
+function addBgRemoval(url: string): string {
+  const isSvg = /\.svg(\?|$)/i.test(url);
+  if (url.includes("res.cloudinary.com") && !isSvg) {
+    return url.replace("/image/upload/", "/image/upload/e_background_removal/");
+  }
+  return url;
+}
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return isMobile;
+}
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+}
+
+/** Build Cloudinary-optimized video URL for the given viewport */
+function optimizedVideoUrl(url: string, mobile: boolean): string {
+  if (!url.includes("res.cloudinary.com")) return url;
+  const width = mobile ? "w_640" : "w_1280";
+  return url.replace("/video/upload/", `/video/upload/q_auto,f_auto,${width}/`);
+}
 
 interface RestaurantHeroProps {
   restaurant: Restaurant;
@@ -16,23 +55,69 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
   const openStatus = isOpen(hours);
   const design = useDesign();
   const { palette, effects } = design;
+
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+  const [mobilePlayRequested, setMobilePlayRequested] = useState(false);
+
+  const isMobile = useIsMobile();
+  const reducedMotion = useReducedMotion();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const heroRef = useRef<HTMLSectionElement>(null);
+
+  const heroVideo = branding.heroVideo;
+  const posterUrl = branding.heroVideoPoster || branding.heroImage;
+  const showVideo = heroVideo && !reducedMotion && (!isMobile || mobilePlayRequested);
+
+  // IntersectionObserver: pause/resume video when scrolled out of view
+  useEffect(() => {
+    const video = videoRef.current;
+    const hero = heroRef.current;
+    if (!video || !hero) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [showVideo]);
+
+  // Logo overlay for video loop outro (Commit 5)
+  const [showLogoOverlay, setShowLogoOverlay] = useState(false);
+  const handleTimeUpdate = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || !video.duration) return;
+    const timeRemaining = video.duration - video.currentTime;
+    setShowLogoOverlay(timeRemaining < 1.5);
+  }, []);
 
   const animDuration = effects.animationSpeed === "subtle" ? 1.0 : effects.animationSpeed === "energetic" ? 0.6 : 0.8;
   const stagger = (i: number) => ({ delay: i * 0.25 });
 
   return (
-    <section className="relative min-h-[70vh] overflow-hidden md:min-h-screen" aria-label={`${name} hero`}>
+    <section ref={heroRef} className="relative min-h-[70vh] overflow-hidden md:min-h-screen" aria-label={`${name} hero`}>
       {/* Loading Shimmer */}
-      {branding.heroImage && !imageLoaded && (
+      {(branding.heroImage || posterUrl) && !imageLoaded && !videoReady && (
         <div className="hero-shimmer absolute inset-0" style={{ backgroundColor: palette.background }} />
       )}
 
-      {/* Ken Burns Background Image */}
-      {branding.heroImage && (
-        <div className="absolute inset-0 hero-ken-burns">
+      {/* Poster / Ken Burns Background Image — always present, fades out when video ready */}
+      {posterUrl && (
+        <div
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            videoReady ? "opacity-0" : "opacity-100"
+          } ${!reducedMotion && !videoReady ? "hero-ken-burns" : ""}`}
+        >
           <Image
-            src={branding.heroImage}
+            src={posterUrl}
             alt={`${name} restaurant`}
             fill
             priority
@@ -45,12 +130,70 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         </div>
       )}
 
-      {/* Dark overlay — solid enough for white text to read on any photo */}
-      <div className="absolute inset-0 bg-black/55" />
+      {/* Background Video — desktop auto, mobile on tap */}
+      {showVideo && (
+        <video
+          ref={videoRef}
+          src={optimizedVideoUrl(heroVideo, isMobile)}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          onCanPlay={() => setVideoReady(true)}
+          onTimeUpdate={handleTimeUpdate}
+          onError={() => setVideoReady(false)}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+            videoReady ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      )}
+
+      {/* Mobile play button */}
+      {heroVideo && isMobile && !mobilePlayRequested && !reducedMotion && (
+        <button
+          onClick={() => setMobilePlayRequested(true)}
+          className="absolute bottom-20 right-4 z-20 flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-sm text-white backdrop-blur-sm transition-all hover:bg-black/70"
+          aria-label="Play background video"
+        >
+          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          Play Video
+        </button>
+      )}
+
+      {/* Logo outro overlay — fades in during last 1.5s of video loop */}
+      {videoReady && showLogoOverlay && branding.logo && (
+        <div className="absolute inset-0 z-[5] flex items-center justify-center">
+          <img
+            src={addBgRemoval(branding.logo)}
+            alt=""
+            aria-hidden="true"
+            className="h-auto w-[200px] object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)] transition-opacity duration-500"
+            style={{ opacity: showLogoOverlay ? 1 : 0 }}
+          />
+        </div>
+      )}
+
+      {/* Dark overlay — solid enough for white text to read on any photo/video */}
+      <div className="absolute inset-0 bg-black/55" style={{ zIndex: 6 }} />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6 md:min-h-screen">
-        {/* Restaurant name — large styled text wordmark, no logo image */}
+      <div className="relative flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6 md:min-h-screen" style={{ zIndex: 10 }}>
+        {/* Prominent logo */}
+        {branding.logo && (
+          <motion.img
+            src={addBgRemoval(branding.logo)}
+            alt={`${name} logo`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: animDuration * 0.75, ...stagger(0) }}
+            className="mb-2 h-auto w-[220px] object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)] sm:w-[280px] md:w-[340px]"
+          />
+        )}
+
+        {/* Restaurant name */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -166,7 +309,8 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.6 }}
-        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2"
+        style={{ zIndex: 10 }}
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
