@@ -104,6 +104,7 @@ export interface Branding {
   logo?: string;
   heroImage?: string;
   heroVideo?: string;
+  heroVideoPoster?: string;
   template: RestaurantType;
 }
 
