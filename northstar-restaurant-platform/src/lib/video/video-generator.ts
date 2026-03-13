@@ -76,9 +76,7 @@ const cuisineVideoPrompts: Record<string, string[]> = {
 
 function mapCuisineToPromptKey(cuisineType: string): string {
   const lower = (cuisineType || "").toLowerCase();
-  // Direct matches
   if (cuisineVideoPrompts[lower]) return lower;
-  // Fuzzy mapping
   if (lower.includes("greek") || lower.includes("gyro") || lower.includes("kebab") || lower.includes("falafel")) return "mediterranean";
   if (lower.includes("sushi") || lower.includes("ramen")) return "japanese";
   if (lower.includes("taco") || lower.includes("burrito")) return "mexican";
@@ -88,7 +86,6 @@ function mapCuisineToPromptKey(cuisineType: string): string {
   if (lower.includes("cafe") || lower.includes("bakery") || lower.includes("pastry")) return "bakery";
   if (lower.includes("coffee") || lower.includes("espresso")) return "coffee";
   if (lower.includes("pad thai") || lower.includes("thai")) return "thai";
-  if (lower.includes("seafood")) return "default";
   return "default";
 }
 
@@ -97,7 +94,6 @@ export function buildVideoPrompt(config: VideoGenerationConfig): string {
   const prompts = cuisineVideoPrompts[key] || cuisineVideoPrompts.default;
   const pick = prompts[Math.floor(Math.random() * prompts.length)];
 
-  // Inject top menu items for specificity if available
   if (config.topMenuItems.length > 0) {
     const dishes = config.topMenuItems.slice(0, 3).join(", ");
     return `${pick} The restaurant "${config.restaurantName}" is known for: ${dishes}.`;
@@ -105,88 +101,34 @@ export function buildVideoPrompt(config: VideoGenerationConfig): string {
   return pick;
 }
 
-// --- fal.ai queue-based generation ---
+// --- fal.ai generation via SDK ---
 
-interface FalQueueResponse {
-  request_id: string;
-  status_url: string;
-  response_url: string;
+interface FalVideoResult {
+  video: { url: string; content_type: string; file_name: string; file_size: number };
 }
 
-interface FalStatusResponse {
-  status: "IN_QUEUE" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
-  response_url?: string;
-  logs?: Array<{ message: string }>;
-}
+async function generateWithFal(apiKey: string, prompt: string): Promise<FalVideoResult> {
+  // Dynamic import to support both script and Next.js contexts
+  const { fal } = await import("@fal-ai/client");
+  fal.config({ credentials: apiKey });
 
-interface FalResultResponse {
-  video: { url: string; content_type: string; file_size: number };
-}
-
-async function submitToFal(apiKey: string, prompt: string): Promise<FalQueueResponse> {
-  const res = await fetch("https://queue.fal.run/fal-ai/minimax-video/video/generate", {
-    method: "POST",
-    headers: {
-      Authorization: `Key ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt,
-      prompt_optimizer: true,
-    }),
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`fal.ai submit failed (${res.status}): ${text}`);
-  }
-
-  return res.json() as Promise<FalQueueResponse>;
-}
-
-async function pollFalStatus(apiKey: string, statusUrl: string, maxWaitMs = 300_000): Promise<string> {
   const start = Date.now();
-  const pollInterval = 5_000;
-
-  while (Date.now() - start < maxWaitMs) {
-    const res = await fetch(statusUrl, {
-      headers: { Authorization: `Key ${apiKey}` },
-    });
-
-    if (!res.ok) {
-      throw new Error(`fal.ai status check failed (${res.status})`);
-    }
-
-    const status = (await res.json()) as FalStatusResponse;
-
-    if (status.status === "COMPLETED") {
-      return status.response_url || statusUrl.replace("/status", "");
-    }
-
-    if (status.status === "FAILED") {
-      throw new Error("fal.ai video generation failed");
-    }
-
-    // Log progress
-    const elapsed = Math.round((Date.now() - start) / 1000);
-    console.log(`  [${elapsed}s] Status: ${status.status}...`);
-
-    await new Promise((r) => setTimeout(r, pollInterval));
-  }
-
-  throw new Error(`fal.ai generation timed out after ${maxWaitMs / 1000}s`);
-}
-
-async function fetchFalResult(apiKey: string, responseUrl: string): Promise<FalResultResponse> {
-  const res = await fetch(responseUrl, {
-    headers: { Authorization: `Key ${apiKey}` },
+  const result = await fal.subscribe("fal-ai/kling-video/v2/master/text-to-video", {
+    input: {
+      prompt,
+      duration: "5",
+      aspect_ratio: "16:9",
+    },
+    logs: true,
+    onQueueUpdate: (update: { status: string }) => {
+      const elapsed = Math.round((Date.now() - start) / 1000);
+      if (elapsed % 30 === 0 || update.status === "COMPLETED") {
+        console.log(`  [${elapsed}s] ${update.status}`);
+      }
+    },
   });
 
-  if (!res.ok) {
-    throw new Error(`fal.ai result fetch failed (${res.status})`);
-  }
-
-  return res.json() as Promise<FalResultResponse>;
+  return result.data as FalVideoResult;
 }
 
 // --- Cloudinary video upload ---
@@ -216,7 +158,6 @@ async function uploadVideoToCloudinary(
     public_id: publicId,
     timestamp,
     overwrite: "true",
-    resource_type: "video",
   };
   const signature = signCloudinary(params, apiSecret);
 
@@ -227,7 +168,6 @@ async function uploadVideoToCloudinary(
   form.append("folder", "northstar/videos");
   form.append("public_id", publicId);
   form.append("overwrite", "true");
-  form.append("resource_type", "video");
   form.append("signature", signature);
 
   console.log(`  Uploading video to Cloudinary as ${publicId}...`);
@@ -275,19 +215,12 @@ export async function generateVideo(config: VideoGenerationConfig): Promise<Gene
         console.log(`  Retry attempt ${attempt}/${maxRetries}...`);
       }
 
-      // 1. Submit to fal.ai queue
-      const queue = await submitToFal(config.falApiKey, prompt);
-      console.log(`  Queued: ${queue.request_id}`);
-
-      // 2. Poll until complete
-      const responseUrl = await pollFalStatus(config.falApiKey, queue.status_url);
-
-      // 3. Fetch result
-      const result = await fetchFalResult(config.falApiKey, responseUrl);
+      // 1. Generate video via fal.ai SDK
+      const result = await generateWithFal(config.falApiKey, prompt);
       console.log(`  Video generated: ${result.video.url}`);
       console.log(`  File size: ${(result.video.file_size / 1024 / 1024).toFixed(1)}MB`);
 
-      // 4. Upload to Cloudinary
+      // 2. Upload to Cloudinary
       const publicId = `${config.slug}-hero-video`;
       const cloudinary = await uploadVideoToCloudinary(result.video.url, publicId);
 
@@ -297,7 +230,7 @@ export async function generateVideo(config: VideoGenerationConfig): Promise<Gene
       return {
         videoUrl: cloudinary.videoUrl,
         posterUrl: cloudinary.posterUrl,
-        duration: 6,
+        duration: 5,
         prompt,
       };
     } catch (err) {

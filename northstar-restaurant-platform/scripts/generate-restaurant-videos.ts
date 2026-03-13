@@ -8,7 +8,10 @@
  *   npx tsx scripts/generate-restaurant-videos.ts --slug super-gyros --force
  */
 
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(__dirname, "..", ".env.local") });
 import { createClient } from "@supabase/supabase-js";
 import { generateVideo, buildVideoPrompt } from "../src/lib/video/video-generator";
 import type { Restaurant } from "../src/types/restaurant";
