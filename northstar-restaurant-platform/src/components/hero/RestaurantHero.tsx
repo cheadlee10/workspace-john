@@ -176,8 +176,8 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         </div>
       )}
 
-      {/* Dark overlay — solid enough for white text to read on any photo/video */}
-      <div className="absolute inset-0 bg-black/55" style={{ zIndex: 6 }} />
+      {/* Dark overlay — slightly stronger when video is playing to keep brand prominent */}
+      <div className={`absolute inset-0 ${videoReady ? "bg-black/60" : "bg-black/55"}`} style={{ zIndex: 6 }} />
 
       {/* Content */}
       <div className="relative flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 text-center sm:px-6 md:min-h-screen" style={{ zIndex: 10 }}>

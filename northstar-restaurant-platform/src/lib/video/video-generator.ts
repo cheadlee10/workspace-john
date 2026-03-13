@@ -74,23 +74,41 @@ const cuisineVideoPrompts: Record<string, string[]> = {
 
 // --- Prompt builder ---
 
-function mapCuisineToPromptKey(cuisineType: string): string {
+function inferFromText(text: string): string | null {
+  const t = text.toLowerCase();
+  if (t.includes("taco") || t.includes("taqueria") || t.includes("burrito") || t.includes("antojito") || t.includes("mexican")) return "mexican";
+  if (t.includes("gyro") || t.includes("falafel") || t.includes("kebab") || t.includes("greek") || t.includes("mediterranean")) return "mediterranean";
+  if (t.includes("sushi") || t.includes("ramen") || t.includes("japanese")) return "japanese";
+  if (t.includes("pizza") || t.includes("pasta") || t.includes("italian")) return "italian";
+  if (t.includes("curry") || t.includes("tandoori") || t.includes("dosa") || t.includes("indian")) return "indian";
+  if (t.includes("thai") || t.includes("pad thai")) return "thai";
+  if (t.includes("espresso") || t.includes("coffee") || t.includes("latte") || t.includes("cafe")) return "coffee";
+  if (t.includes("bakery") || t.includes("donut") || t.includes("pastry") || t.includes("cinnamon roll") || t.includes("bake ") || t.includes("sweets")) return "bakery";
+  if (t.includes("bbq") || t.includes("barbecue") || t.includes("burger") || t.includes("grill")) return "american";
+  if (t.includes("fusion") || t.includes("streetfood") || t.includes("street food")) return "default";
+  return null;
+}
+
+function mapCuisineToPromptKey(cuisineType: string, restaurantName: string): string {
   const lower = (cuisineType || "").toLowerCase();
+  // Always check restaurant name — it's more specific than generic cuisine labels
+  const fromName = inferFromText(restaurantName);
+  // If name gives a specialty match (coffee, bakery, specific cuisine), prefer it
+  if (fromName && (lower === "american" || lower === "establishment" || lower === "other" || lower === "fusion" || !cuisineVideoPrompts[lower])) {
+    return fromName;
+  }
+  // Direct match on cuisine type
   if (cuisineVideoPrompts[lower]) return lower;
-  if (lower.includes("greek") || lower.includes("gyro") || lower.includes("kebab") || lower.includes("falafel")) return "mediterranean";
-  if (lower.includes("sushi") || lower.includes("ramen")) return "japanese";
-  if (lower.includes("taco") || lower.includes("burrito")) return "mexican";
-  if (lower.includes("pizza") || lower.includes("pasta")) return "italian";
-  if (lower.includes("curry") || lower.includes("tandoori")) return "indian";
-  if (lower.includes("burger") || lower.includes("bbq") || lower.includes("barbecue")) return "american";
-  if (lower.includes("cafe") || lower.includes("bakery") || lower.includes("pastry")) return "bakery";
-  if (lower.includes("coffee") || lower.includes("espresso")) return "coffee";
-  if (lower.includes("pad thai") || lower.includes("thai")) return "thai";
+  // Try fuzzy match on cuisine type
+  const fromCuisine = inferFromText(lower);
+  if (fromCuisine) return fromCuisine;
+  // Last resort
+  if (fromName) return fromName;
   return "default";
 }
 
 export function buildVideoPrompt(config: VideoGenerationConfig): string {
-  const key = mapCuisineToPromptKey(config.cuisineType);
+  const key = mapCuisineToPromptKey(config.cuisineType, config.restaurantName);
   const prompts = cuisineVideoPrompts[key] || cuisineVideoPrompts.default;
   const pick = prompts[Math.floor(Math.random() * prompts.length)];
 
