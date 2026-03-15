@@ -49,6 +49,9 @@ export interface ScrapedRestaurantData {
   photos?: string[];
   description?: string;
   priceLevel?: number; // 1-4 ($, $$, $$$, $$$$)
+  logoUrl?: string; // Real logo URL (from logo-downloader, already on Cloudinary)
+  logoSource?: 'website-logo' | 'website-og' | 'website-favicon' | 'clearbit' | 'google-photo' | 'ai-generated';
+  menuSource?: 'website' | 'yelp' | 'generated';
 }
 
 export function generateRestaurantConfig(data: ScrapedRestaurantData): Restaurant {
@@ -56,6 +59,11 @@ export function generateRestaurantConfig(data: ScrapedRestaurantData): Restauran
   const cuisineType = detectCuisine(data.cuisineTypes || []);
   const restaurantType = detectRestaurantType(data);
   const branding = generateBranding(cuisineType, restaurantType, data.priceLevel);
+
+  // If a real logo was downloaded, use it instead of generating one
+  if (data.logoUrl) {
+    branding.logo = data.logoUrl;
+  }
 
   const menu = data.menuItems?.length
     ? buildMenuFromItems(data.menuItems)

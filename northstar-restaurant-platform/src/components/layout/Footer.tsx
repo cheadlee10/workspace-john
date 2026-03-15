@@ -9,7 +9,7 @@ interface FooterProps {
 }
 
 export function Footer({ restaurant }: FooterProps) {
-  const { name, contact, location, hours, features, socialMedia } = restaurant;
+  const { name, contact, location, hours, features, socialMedia = {} as Restaurant['socialMedia'] } = restaurant;
   const year = new Date().getFullYear();
   const design = useDesign();
   const { palette } = design;
@@ -26,15 +26,7 @@ export function Footer({ restaurant }: FooterProps) {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            {restaurant.branding.logo && (
-              <img
-                src={restaurant.branding.logo.includes("res.cloudinary.com")
-                  ? restaurant.branding.logo.replace("/image/upload/", "/image/upload/e_background_removal/")
-                  : restaurant.branding.logo}
-                alt={`${name} logo`}
-                className="mb-3 h-20 w-auto object-contain brightness-0 invert"
-              />
-            )}
+            {/* Single-logo mode: footer logo hidden */}
             <h3 className="mb-4 text-xl font-bold" style={{ color: palette.footerText }}>{name}</h3>
             <p className="mb-4 text-sm leading-relaxed" style={{ color: mutedColor }}>
               {restaurant.tagline || restaurant.description.slice(0, 120) + "..."}
@@ -162,24 +154,19 @@ export function Footer({ restaurant }: FooterProps) {
 
         {/* Bottom Bar */}
         <div className="mt-12 border-t pt-6" style={{ borderColor: `${palette.footerText}15` }}>
-          <div className="flex flex-col items-center justify-between gap-2 text-xs sm:flex-row" style={{ color: `${palette.footerText}66` }}>
+          <div className="flex items-center justify-center text-xs sm:justify-between" style={{ color: `${palette.footerText}66` }}>
             <p>
               &copy; {year} {name}. All rights reserved.
             </p>
-            <p>
-              Powered by{" "}
-              <a
-                href="https://northstarsynergy.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium transition-colors"
-                style={{ color: `${palette.footerText}99` }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = `${palette.footerText}99`; }}
-              >
-                NorthStar Synergy
-              </a>
-            </p>
+            <a
+              href="https://northstarsynergy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-3 transition-opacity hover:opacity-60"
+              style={{ color: `${palette.footerText}4D`, fontSize: "10px", letterSpacing: "0.04em" }}
+            >
+              NorthStar
+            </a>
           </div>
         </div>
       </div>
