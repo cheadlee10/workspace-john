@@ -12,6 +12,7 @@ const STAGE_LABELS: Record<LeadStage, string> = {
   proposal: "Proposal",
   close: "Closed",
   onboarding: "Onboarding",
+  onboarding_complete: "Onboarding Done",
   active: "Active",
   churned: "Churned",
 };
@@ -23,6 +24,7 @@ const STAGE_COLORS: Record<LeadStage, string> = {
   proposal: "bg-amber-200",
   close: "bg-emerald-200",
   onboarding: "bg-cyan-200",
+  onboarding_complete: "bg-teal-200",
   active: "bg-emerald-400",
   churned: "bg-red-200",
 };
@@ -39,7 +41,7 @@ export default async function DashboardPage() {
     getRecentActivities(15),
   ]);
 
-  const funnelStages: LeadStage[] = ["prospect", "outreach", "demo", "proposal", "close", "onboarding"];
+  const funnelStages: LeadStage[] = ["prospect", "outreach", "demo", "proposal", "close", "onboarding", "onboarding_complete"];
 
   return (
     <div className="p-6">

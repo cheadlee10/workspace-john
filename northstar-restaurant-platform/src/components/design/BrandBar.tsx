@@ -9,7 +9,8 @@ interface BrandBarProps {
 }
 
 function addBgRemoval(url: string): string {
-  if (url.includes("res.cloudinary.com")) {
+  const isSvg = /\.svg(\?|$)/i.test(url);
+  if (url.includes("res.cloudinary.com") && !isSvg) {
     return url.replace("/image/upload/", "/image/upload/e_background_removal/");
   }
   return url;
@@ -36,7 +37,7 @@ export function BrandBar({ logoUrl }: BrandBarProps) {
           initial={{ opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="h-auto w-[160px] object-contain md:w-[250px]"
+          className="h-auto w-[240px] object-contain md:w-[360px]"
         />
         <motion.div
           initial={{ scaleX: 0 }}

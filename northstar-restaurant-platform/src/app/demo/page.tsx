@@ -43,7 +43,7 @@ export default async function DemoPage() {
         reviews={restaurant.reviews}
         restaurantName={restaurant.name}
         accentColor={design.palette.accent}
-        googlePlaceId={restaurant.socialMedia.googlePlaceId}
+        googlePlaceId={restaurant.socialMedia?.googlePlaceId}
       />
     ) : null,
     about: <AboutSection key="about" restaurant={restaurant} />,

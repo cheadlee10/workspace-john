@@ -27,6 +27,7 @@ import {
 import { sendPostcard as lobSendPostcard, type PostcardConfig } from "./postcard-mailer";
 import { isOnDnc } from "./dnc-store";
 import { canSendToday, recordSend } from "./send-throttle";
+import { openRouterGenerateText } from "@/lib/ai/openrouter";
 
 // Pipeline stages
 export type PipelineStage =
@@ -189,12 +190,12 @@ export async function processFollowUps(
 
     // DNC check before every follow-up touch
     const dncHit = await isOnDnc(
-      prospect.restaurant.email,
-      prospect.restaurant.phone,
-      prospect.restaurant.address
+      prospect.restaurant.restaurant.email,
+      prospect.restaurant.restaurant.phone,
+      prospect.restaurant.restaurant.address
     );
     if (dncHit) {
-      console.warn(`[Pipeline] Skipping follow-up for ${prospect.restaurant.name} — on DNC list`);
+      console.warn(`[Pipeline] Skipping follow-up for ${prospect.restaurant.restaurant.name} — on DNC list`);
       prospect.nextAction = undefined;
       continue;
     }
@@ -203,7 +204,7 @@ export async function processFollowUps(
       case "followup":
         if (prospect.emailsSent === 1) {
           if (!(await canSendToday())) {
-            console.warn(`[Pipeline] Daily send limit reached — deferring follow-up for ${prospect.restaurant.name}`);
+            console.warn(`[Pipeline] Daily send limit reached — deferring follow-up for ${prospect.restaurant.restaurant.name}`);
             continue;
           }
           await sendFollowUpEmail(prospect, config);
@@ -232,7 +233,7 @@ export async function processFollowUps(
       case "email":
         if (prospect.emailsSent === 2) {
           if (!(await canSendToday())) {
-            console.warn(`[Pipeline] Daily send limit reached — deferring final email for ${prospect.restaurant.name}`);
+            console.warn(`[Pipeline] Daily send limit reached — deferring final email for ${prospect.restaurant.restaurant.name}`);
             continue;
           }
           await sendFinalEmail(prospect, config);
@@ -301,10 +302,29 @@ async function recordWalkthrough(
   return `https://stream.mux.com/demo-walkthrough.m3u8`;
 }
 
+async function generateReviewPersonalizationLine(prospect: PipelineProspect): Promise<string | undefined> {
+  try {
+    const reviews = prospect.restaurant.restaurant.reviews?.slice(0, 3) || [];
+    const reviewText = reviews.map((r) => `- ${r.text}`).join("\n");
+    if (!reviewText) return undefined;
+
+    const line = await openRouterGenerateText(
+      `Write one personalized sentence for a cold outreach email to ${prospect.restaurant.restaurant.name}. Use this customer feedback and mention one specific loved item or experience naturally. Keep it warm and concise. Reviews:\n${reviewText}`,
+      { model: "google/gemini-2.5-flash", maxTokens: 80, temperature: 0.7 }
+    );
+
+    return line.replace(/\n+/g, " ").trim();
+  } catch {
+    return undefined;
+  }
+}
+
 async function sendPitchEmail(
   prospect: PipelineProspect,
   config: PipelineConfig
 ): Promise<void> {
+  const personalizedLine = await generateReviewPersonalizationLine(prospect);
+
   const emailCtx: EmailContext = {
     restaurantName: prospect.restaurant.restaurant.name,
     city: prospect.restaurant.restaurant.city,
@@ -314,6 +334,7 @@ async function sendPitchEmail(
     googleRating: prospect.restaurant.restaurant.googleRating,
     reviewCount: prospect.restaurant.restaurant.googleReviewCount,
     cuisineType: prospect.restaurant.restaurant.cuisineTypes?.[0] || "restaurant",
+    personalizedLine,
     senderName: config.senderName,
     senderTitle: config.senderTitle,
     companyName: config.companyName,

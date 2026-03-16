@@ -11,6 +11,7 @@ const STAGES: { key: LeadStage; label: string; color: string; bg: string }[] = [
   { key: "proposal", label: "Proposal", color: "text-amber-700", bg: "bg-amber-50" },
   { key: "close", label: "Closed Won", color: "text-emerald-700", bg: "bg-emerald-50" },
   { key: "onboarding", label: "Onboarding", color: "text-cyan-700", bg: "bg-cyan-50" },
+  { key: "onboarding_complete", label: "Onboarding Done", color: "text-teal-700", bg: "bg-teal-50" },
 ];
 
 export default function PipelinePage() {

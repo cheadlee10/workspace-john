@@ -15,9 +15,12 @@ import { CartDrawerWrapper } from "@/components/ordering/CartDrawerWrapper";
 import { SectionDivider } from "@/components/design/SectionDivider";
 import { SectionReveal } from "@/components/design/SectionReveal";
 import { FooterWave } from "@/components/design/FooterWave";
-import { BrandBar } from "@/components/design/BrandBar";
+// BrandBar removed (single-logo mode)
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -55,7 +58,7 @@ export default async function DemoBySlugPage({ params }: { params: Promise<{ slu
         reviews={restaurant.reviews}
         restaurantName={restaurant.name}
         accentColor={design.palette.accent}
-        googlePlaceId={restaurant.socialMedia.googlePlaceId}
+        googlePlaceId={restaurant.socialMedia?.googlePlaceId}
       />
     ) : null,
     about: <AboutSection key="about" restaurant={restaurant} />,
@@ -83,7 +86,6 @@ export default async function DemoBySlugPage({ params }: { params: Promise<{ slu
             {sectionId === "hero" ? (
               <>
                 {sectionMap[sectionId]}
-                <BrandBar logoUrl={restaurant.branding.logo} />
               </>
             ) : (
               <SectionReveal>{sectionMap[sectionId]}</SectionReveal>

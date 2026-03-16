@@ -103,7 +103,7 @@ async function seedLeads() {
 
     const targetStage = stages[i];
     if (targetStage !== "prospect") {
-      await moveLeadToStage(lead.id, targetStage as "outreach" | "demo" | "proposal" | "close" | "onboarding" | "active");
+      await moveLeadToStage(lead.id, targetStage as "outreach" | "demo" | "proposal" | "close" | "onboarding" | "onboarding_complete" | "active");
     }
 
     if (i % 3 === 0) {

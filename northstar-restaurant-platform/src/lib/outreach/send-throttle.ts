@@ -29,6 +29,10 @@ const memSendLog = new Map<string, number>(); // date string -> count
 // ---------------------------------------------------------------------------
 
 function getWarmupLimit(): number {
+  // Hard override for aggressive sending mode
+  const override = Number(process.env.OUTREACH_DAILY_LIMIT || "");
+  if (Number.isFinite(override) && override > 0) return Math.floor(override);
+
   const startDateStr = process.env.WARMUP_START_DATE;
   if (!startDateStr) return 5; // Conservative default if not configured
 

@@ -59,15 +59,7 @@ export function StickyNav({ restaurant }: StickyNavProps) {
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <a href="#" className="flex items-center gap-2 text-lg font-bold" style={{ color: dark ? "#ffffff" : palette.accent }}>
-            {restaurant.branding.logo && (
-              <img
-                src={restaurant.branding.logo.includes("res.cloudinary.com")
-                  ? restaurant.branding.logo.replace("/image/upload/", "/image/upload/e_background_removal/")
-                  : restaurant.branding.logo}
-                alt={`${name} logo`}
-                className="h-10 w-auto object-contain"
-              />
-            )}
+            {/* Single-logo mode: nav logo hidden */}
             {name}
           </a>
 

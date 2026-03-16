@@ -1,166 +1,219 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { EmailSequence, EmailEnrollment } from "@/types/business";
+import { useEffect, useState } from "react";
+import type { LeadStage } from "@/types/business";
+import type { OutreachTrackerData, OutreachTrackerRow } from "@/lib/outreach/outreach-tracker";
 
-interface SequenceWithStats extends EmailSequence {
-  stats: { enrolled: number; active: number; completed: number; emailsSent: number };
+const STAGE_STYLES: Record<LeadStage, string> = {
+  prospect: "bg-gray-100 text-gray-700",
+  outreach: "bg-blue-50 text-blue-700",
+  demo: "bg-purple-50 text-purple-700",
+  proposal: "bg-amber-50 text-amber-700",
+  close: "bg-emerald-50 text-emerald-700",
+  onboarding: "bg-cyan-50 text-cyan-700",
+  onboarding_complete: "bg-teal-50 text-teal-700",
+  active: "bg-emerald-100 text-emerald-800",
+  churned: "bg-red-50 text-red-700",
+};
+
+function stageLabel(stage: LeadStage): string {
+  if (stage === "close") {
+    return "Closed";
+  }
+  if (stage === "onboarding_complete") {
+    return "Onboarding Done";
+  }
+
+  return stage.charAt(0).toUpperCase() + stage.slice(1);
+}
+
+function formatDate(value: string | null): string {
+  if (!value) return "—";
+
+  return new Date(value).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function normalizeUrl(url: string): string {
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+
+  return `https://${url}`;
+}
+
+function EmptyValue() {
+  return <span className="text-gray-400">—</span>;
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="p-6 animate-pulse">
+      <div className="mb-6">
+        <div className="h-7 w-44 rounded bg-gray-200" />
+        <div className="mt-2 h-4 w-56 rounded bg-gray-100" />
+      </div>
+
+      <div className="mb-4 flex gap-4">
+        <div className="h-20 w-48 rounded-xl bg-gray-200" />
+        <div className="h-20 w-48 rounded-xl bg-gray-100" />
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div className="border-b border-gray-100 bg-gray-50 px-4 py-3">
+          <div className="h-4 w-64 rounded bg-gray-200" />
+        </div>
+        <div className="space-y-3 p-4">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="h-12 rounded bg-gray-100" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TrackerRowView({ row }: { row: OutreachTrackerRow }) {
+  return (
+    <tr className="border-b border-gray-50 align-top transition-colors hover:bg-gray-50">
+      <td className="px-4 py-3 text-sm font-semibold text-gray-900">{row.restaurantName}</td>
+      <td className="px-4 py-3">
+        <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${STAGE_STYLES[row.stage]}`}>
+          {stageLabel(row.stage)}
+        </span>
+      </td>
+      <td className="px-4 py-3 text-sm">
+        {row.demoSiteLink ? (
+          <a
+            href={normalizeUrl(row.demoSiteLink)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            {row.demoSiteLink}
+          </a>
+        ) : (
+          <EmptyValue />
+        )}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(row.email1Sent)}</td>
+      <td className="px-4 py-3 text-sm font-medium text-gray-900">{row.email1Opened}</td>
+      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(row.email2Sent)}</td>
+      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(row.postcardSent)}</td>
+      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(row.callMade)}</td>
+      <td className="px-4 py-3 text-sm text-gray-600">{row.callOutcome ?? "—"}</td>
+      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(row.lastActivity)}</td>
+    </tr>
+  );
 }
 
 export default function OutreachPage() {
-  const [sequences, setSequences] = useState<SequenceWithStats[]>([]);
-  const [enrollments, setEnrollments] = useState<EmailEnrollment[]>([]);
+  const [data, setData] = useState<OutreachTrackerData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
-  const [lastProcessResult, setLastProcessResult] = useState<{ processed: number; emails: Array<{ restaurantName: string; subject: string }> } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/outreach").then((r) => r.json()),
-      fetch("/api/outreach?view=enrollments").then((r) => r.json()),
-    ]).then(([seqData, enrData]) => {
-      setSequences(seqData.sequences || []);
-      setEnrollments(enrData.enrollments || []);
-      setLoading(false);
-    });
+    let cancelled = false;
+
+    async function loadTracker() {
+      try {
+        const response = await fetch("/api/outreach?view=tracker");
+        const payload = await response.json() as OutreachTrackerData | { error?: string };
+
+        if (!response.ok) {
+          throw new Error("error" in payload && payload.error ? payload.error : "Failed to load outreach tracker");
+        }
+
+        if (!cancelled) {
+          setData(payload as OutreachTrackerData);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Failed to load outreach tracker");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadTracker();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const processOutreach = async () => {
-    setProcessing(true);
-    const res = await fetch("/api/outreach", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "process" }),
-    });
-    const data = await res.json();
-    setLastProcessResult(data);
-    setProcessing(false);
-  };
-
   if (loading) {
+    return <LoadingSkeleton />;
+  }
+
+  if (error || !data) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <svg className="h-8 w-8 animate-spin text-gray-300" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
+      <div className="p-6">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+          <h1 className="text-lg font-semibold text-red-800">Outreach Tracker</h1>
+          <p className="mt-1 text-sm text-red-700">{error ?? "Failed to load outreach tracker."}</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Outreach</h1>
-          <p className="text-sm text-gray-500">Email sequences and automated outreach</p>
+          <h1 className="text-2xl font-bold text-gray-900">Outreach Tracker</h1>
+          <p className="text-sm text-gray-500">Prospect-by-prospect outreach status across email, postcard, and calls.</p>
         </div>
-        <button
-          onClick={processOutreach}
-          disabled={processing}
-          className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
-        >
-          {processing ? "Processing..." : "Process Pending Emails"}
-        </button>
-      </div>
 
-      {/* Process Result */}
-      {lastProcessResult && (
-        <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-          <p className="text-sm font-semibold text-emerald-700">
-            Processed {lastProcessResult.processed} email{lastProcessResult.processed !== 1 ? "s" : ""}
-          </p>
-          {lastProcessResult.emails.length > 0 && (
-            <div className="mt-2 space-y-1">
-              {lastProcessResult.emails.map((e, i) => (
-                <p key={i} className="text-xs text-emerald-600">
-                  {e.restaurantName}: &ldquo;{e.subject}&rdquo;
-                </p>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Email Sequences */}
-      <div className="mb-8">
-        <h2 className="mb-4 text-sm font-semibold text-gray-900">Email Sequences</h2>
-        <div className="space-y-3">
-          {sequences.map((seq) => (
-            <div key={seq.id} className="rounded-xl border border-gray-200 bg-white p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900">{seq.name}</h3>
-                  <p className="text-xs text-gray-500">{seq.description}</p>
-                </div>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  seq.isActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"
-                }`}>
-                  {seq.isActive ? "Active" : "Paused"}
-                </span>
-              </div>
-
-              <div className="mt-4 grid grid-cols-2 gap-4 text-center sm:grid-cols-4">
-                <div>
-                  <p className="text-lg font-bold text-gray-900">{seq.steps.length}</p>
-                  <p className="text-xs text-gray-500">Steps</p>
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-blue-600">{seq.stats.enrolled}</p>
-                  <p className="text-xs text-gray-500">Enrolled</p>
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-amber-600">{seq.stats.active}</p>
-                  <p className="text-xs text-gray-500">Active</p>
-                </div>
-                <div>
-                  <p className="text-lg font-bold text-emerald-600">{seq.stats.emailsSent}</p>
-                  <p className="text-xs text-gray-500">Sent</p>
-                </div>
-              </div>
-
-              {/* Steps Preview */}
-              <div className="mt-4 space-y-2">
-                {seq.steps.map((step, i) => (
-                  <div key={step.id} className="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2 text-sm">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600">
-                      {i + 1}
-                    </span>
-                    <span className="text-gray-600">Day {step.dayOffset}:</span>
-                    <span className="truncate text-gray-900">{step.subject}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-wrap gap-3">
+          <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+            <p className="text-xs font-medium text-gray-500">Prospects</p>
+            <p className="mt-1 text-xl font-bold text-gray-900">{data.summary.prospectCount}</p>
+          </div>
+          <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+            <p className="text-xs font-medium text-gray-500">Emails Sent Today</p>
+            <p className="mt-1 text-xl font-bold text-gray-900">{data.summary.emailsSentToday}</p>
+            <p className="text-[11px] text-gray-400">Daily send log</p>
+          </div>
         </div>
       </div>
 
-      {/* Active Enrollments */}
-      <div>
-        <h2 className="mb-4 text-sm font-semibold text-gray-900">Active Enrollments ({enrollments.length})</h2>
-        {enrollments.length === 0 ? (
-          <div className="rounded-xl border border-gray-200 bg-white py-8 text-center">
-            <p className="text-sm text-gray-400">No active enrollments</p>
-            <p className="mt-1 text-xs text-gray-400">Enroll leads from the Pipeline page</p>
-          </div>
-        ) : (
-          <div className="rounded-xl border border-gray-200 bg-white">
-            {enrollments.map((enr) => (
-              <div key={enr.id} className="flex items-center justify-between border-b border-gray-50 px-4 py-3 last:border-0">
-                <div>
-                  <p className="text-sm font-medium text-gray-900">Lead: {enr.leadId}</p>
-                  <p className="text-xs text-gray-500">Step {enr.currentStep + 1} &middot; {enr.status}</p>
-                </div>
-                {enr.nextStepAt && (
-                  <span className="text-xs text-gray-400">
-                    Next: {new Date(enr.nextStepAt).toLocaleDateString()}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Restaurant Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Stage</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Demo Site Link</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Email 1 Sent (date)</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Email 1 Opened (y/n)</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Email 2 Sent</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Postcard Sent (date)</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Call Made (date)</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Call Outcome</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Last Activity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.rows.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="px-4 py-12 text-center text-sm text-gray-400">
+                    No prospects found.
+                  </td>
+                </tr>
+              ) : (
+                data.rows.map((row) => <TrackerRowView key={row.leadId} row={row} />)
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

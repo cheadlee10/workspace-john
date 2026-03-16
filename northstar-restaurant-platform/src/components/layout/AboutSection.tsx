@@ -9,7 +9,7 @@ interface AboutSectionProps {
 }
 
 export function AboutSection({ restaurant }: AboutSectionProps) {
-  const { name, description, cuisine, socialMedia } = restaurant;
+  const { name, description, cuisine = [], socialMedia = {} as Restaurant['socialMedia'] } = restaurant;
   const design = useDesign();
   const { palette } = design;
 
@@ -41,9 +41,14 @@ export function AboutSection({ restaurant }: AboutSectionProps) {
             className="mx-auto mb-8 h-1 w-16 rounded-full"
             style={{ backgroundColor: palette.accent }}
           />
-          <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed" style={{ color: palette.textMuted }}>
-            {description}
-          </p>
+          {(description || "")
+            .split(/\n\s*\n/)
+            .filter(Boolean)
+            .map((paragraph, idx) => (
+              <p key={idx} className="mx-auto mb-5 max-w-2xl text-lg leading-relaxed" style={{ color: palette.textMuted }}>
+                {paragraph}
+              </p>
+            ))}
 
           {/* Cuisine Tags */}
           {cuisine.length > 0 && (

@@ -495,6 +495,7 @@ export async function getPipelineStats(): Promise<{
     proposal: 0,
     close: 0,
     onboarding: 0,
+    onboarding_complete: 0,
     active: 0,
     churned: 0,
   };
@@ -508,7 +509,7 @@ export async function getPipelineStats(): Promise<{
     totalValue += lead.value;
   }
 
-  const closed = byStage.active + byStage.close + byStage.onboarding;
+  const closed = byStage.active + byStage.close + byStage.onboarding + byStage.onboarding_complete;
   const conversionRate = all.length > 0 ? (closed / all.length) * 100 : 0;
 
   return {

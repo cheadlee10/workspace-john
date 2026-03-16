@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllSequences, createSequence, enrollLead, processEnrollments, getActiveEnrollments, getSequenceStats } from "@/lib/outreach/sequence-store";
+import { getOutreachTrackerData } from "@/lib/outreach/outreach-tracker";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const view = searchParams.get("view"); // "sequences", "enrollments", "stats"
 
+    if (view === "tracker") {
+      const response = NextResponse.json(await getOutreachTrackerData());
+      response.headers.set("Cache-Control", "private, no-store");
+      return response;
+    }
+
     if (view === "enrollments") {
-      return NextResponse.json({ enrollments: await getActiveEnrollments() });
+      const response = NextResponse.json({ enrollments: await getActiveEnrollments() });
+      response.headers.set("Cache-Control", "private, no-store");
+      return response;
     }
 
     const allSequences = await getAllSequences();
@@ -16,7 +25,9 @@ export async function GET(request: NextRequest) {
       stats: await getSequenceStats(seq.id),
     })));
 
-    return NextResponse.json({ sequences });
+    const response = NextResponse.json({ sequences });
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
   } catch (error) {
     console.error("[Outreach API]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

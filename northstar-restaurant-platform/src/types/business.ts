@@ -13,6 +13,7 @@ export type LeadStage =
   | "proposal"
   | "close"
   | "onboarding"
+  | "onboarding_complete"
   | "active"
   | "churned";
 

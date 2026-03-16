@@ -29,11 +29,10 @@ export function LocationSection({ restaurant }: LocationSectionProps) {
     `${location.address}, ${location.city}, ${location.state} ${location.zip}`
   )}`;
 
-  const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
-  const mapsEmbedUrl = mapsApiKey
-    ? `https://www.google.com/maps/embed/v1/place?key=${mapsApiKey}&q=${encodeURIComponent(
-        `${name}, ${location.address}, ${location.city}, ${location.state}`
-      )}`
+  const hasCoords = Number.isFinite(location.lat) && Number.isFinite(location.lng) && (location.lat !== 0 || location.lng !== 0);
+  const delta = 0.005;
+  const osMapEmbedUrl = hasCoords
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${location.lng - delta}%2C${location.lat - delta}%2C${location.lng + delta}%2C${location.lat + delta}&layer=mapnik&marker=${location.lat}%2C${location.lng}`
     : null;
 
   return (
@@ -60,32 +59,37 @@ export function LocationSection({ restaurant }: LocationSectionProps) {
             style={{ borderRadius: design.layout.cornerRadius }}
           >
             <div className="aspect-[4/3] w-full" style={{ backgroundColor: palette.surfaceAlt }}>
-              {mapsEmbedUrl ? (
+              {osMapEmbedUrl ? (
                 <iframe
-                  src={mapsEmbedUrl}
+                  src={osMapEmbedUrl}
                   width="100%"
                   height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
+                  style={{ border: "none", borderRadius: "8px" }}
                   loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title={`${name} location on Google Maps`}
+                  title={`${name} map location`}
                 />
               ) : (
                 <a
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-full w-full flex-col items-center justify-center gap-3 transition-colors hover:opacity-80"
+                  className="flex h-full w-full items-center justify-center"
                   style={{ color: palette.textMuted }}
                 >
-                  <svg className="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span className="text-sm font-medium">View on Google Maps</span>
+                  Map unavailable — tap to open directions
                 </a>
               )}
+            </div>
+            <div className="border-t px-4 py-3 text-center" style={{ borderColor: palette.menuCardBorder, backgroundColor: palette.surface }}>
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium underline underline-offset-2"
+                style={{ color: palette.accent }}
+              >
+                Open interactive map in Google Maps
+              </a>
             </div>
           </motion.div>
 

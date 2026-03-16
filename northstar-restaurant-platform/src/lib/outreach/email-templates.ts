@@ -31,6 +31,7 @@ export interface EmailContext {
   companyAddress: string; // Required by CAN-SPAM
   unsubscribeUrl: string;
   bookingUrl?: string;
+  personalizedLine?: string;
 }
 
 export function generateInitialPitchEmail(ctx: EmailContext): {
@@ -51,6 +52,7 @@ export function generateInitialPitchEmail(ctx: EmailContext): {
 
 I was looking for ${ctx.cuisineType} in ${ctx.city} and came across ${ctx.restaurantName} on Google.${ratingLine}
 
+${ctx.personalizedLine ? `${ctx.personalizedLine}\n` : ""}
 But when I looked for your website, there wasn't one.
 
 So I built you one: ${ctx.previewUrl}

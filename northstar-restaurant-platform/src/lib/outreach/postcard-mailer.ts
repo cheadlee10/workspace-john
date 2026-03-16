@@ -66,6 +66,7 @@ export async function sendPostcard(config: PostcardConfig): Promise<{
       back: backHtml,
       size: "4x6",
       mail_type: "usps_first_class",
+      use_type: "marketing",
     }),
   });
 

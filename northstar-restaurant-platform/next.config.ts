@@ -18,6 +18,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "maps.googleapis.com",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "staticmap.openstreetmap.de",
+      },
+      {
+        protocol: "https",
+        hostname: "www.openstreetmap.org",
+      },
     ],
   },
 };
