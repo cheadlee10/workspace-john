@@ -3,6 +3,7 @@ import { runDailyPipeline } from "@/lib/pipeline/orchestrator";
 import type { PipelineConfig } from "@/lib/pipeline/orchestrator";
 import { formatDailyReport, formatOneLiner } from "@/lib/pipeline/daily-report";
 import { logActivity } from "@/lib/activity/activity-store";
+import { checkUpsellOpportunities, sendUpsellNotification } from "@/lib/pipeline/upsell-scheduler";
 
 /**
  * Cron endpoint for the daily autonomous pipeline.
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
     // -------------------------------------------------------------------
     // Build pipeline config from environment variables
     // -------------------------------------------------------------------
-    const targetAreasRaw = process.env.PIPELINE_TARGET_AREAS || "Seattle WA,Bellevue WA,Tacoma WA";
+    const targetAreasRaw = process.env.PIPELINE_TARGET_AREAS || "Seattle WA,Bellevue WA,Tacoma WA,Spokane WA,Olympia WA,Everett WA,Kent WA,Renton WA,Kirkland WA,Redmond WA,Kennewick WA,Yakima WA,Bellingham WA,Vancouver WA";
     const targetAreas = targetAreasRaw.split(",").map((a) => a.trim()).filter(Boolean);
 
     // Allow overrides from loop runner or query params
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
           ? `https://${process.env.VERCEL_URL}`
           : "https://northstar-restaurant-platform.vercel.app"),
       senderEmail: process.env.OUTREACH_SENDER_EMAIL || "hello@northstarsynergy.com",
-      senderName: process.env.OUTREACH_SENDER_NAME || "Craig",
+      senderName: process.env.OUTREACH_SENDER_NAME || "John",
       companyAddress: process.env.OUTREACH_COMPANY_ADDRESS || "NorthStar Synergy, Seattle, WA",
     };
 
@@ -109,6 +110,21 @@ export async function GET(request: NextRequest) {
     }
 
     // -------------------------------------------------------------------
+    // Check upsell opportunities
+    // -------------------------------------------------------------------
+    let upsellCount = 0;
+    try {
+      const opportunities = await checkUpsellOpportunities();
+      upsellCount = opportunities.length;
+      if (opportunities.length > 0) {
+        await sendUpsellNotification(opportunities);
+        console.warn(`[cron/pipeline] ${opportunities.length} upsell opportunities found and notified`);
+      }
+    } catch (err) {
+      console.warn("[cron/pipeline] Upsell check failed:", err instanceof Error ? err.message : err);
+    }
+
+    // -------------------------------------------------------------------
     // Log activity
     // -------------------------------------------------------------------
     await logActivity({
@@ -123,6 +139,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       ...result,
+      upsellOpportunities: upsellCount,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

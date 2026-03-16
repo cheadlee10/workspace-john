@@ -56,7 +56,7 @@ ${ctx.personalizedLine ? `${ctx.personalizedLine}\n` : ""}
 But when I looked for your website, there wasn't one.
 
 So I built you one: ${ctx.previewUrl}
-
+${ctx.videoUrl ? `\nHere's a quick preview of what visitors will see: ${ctx.videoUrl}\n` : ""}
 It has your full menu (works great on phones), your Google reviews, your hours and location, and a button for customers to call you or get directions.
 
 77% of people check a restaurant's website before deciding where to eat. Right now, those people are finding your competitors instead.

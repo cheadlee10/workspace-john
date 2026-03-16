@@ -249,6 +249,7 @@ export async function runDailyPipeline(
   for (const prospect of allProspects) {
     const restaurantName = prospect.restaurant.name;
     console.warn(`[Pipeline] Processing: ${restaurantName} (score: ${prospect.prospectScore})`);
+    let generatedVideoUrl: string | undefined;
 
     try {
       // DNC check
@@ -378,6 +379,45 @@ export async function runDailyPipeline(
         continue; // Can't proceed without a restaurant record
       }
 
+      // -- Step 2d.5: Generate hero video (if FAL key is available) --
+      if (process.env.FAL_API_KEY) {
+        try {
+          const { generateVideo } = await import("@/lib/video/video-generator");
+          const cuisineType = prospect.restaurant.cuisineTypes?.[0] || "default";
+          const topItems = (prospect.restaurant.menuItems || enrichedData.menuItems || [])
+            .slice(0, 5)
+            .map((i) => i.name);
+
+          const video = await generateVideo({
+            falApiKey: process.env.FAL_API_KEY,
+            restaurantName,
+            cuisineType,
+            slug: siteConfig.slug,
+            topMenuItems: topItems,
+          });
+
+          generatedVideoUrl = video.videoUrl;
+
+          // Update the restaurant record with video URLs
+          try {
+            const { updateRestaurant } = await import("@/lib/tenant/restaurant-store");
+            await updateRestaurant(siteConfig.id, {
+              branding: {
+                ...siteConfig.branding,
+                heroVideo: video.videoUrl,
+                heroVideoPoster: video.posterUrl,
+              },
+            });
+            console.warn(`[Pipeline] Hero video generated for ${restaurantName}: ${video.videoUrl}`);
+          } catch (updateErr) {
+            console.warn(`[Pipeline] Could not save video URLs for ${restaurantName}:`, updateErr instanceof Error ? updateErr.message : updateErr);
+          }
+        } catch (err) {
+          console.warn(`[Pipeline] Video generation failed for ${restaurantName}:`, err instanceof Error ? err.message : err);
+          // Non-fatal — continue without video
+        }
+      }
+
       // -- Step 2e: Create lead record --
       const previewUrl = `${config.baseUrl}/demo/${siteConfig.slug}`;
       let lead: Lead;
@@ -436,7 +476,7 @@ export async function runDailyPipeline(
         try {
           const canSend = await canSendToday();
           if (canSend) {
-            await sendPitchEmail(lead, prospect, previewUrl, config);
+            await sendPitchEmail(lead, prospect, previewUrl, config, generatedVideoUrl);
             await recordSend();
 
             await addOutreachEvent(lead.id, {
@@ -458,8 +498,8 @@ export async function runDailyPipeline(
         }
       }
 
-      // Send postcard if no email or as supplement
-      if (hasAddress && config.lobApiKey && !hasEmail) {
+      // Send postcard to ALL leads with addresses (physical mail is a huge differentiator)
+      if (hasAddress && config.lobApiKey) {
         try {
           await sendProspectPostcard(prospect, previewUrl, config);
 
@@ -672,21 +712,113 @@ export async function processScheduledFollowUps(
 
           processed++;
           console.warn(`[Pipeline] Follow-up sent to ${lead.restaurantName} (email #${nextEmailCount})`);
+
+          // Warm lead detection: if they opened a prior email but didn't reply, send postcard as supplement
+          const hasOpened = lead.outreachHistory.some(
+            (e) => e.type === "email" && (e.openedAt || e.status === "opened")
+          );
+          const hasReplied = lead.outreachHistory.some(
+            (e) => e.type === "email" && (e.repliedAt || e.status === "replied")
+          );
+          const hasPostcard = lead.outreachHistory.some((e) => e.type === "postcard");
+
+          if (hasOpened && !hasReplied && !hasPostcard && config.lobApiKey && lead.address && lead.city && lead.state) {
+            try {
+              const senderName = config.senderName || SENDER_NAME_DEFAULT;
+              const companyAddress = config.companyAddress || COMPANY_ADDRESS_DEFAULT;
+              const fromParts = companyAddress.split(",").map((s) => s.trim());
+
+              const warmPostcardConfig: PostcardConfig = {
+                lobApiKey: config.lobApiKey,
+                restaurantName: lead.restaurantName,
+                restaurantAddress: lead.address,
+                restaurantCity: lead.city,
+                restaurantState: lead.state,
+                restaurantZip: "", // May not have zip on the lead
+                previewUrl: lead.previewUrl || config.baseUrl,
+                websiteScreenshotUrl: `${lead.previewUrl || config.baseUrl}/og-image.png`,
+                fromName: senderName,
+                fromAddress: fromParts[0] || "",
+                fromCity: fromParts[1] || "",
+                fromState: (fromParts[2] || "").replace(/\s*\d{5}.*/, "").trim(),
+                fromZip: (fromParts[2] || "").match(/\d{5}/)?.[0] || "",
+              };
+
+              await lobSendPostcard(warmPostcardConfig);
+              await addOutreachEvent(lead.id, {
+                type: "postcard",
+                status: "sent",
+                sentAt: new Date().toISOString(),
+                metadata: { trigger: "warm_lead_auto" },
+              });
+              console.warn(`[Pipeline] Warm lead postcard sent to ${lead.restaurantName} (opened email, no reply)`);
+            } catch (postcardErr) {
+              console.warn(`[Pipeline] Warm lead postcard failed for ${lead.restaurantName}:`, postcardErr instanceof Error ? postcardErr.message : postcardErr);
+            }
+          }
         } catch (err) {
           const msg = `Follow-up email failed for ${lead.restaurantName}: ${err instanceof Error ? err.message : String(err)}`;
           console.warn(`[Pipeline] ${msg}`);
           errors.push(msg);
         }
       } else {
-        // No email -- try postcard if we haven't sent one
+        // No email -- send postcard if we haven't sent one yet
         const postcardCount = lead.outreachHistory.filter((e) => e.type === "postcard").length;
-        if (postcardCount === 0 && config.lobApiKey && lead.address && lead.city && lead.state) {
-          console.warn(`[Pipeline] No email for ${lead.restaurantName} -- would send postcard (not implemented in follow-up path)`);
+        const hasValidAddress = !!(config.lobApiKey && lead.address && lead.city && lead.state);
+
+        if (postcardCount === 0 && hasValidAddress) {
+          if (config.dryRun) {
+            console.warn(`[Pipeline] [DRY RUN] Would send follow-up postcard to ${lead.restaurantName} (no email)`);
+            processed++;
+          } else {
+            try {
+              const senderName = config.senderName || SENDER_NAME_DEFAULT;
+              const companyAddress = config.companyAddress || COMPANY_ADDRESS_DEFAULT;
+              const fromParts = companyAddress.split(",").map((s) => s.trim());
+
+              const followUpPostcardConfig: PostcardConfig = {
+                lobApiKey: config.lobApiKey!,
+                restaurantName: lead.restaurantName,
+                restaurantAddress: lead.address!,
+                restaurantCity: lead.city!,
+                restaurantState: lead.state!,
+                restaurantZip: "", // May not have zip on the lead
+                previewUrl: lead.previewUrl || config.baseUrl,
+                websiteScreenshotUrl: `${lead.previewUrl || config.baseUrl}/og-image.png`,
+                fromName: senderName,
+                fromAddress: fromParts[0] || "",
+                fromCity: fromParts[1] || "",
+                fromState: (fromParts[2] || "").replace(/\s*\d{5}.*/, "").trim(),
+                fromZip: (fromParts[2] || "").match(/\d{5}/)?.[0] || "",
+              };
+
+              await lobSendPostcard(followUpPostcardConfig);
+              await addOutreachEvent(lead.id, {
+                type: "postcard",
+                status: "sent",
+                sentAt: new Date().toISOString(),
+                metadata: { trigger: "follow_up_no_email" },
+              });
+
+              processed++;
+              console.warn(`[Pipeline] Follow-up postcard sent to ${lead.restaurantName} (no email on file)`);
+            } catch (postcardErr) {
+              const msg = `Follow-up postcard failed for ${lead.restaurantName}: ${postcardErr instanceof Error ? postcardErr.message : String(postcardErr)}`;
+              console.warn(`[Pipeline] ${msg}`);
+              errors.push(msg);
+            }
+          }
         }
 
-        // Clear the follow-up since we can't act on it
+        // Schedule next follow-up or clear if postcard was already sent
         try {
-          await updateLead(lead.id, { nextFollowUpAt: undefined });
+          const nextFollowUpAt = postcardCount === 0 && hasValidAddress
+            ? new Date(Date.now() + FOLLOW_UP_DAYS * 24 * 60 * 60 * 1000).toISOString()
+            : undefined; // Already sent postcard or no address -- cadence complete for no-email leads
+          await updateLead(lead.id, {
+            lastContactedAt: new Date().toISOString(),
+            nextFollowUpAt,
+          });
         } catch {
           // Best effort
         }
@@ -796,7 +928,8 @@ async function sendPitchEmail(
   lead: Lead,
   prospect: ProspectResult,
   previewUrl: string,
-  config: PipelineConfig
+  config: PipelineConfig,
+  videoUrl?: string
 ): Promise<void> {
   const senderName = config.senderName || SENDER_NAME_DEFAULT;
   const companyAddress = config.companyAddress || COMPANY_ADDRESS_DEFAULT;
@@ -805,7 +938,7 @@ async function sendPitchEmail(
     restaurantName: prospect.restaurant.name,
     city: prospect.restaurant.city,
     previewUrl,
-    videoUrl: "",
+    videoUrl: videoUrl || "",
     gifThumbnailUrl: "",
     googleRating: prospect.restaurant.googleRating,
     reviewCount: prospect.restaurant.googleReviewCount,
