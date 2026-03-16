@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       targetAreas,
       dailyProspectLimit: limitOverride ? Number(limitOverride) : (Number(process.env.PIPELINE_DAILY_LIMIT) || 5),
       dryRun: dryRunParam === "true" || process.env.PIPELINE_DRY_RUN === "true",
-      reportEmail: process.env.PIPELINE_REPORT_EMAIL || process.env.ADMIN_EMAIL || undefined,
+      reportEmail: process.env.PIPELINE_REPORT_EMAIL || process.env.ADMIN_EMAIL || "john@northstarsynergy.com",
       baseUrl:
         process.env.NEXT_PUBLIC_BASE_URL ||
         (process.env.VERCEL_URL
