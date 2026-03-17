@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: process.env.SUPPORT_FROM_EMAIL || "support@northstarsynergy.com",
+            from: process.env.SUPPORT_FROM_EMAIL || "support@northstarsynergy.org",
             to: email,
             subject: `Re: ${subject} [${ticket.id}]`,
             text: ticket.autoResponse.replace(/\*\*/g, ""),

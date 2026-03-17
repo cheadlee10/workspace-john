@@ -55,13 +55,13 @@ export async function GET(request: NextRequest) {
       targetAreas,
       dailyProspectLimit: limitOverride ? Number(limitOverride) : (Number(process.env.PIPELINE_DAILY_LIMIT) || 5),
       dryRun: dryRunParam === "true" || process.env.PIPELINE_DRY_RUN === "true",
-      reportEmail: process.env.PIPELINE_REPORT_EMAIL || process.env.ADMIN_EMAIL || "john@northstarsynergy.com",
+      reportEmail: process.env.PIPELINE_REPORT_EMAIL || process.env.ADMIN_EMAIL || "john@northstarsynergy.org",
       baseUrl:
         process.env.NEXT_PUBLIC_BASE_URL ||
         (process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
           : "https://northstar-restaurant-platform.vercel.app"),
-      senderEmail: process.env.OUTREACH_SENDER_EMAIL || "hello@northstarsynergy.com",
+      senderEmail: process.env.OUTREACH_SENDER_EMAIL || "hello@northstarsynergy.org",
       senderName: process.env.OUTREACH_SENDER_NAME || "John",
       companyAddress: process.env.OUTREACH_COMPANY_ADDRESS || "NorthStar Synergy, Seattle, WA",
     };

@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       </div>
     `;
 
-    const fallbackEmail = process.env.CONTACT_FORM_EMAIL || "hello@northstarsynergy.com";
+    const fallbackEmail = process.env.CONTACT_FORM_EMAIL || "hello@northstarsynergy.org";
     const toEmail = (restaurantEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(restaurantEmail))
       ? restaurantEmail
       : fallbackEmail;

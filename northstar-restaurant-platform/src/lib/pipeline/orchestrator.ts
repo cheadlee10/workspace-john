@@ -104,7 +104,7 @@ export interface PipelineResult {
 // ---------------------------------------------------------------------------
 
 const SENDER_NAME_DEFAULT = "Craig";
-const SENDER_EMAIL_DEFAULT = "hello@northstarsynergy.com";
+const SENDER_EMAIL_DEFAULT = "hello@northstarsynergy.org";
 const COMPANY_ADDRESS_DEFAULT = "NorthStar Synergy, Seattle, WA";
 const FOLLOW_UP_DAYS = 3; // days before first follow-up
 
