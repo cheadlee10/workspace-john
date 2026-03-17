@@ -375,8 +375,8 @@ export async function captureScreenshot(
   outputPath: string
 ): Promise<string> {
   // Dynamic import - puppeteer is an optional server-side dependency
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const puppeteer = require("puppeteer");
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+  const puppeteer = eval('require')("puppeteer");
 
   const browser = await puppeteer.launch({
     headless: true,

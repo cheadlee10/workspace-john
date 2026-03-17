@@ -8,6 +8,7 @@
 
 import type { Restaurant } from "@/types/restaurant";
 import { demoRestaurant } from "@/config/demo-restaurant";
+import { wave115Restaurants } from "@/config/wave115-restaurants";
 import { isDbEnabled, getSupabase, isTableNotFoundError, markSchemaUnavailable } from "@/lib/db/supabase";
 
 // === In-memory fallback ===
@@ -18,6 +19,12 @@ const memSlugIndex = new Map<string, string>();
 // Initialize with demo restaurant
 memRestaurants.set(demoRestaurant.id, demoRestaurant);
 memSlugIndex.set(demoRestaurant.slug, demoRestaurant.id);
+
+// Initialize with wave115 restaurants
+for (const r of wave115Restaurants) {
+  memRestaurants.set(r.id, r);
+  memSlugIndex.set(r.slug, r.id);
+}
 
 // === DB helpers ===
 function fromDbRestaurant(row: Record<string, unknown>): Restaurant {
