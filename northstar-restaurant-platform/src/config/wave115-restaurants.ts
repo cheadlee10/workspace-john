@@ -44,6 +44,8 @@ export const biteRestaurant: Restaurant = {
     fontHeading: "Georgia, serif",
     fontBody: "system-ui, sans-serif",
     heroImage: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=80",
+    heroVideo: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788195/northstar/videos/wave115-bite-restaurant-tacoma.mp4",
+    heroVideoPoster: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788195/northstar/videos/wave115-bite-restaurant-tacoma.jpg",
     template: "casual-dining",
   },
   socialMedia: {
@@ -443,6 +445,8 @@ export const coopersRestaurant: Restaurant = {
     fontHeading: "'Playfair Display', Georgia, serif",
     fontBody: "system-ui, sans-serif",
     heroImage: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&q=80",
+    heroVideo: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788378/northstar/videos/wave115-coopers-food-and-drink-tacoma.mp4",
+    heroVideoPoster: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788378/northstar/videos/wave115-coopers-food-and-drink-tacoma.jpg",
     template: "casual-dining",
   },
   socialMedia: {
@@ -781,6 +785,8 @@ export const latahBistroRestaurant: Restaurant = {
     fontHeading: "Georgia, serif",
     fontBody: "system-ui, sans-serif",
     heroImage: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1920&q=80",
+    heroVideo: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788550/northstar/videos/wave115-latah-bistro-spokane.mp4",
+    heroVideoPoster: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788550/northstar/videos/wave115-latah-bistro-spokane.jpg",
     template: "casual-dining",
   },
   socialMedia: {
@@ -1088,6 +1094,8 @@ export const lunaRestaurant: Restaurant = {
     fontHeading: "Georgia, serif",
     fontBody: "system-ui, sans-serif",
     heroImage: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=80",
+    heroVideo: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788703/northstar/videos/wave115-luna-spokane.mp4",
+    heroVideoPoster: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788703/northstar/videos/wave115-luna-spokane.jpg",
     template: "fine-dining",
   },
   socialMedia: {
@@ -1381,6 +1389,8 @@ export const localFlavorsRestaurant: Restaurant = {
     fontHeading: "'Playfair Display', Georgia, serif",
     fontBody: "system-ui, sans-serif",
     heroImage: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&q=80",
+    heroVideo: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788870/northstar/videos/wave115-local-flavors-spokane.mp4",
+    heroVideoPoster: "https://res.cloudinary.com/doz6mmxdh/video/upload/v1773788870/northstar/videos/wave115-local-flavors-spokane.jpg",
     template: "bar-brewery",
   },
   socialMedia: {
