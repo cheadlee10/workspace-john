@@ -37,8 +37,16 @@ import {
   getSupabase,
   isDbEnabled,
   isTableNotFoundError,
-  markSchemaUnavailable,
 } from "@/lib/db/supabase";
+
+// ---------------------------------------------------------------------------
+// Local flag: tracks whether geo_progress table exists in Supabase.
+// IMPORTANT: We intentionally do NOT call markSchemaUnavailable() here because
+// that global flag would disable DB access for ALL tables (leads, restaurants,
+// etc.) which breaks the entire pipeline. If geo_progress is missing, only
+// geo-expansion falls back to in-memory — everything else keeps using Supabase.
+// ---------------------------------------------------------------------------
+let geoTableAvailable = true;
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -752,7 +760,7 @@ async function getProgressRecord(
 ): Promise<GeoProgress | null> {
   const id = makeId(city, stateCode);
 
-  if (isDbEnabled()) {
+  if (isDbEnabled() && geoTableAvailable) {
     const sb = getSupabase()!;
     const { data, error } = await sb
       .from("geo_progress")
@@ -762,7 +770,8 @@ async function getProgressRecord(
 
     if (error) {
       if (isTableNotFoundError(error)) {
-        markSchemaUnavailable();
+        geoTableAvailable = false;
+        console.warn("[GeoExpansion] geo_progress table not found — using in-memory fallback (other tables unaffected)");
         // Fall through to memory
       } else if (error.code === "PGRST116") {
         // No rows — city not tracked yet
@@ -785,7 +794,7 @@ async function getProgressRecord(
  * Get all progress records.
  */
 async function getAllProgressRecords(): Promise<GeoProgress[]> {
-  if (isDbEnabled()) {
+  if (isDbEnabled() && geoTableAvailable) {
     const sb = getSupabase()!;
     const { data, error } = await sb
       .from("geo_progress")
@@ -794,7 +803,8 @@ async function getAllProgressRecords(): Promise<GeoProgress[]> {
 
     if (error) {
       if (isTableNotFoundError(error)) {
-        markSchemaUnavailable();
+        geoTableAvailable = false;
+        console.warn("[GeoExpansion] geo_progress table not found — using in-memory fallback (other tables unaffected)");
         // Fall through to memory
       } else {
         console.warn(
@@ -814,7 +824,7 @@ async function getAllProgressRecords(): Promise<GeoProgress[]> {
  * Upsert a progress record (insert or update).
  */
 async function upsertProgress(gp: GeoProgress): Promise<void> {
-  if (isDbEnabled()) {
+  if (isDbEnabled() && geoTableAvailable) {
     const sb = getSupabase()!;
     const dbRow = toDbRow(gp);
     const { error } = await sb
@@ -823,7 +833,8 @@ async function upsertProgress(gp: GeoProgress): Promise<void> {
 
     if (error) {
       if (isTableNotFoundError(error)) {
-        markSchemaUnavailable();
+        geoTableAvailable = false;
+        console.warn("[GeoExpansion] geo_progress table not found — using in-memory fallback (other tables unaffected)");
         // Fall through to memory
       } else {
         console.warn(

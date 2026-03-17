@@ -1,11 +1,12 @@
 /**
  * Physical Postcard Mailer via Lob.com API
  *
- * Sends a beautiful physical postcard to restaurants:
- * - Front: Screenshot of their custom website
- * - Back: Short pitch + QR code linking to their preview
+ * Sends a premium physical postcard to restaurants:
+ * - Front: Full-bleed website screenshot with refined typographic overlay
+ * - Back: Warm, personal pitch + scannable QR code
  *
- * Costs: ~$0.70-$1.05 per postcard (4x6")
+ * Upgraded to 6x9" for more visual impact and a professional feel.
+ * Costs: ~$0.85-$1.20 per postcard (6x9")
  * Delivery: 3-5 business days
  *
  * Why postcards? Restaurant owners are BOMBARDED with digital outreach.
@@ -27,6 +28,9 @@ export interface PostcardConfig {
   fromCity: string;
   fromState: string;
   fromZip: string;
+  cuisineType?: string; // e.g., "Greek", "Bakery", "Coffee"
+  googleRating?: number; // e.g., 4.7
+  reviewCount?: number; // e.g., 470
 }
 
 /**
@@ -64,7 +68,7 @@ export async function sendPostcard(config: PostcardConfig): Promise<{
       },
       front: frontHtml,
       back: backHtml,
-      size: "4x6",
+      size: "6x9",
       mail_type: "usps_first_class",
       use_type: "marketing",
     }),
@@ -80,20 +84,27 @@ export async function sendPostcard(config: PostcardConfig): Promise<{
 }
 
 /**
- * Front of postcard: Restaurant website screenshot
+ * Front of postcard: Full-bleed website screenshot with premium overlay.
+ * 6x9" format — generous canvas for visual impact.
  */
 function generatePostcardFront(config: PostcardConfig): string {
+  const ratingStars =
+    config.googleRating && config.reviewCount
+      ? `<div class="rating">${config.googleRating} &#9733; &middot; ${config.reviewCount} reviews on Google</div>`
+      : "";
+
   return `
     <html>
     <head>
       <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap');
         body {
           margin: 0;
           padding: 0;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
-          background: #1a1a2e;
-          width: 6.25in;
-          height: 4.25in;
+          font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+          background: #0c0c14;
+          width: 9.25in;
+          height: 6.25in;
           position: relative;
           overflow: hidden;
         }
@@ -101,140 +112,251 @@ function generatePostcardFront(config: PostcardConfig): string {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0.85;
+          filter: brightness(0.92) contrast(1.04);
         }
-        .overlay {
+        .vignette {
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.72) 100%),
+            linear-gradient(135deg, rgba(15,118,110,0.18) 0%, transparent 60%);
+        }
+        .content {
           position: absolute;
           bottom: 0;
           left: 0;
           right: 0;
-          padding: 20px 24px;
-          background: linear-gradient(transparent, rgba(0,0,0,0.8));
+          padding: 32px 40px;
           color: white;
         }
         .name {
-          font-size: 22px;
-          font-weight: 700;
-          margin-bottom: 4px;
+          font-family: 'DM Serif Display', Georgia, serif;
+          font-size: 36px;
+          font-weight: 400;
+          line-height: 1.15;
+          margin-bottom: 6px;
+          text-shadow: 0 2px 12px rgba(0,0,0,0.5);
         }
         .tagline {
+          font-size: 14px;
+          font-weight: 500;
+          opacity: 0.92;
+          letter-spacing: 0.3px;
+          margin-bottom: 4px;
+        }
+        .rating {
           font-size: 12px;
-          opacity: 0.9;
-          letter-spacing: 0.5px;
+          font-weight: 400;
+          opacity: 0.78;
+          margin-top: 6px;
+          letter-spacing: 0.2px;
         }
         .badge {
           position: absolute;
-          top: 16px;
-          right: 16px;
-          background: white;
-          color: #1a1a2e;
-          padding: 6px 14px;
-          border-radius: 20px;
-          font-size: 10px;
-          font-weight: 700;
+          top: 24px;
+          right: 28px;
+          background: rgba(255,255,255,0.96);
+          color: #0f766e;
+          padding: 8px 18px;
+          border-radius: 6px;
+          font-size: 11px;
+          font-weight: 600;
           text-transform: uppercase;
-          letter-spacing: 1px;
+          letter-spacing: 1.2px;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+        .teal-bar {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #0f766e 0%, #14b8a6 50%, #0f766e 100%);
         }
       </style>
     </head>
     <body>
       <img src="${config.websiteScreenshotUrl}" class="screenshot" alt="${config.restaurantName}" />
-      <div class="badge">Your New Website</div>
-      <div class="overlay">
+      <div class="vignette"></div>
+      <div class="badge">Website Preview</div>
+      <div class="content">
         <div class="name">${config.restaurantName}</div>
-        <div class="tagline">We built you something special</div>
+        <div class="tagline">Your new website is ready to view</div>
+        ${ratingStars}
       </div>
+      <div class="teal-bar"></div>
     </body>
     </html>
   `.trim();
 }
 
 /**
- * Back of postcard: Short pitch + QR code
+ * Back of postcard: Warm, personal pitch + QR code.
+ * 6x9" format — room for genuine message without feeling cramped.
  */
 function generatePostcardBack(config: PostcardConfig): string {
-  // QR code generated via Google Charts API (free, no API key needed)
-  const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=${encodeURIComponent(config.previewUrl)}&choe=UTF-8`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(config.previewUrl)}&color=0f766e&bgcolor=ffffff&format=png`;
+
+  // Build a personalized opener that feels human
+  const cuisineNote = config.cuisineType
+    ? ` specializing in ${config.cuisineType.toLowerCase()}`
+    : "";
+  const ratingNote =
+    config.googleRating && config.reviewCount
+      ? ` Your ${config.googleRating}-star rating across ${config.reviewCount} reviews says a lot about the quality you deliver.`
+      : "";
 
   return `
     <html>
     <head>
       <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap');
         body {
           margin: 0;
-          padding: 24px;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
-          width: 6.25in;
-          height: 4.25in;
+          padding: 0;
+          font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+          width: 9.25in;
+          height: 6.25in;
           box-sizing: border-box;
           display: flex;
-          color: #1a1a2e;
+          color: #1f2937;
+          background: #ffffff;
         }
-        .content {
+        .left {
           flex: 1;
-          padding-right: 20px;
+          padding: 36px 32px 36px 40px;
+          display: flex;
+          flex-direction: column;
         }
-        .greeting {
-          font-size: 14px;
-          font-weight: 700;
-          margin-bottom: 10px;
-          color: #1a1a2e;
-        }
-        .message {
-          font-size: 11px;
-          line-height: 1.6;
-          color: #444;
-          margin-bottom: 12px;
-        }
-        .url {
-          font-size: 10px;
-          font-weight: 600;
-          color: #c0392b;
-          word-break: break-all;
-        }
-        .footer {
-          font-size: 9px;
-          color: #999;
-          margin-top: auto;
-        }
-        .qr-section {
+        .right {
+          width: 3in;
+          background: #f8fafb;
+          border-left: 1px solid #e5e7eb;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding-left: 20px;
-          border-left: 1px solid #eee;
+          padding: 32px 28px;
+        }
+        .logo-mark {
+          font-family: 'DM Serif Display', Georgia, serif;
+          font-size: 13px;
+          color: #0f766e;
+          letter-spacing: 0.5px;
+          margin-bottom: 20px;
+        }
+        .greeting {
+          font-family: 'DM Serif Display', Georgia, serif;
+          font-size: 20px;
+          color: #111827;
+          margin-bottom: 14px;
+          line-height: 1.3;
+        }
+        .message {
+          font-size: 12px;
+          line-height: 1.7;
+          color: #374151;
+          margin-bottom: 16px;
+        }
+        .message strong {
+          color: #111827;
+          font-weight: 600;
+        }
+        .bullets {
+          font-size: 11px;
+          line-height: 1.8;
+          color: #4b5563;
+          margin-bottom: 16px;
+          padding-left: 0;
+          list-style: none;
+        }
+        .bullets li::before {
+          content: "\\2713\\0020";
+          color: #0f766e;
+          font-weight: 700;
+        }
+        .cta {
+          font-size: 11px;
+          font-weight: 600;
+          color: #0f766e;
+          margin-bottom: auto;
+        }
+        .footer {
+          font-size: 10px;
+          color: #9ca3af;
+          line-height: 1.5;
+          border-top: 1px solid #e5e7eb;
+          padding-top: 12px;
+          margin-top: 12px;
+        }
+        .qr-wrap {
+          background: white;
+          padding: 12px;
+          border-radius: 10px;
+          box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+          margin-bottom: 14px;
         }
         .qr-label {
-          font-size: 9px;
+          font-size: 11px;
           font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: #999;
+          color: #0f766e;
+          text-align: center;
+          margin-bottom: 4px;
+        }
+        .qr-sublabel {
+          font-size: 9px;
+          color: #6b7280;
+          text-align: center;
+          max-width: 160px;
+          line-height: 1.4;
+          margin-bottom: 12px;
+        }
+        .phone-line {
+          font-size: 11px;
+          color: #374151;
+          font-weight: 500;
           margin-top: 8px;
+        }
+        .phone-sub {
+          font-size: 9px;
+          color: #9ca3af;
+          margin-top: 2px;
         }
       </style>
     </head>
     <body>
-      <div class="content">
-        <div class="greeting">Hi ${config.restaurantName}!</div>
+      <div class="left">
+        <div class="logo-mark">NorthStar Synergy</div>
+        <div class="greeting">Hi ${config.restaurantName},</div>
         <div class="message">
-          We built you a beautiful website with your full menu, Google reviews,
-          and online ordering - all ready to go.
+          I came across your restaurant${cuisineNote} in ${config.restaurantCity} and thought you deserved
+          a website that matches the experience you give your customers.${ratingNote}
           <br /><br />
-          Scan the QR code or visit the link below to see your free preview.
-          No strings attached.
+          So I went ahead and <strong>built one for you</strong> — with your real menu,
+          your Google reviews, and everything a customer needs to find you and order.
         </div>
-        <div class="url">${config.previewUrl}</div>
+        <ul class="bullets">
+          <li>Your full menu, beautifully organized</li>
+          <li>Google reviews front and center</li>
+          <li>Online ordering ready to turn on</li>
+          <li>Shows up on Google search</li>
+        </ul>
+        <div class="cta">
+          Scan the QR code to see it. It takes 10 seconds. No strings attached.
+        </div>
         <div class="footer">
-          ${config.fromName}<br />
-          NorthStar Synergy<br />
-          Questions? hello@northstarsynergy.com
+          ${config.fromName} &middot; NorthStar Synergy<br />
+          john@northstarsynergy.com &middot; (425) 555-0142
         </div>
       </div>
-      <div class="qr-section">
-        <img src="${qrUrl}" width="120" height="120" alt="QR Code" />
-        <div class="qr-label">Scan to Preview</div>
+      <div class="right">
+        <div class="qr-label">See Your Website</div>
+        <div class="qr-sublabel">Point your phone camera here</div>
+        <div class="qr-wrap">
+          <img src="${qrUrl}" width="160" height="160" alt="QR Code" />
+        </div>
+        <div class="phone-line">Questions? Call or text</div>
+        <div class="phone-sub">(425) 555-0142</div>
       </div>
     </body>
     </html>

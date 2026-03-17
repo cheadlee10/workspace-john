@@ -1041,6 +1041,9 @@ async function sendProspectPostcard(
     fromCity: fromParts[1] || "",
     fromState: (fromParts[2] || "").replace(/\s*\d{5}.*/, "").trim(),
     fromZip: (fromParts[2] || "").match(/\d{5}/)?.[0] || "",
+    cuisineType: (r as unknown as Record<string, unknown>).cuisineType as string | undefined,
+    googleRating: (r as unknown as Record<string, unknown>).rating as number | undefined,
+    reviewCount: (r as unknown as Record<string, unknown>).reviewCount as number | undefined,
   };
 
   const result = await lobSendPostcard(postcardConfig);
