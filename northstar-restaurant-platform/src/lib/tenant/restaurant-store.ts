@@ -38,15 +38,12 @@ export async function getRestaurant(id: string): Promise<Restaurant | undefined>
     if (error) {
       if (isTableNotFoundError(error)) {
         markSchemaUnavailable();
-        // Fall through to in-memory
-      } else {
-        return undefined;
       }
+      // Fall through to in-memory for both table-not-found and row-not-found
     } else if (data) {
       return fromDbRestaurant(data);
-    } else {
-      return undefined;
     }
+    // No row in DB — fall through to in-memory
   }
   return memRestaurants.get(id);
 }
@@ -58,15 +55,12 @@ export async function getRestaurantByDomain(domain: string): Promise<Restaurant 
     if (error) {
       if (isTableNotFoundError(error)) {
         markSchemaUnavailable();
-        // Fall through to in-memory
-      } else {
-        return undefined;
       }
+      // Fall through to in-memory
     } else if (data) {
       return fromDbRestaurant(data);
-    } else {
-      return undefined;
     }
+    // No row in DB — fall through to in-memory
   }
   const id = memDomainIndex.get(domain.toLowerCase());
   return id ? memRestaurants.get(id) : undefined;
@@ -79,15 +73,12 @@ export async function getRestaurantBySlug(slug: string): Promise<Restaurant | un
     if (error) {
       if (isTableNotFoundError(error)) {
         markSchemaUnavailable();
-        // Fall through to in-memory
-      } else {
-        return undefined;
       }
+      // Fall through to in-memory
     } else if (data) {
       return fromDbRestaurant(data);
-    } else {
-      return undefined;
     }
+    // No row in DB — fall through to in-memory
   }
   const id = memSlugIndex.get(slug.toLowerCase());
   return id ? memRestaurants.get(id) : undefined;
