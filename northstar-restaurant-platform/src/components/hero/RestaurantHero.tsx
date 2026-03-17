@@ -43,7 +43,8 @@ function useReducedMotion() {
 function optimizedVideoUrl(url: string, mobile: boolean): string {
   if (!url.includes("res.cloudinary.com")) return url;
   const width = mobile ? "w_640" : "w_1280";
-  return url.replace("/video/upload/", `/video/upload/q_auto,f_auto,${width}/`);
+  // Use q_auto but keep f_mp4 — f_auto can produce webm which some browsers struggle with
+  return url.replace("/video/upload/", `/video/upload/q_auto,${width}/`);
 }
 
 interface RestaurantHeroProps {
@@ -58,7 +59,6 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
 
   const [imageLoaded, setImageLoaded] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
-  const [mobilePlayRequested, setMobilePlayRequested] = useState(false);
 
   const isMobile = useIsMobile();
   const reducedMotion = useReducedMotion();
@@ -67,7 +67,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
 
   const heroVideo = branding.heroVideo;
   const posterUrl = branding.heroVideoPoster || branding.heroImage;
-  const showVideo = heroVideo && !reducedMotion && (!isMobile || mobilePlayRequested);
+  const showVideo = heroVideo && !reducedMotion;
 
   // IntersectionObserver: pause/resume video when scrolled out of view
   useEffect(() => {
@@ -149,19 +149,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         />
       )}
 
-      {/* Mobile play button */}
-      {heroVideo && isMobile && !mobilePlayRequested && !reducedMotion && (
-        <button
-          onClick={() => setMobilePlayRequested(true)}
-          className="absolute bottom-20 right-4 z-20 flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-sm text-white backdrop-blur-sm transition-all hover:bg-black/70"
-          aria-label="Play background video"
-        >
-          <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-          Play Video
-        </button>
-      )}
+      {/* Mobile play button removed — video autoplays on all devices */}
 
       {/* Logo outro overlay — fades in during last 1.5s of video loop */}
       {videoReady && showLogoOverlay && branding.logo && (
