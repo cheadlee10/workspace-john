@@ -780,7 +780,7 @@ export const latahBistroRestaurant: Restaurant = {
     textColor: "#1a2332",
     fontHeading: "Georgia, serif",
     fontBody: "system-ui, sans-serif",
-    heroImage: "https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=1920&q=80",
+    heroImage: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1920&q=80",
     template: "casual-dining",
   },
   socialMedia: {
