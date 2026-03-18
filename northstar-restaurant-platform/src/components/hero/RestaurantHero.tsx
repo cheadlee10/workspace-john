@@ -64,14 +64,23 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
 
   const heroVideo = branding.heroVideo;
   const posterUrl = branding.heroVideoPoster || branding.heroImage;
-  const showVideo = heroVideo && !reducedMotion;
 
-  // IntersectionObserver: pause/resume video when scrolled out of view
+  // On mount: if video already loaded (SSR hydration race), mark ready immediately
+  // Also start playback and observe visibility
   useEffect(() => {
     const video = videoRef.current;
     const hero = heroRef.current;
     if (!video || !hero) return;
 
+    // Video may have already loaded before React hydrated — check readyState
+    if (video.readyState >= 3) {
+      setVideoReady(true);
+    }
+
+    // Ensure playback starts
+    video.play().catch(() => {});
+
+    // Pause/resume when scrolled out of view
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -85,7 +94,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
 
     observer.observe(hero);
     return () => observer.disconnect();
-  }, [showVideo]);
+  }, [heroVideo]);
 
   // Logo overlay for video loop outro (Commit 5)
   const [showLogoOverlay, setShowLogoOverlay] = useState(false);
@@ -178,19 +187,21 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           />
         )}
 
-        {/* Restaurant name */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: animDuration * 0.75, ...stagger(0) }}
-          className="mb-2 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
-          style={{
-            color: "#ffffff",
-            textShadow: "0 2px 20px rgba(0,0,0,0.5)",
-          }}
-        >
-          {name}
-        </motion.h1>
+        {/* Restaurant name — only show if no logo (logo already has the name) */}
+        {!branding.logo && (
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: animDuration * 0.75, ...stagger(0) }}
+            className="mb-2 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+            style={{
+              color: "#ffffff",
+              textShadow: "0 2px 20px rgba(0,0,0,0.5)",
+            }}
+          >
+            {name}
+          </motion.h1>
+        )}
 
         {/* Tagline */}
         {tagline && (
