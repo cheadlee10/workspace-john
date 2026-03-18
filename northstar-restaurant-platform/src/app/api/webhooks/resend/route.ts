@@ -93,16 +93,79 @@ type ReplyIntent =
 // ---------------------------------------------------------------------------
 
 /**
- * Verify Resend webhook signature (HMAC-SHA256)
+ * Verify Resend webhook signature.
+ *
+ * Supports both:
+ * - Svix format (svix-id / svix-timestamp / svix-signature, whsec_ secret)
+ * - Legacy simple HMAC hex via resend-signature
  */
 async function verifySignature(
   payload: string,
-  signature: string | null,
+  request: NextRequest,
   secret: string
 ): Promise<boolean> {
+  const encoder = new TextEncoder();
+
+  // -------------------------------------------------------------------------
+  // Svix signature path (Resend commonly uses this format)
+  // -------------------------------------------------------------------------
+  const svixId = request.headers.get("svix-id");
+  const svixTimestamp = request.headers.get("svix-timestamp");
+  const svixSignature = request.headers.get("svix-signature");
+
+  if (svixId && svixTimestamp && svixSignature) {
+    try {
+      const signedContent = `${svixId}.${svixTimestamp}.${payload}`;
+      const rawSecret = secret.startsWith("whsec_") ? secret.slice(6) : secret;
+      const secretBytes = Uint8Array.from(Buffer.from(rawSecret, "base64"));
+
+      const key = await crypto.subtle.importKey(
+        "raw",
+        secretBytes,
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"]
+      );
+
+      const digest = await crypto.subtle.sign("HMAC", key, encoder.encode(signedContent));
+      const expected = Buffer.from(new Uint8Array(digest)).toString("base64");
+
+      // Header can contain multiple signatures, examples:
+      // - "v1,abc v1,def"
+      // - "v1=abc,v0=xyz"
+      const candidates = new Set<string>();
+      for (const token of svixSignature.split(/[\s,]+/)) {
+        const t = token.trim();
+        if (!t) continue;
+
+        if (t.startsWith("v1,")) {
+          const val = t.slice(3).trim();
+          if (val) candidates.add(val);
+        } else if (t.startsWith("v1=")) {
+          const val = t.slice(3).trim();
+          if (val) candidates.add(val);
+        } else if (/^[A-Za-z0-9+/=]+$/.test(t)) {
+          // raw base64 token fallback
+          candidates.add(t);
+        }
+      }
+
+      if (candidates.has(expected)) return true;
+
+      // Additional fallback parser for compact forms like "v1,abc"
+      const compactMatches = [...svixSignature.matchAll(/v1[,=]([^,\s]+)/g)].map((m) => m[1]);
+      return compactMatches.includes(expected);
+    } catch {
+      return false;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Legacy simple signature path
+  // -------------------------------------------------------------------------
+  const signature = request.headers.get("resend-signature");
   if (!signature) return false;
 
-  const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
     "raw",
     encoder.encode(secret),
@@ -631,10 +694,7 @@ export async function POST(request: NextRequest) {
 
   // Verify signature if secret is configured
   if (webhookSecret) {
-    const signature =
-      request.headers.get("resend-signature") ||
-      request.headers.get("svix-signature");
-    const isValid = await verifySignature(rawBody, signature, webhookSecret);
+    const isValid = await verifySignature(rawBody, request, webhookSecret);
     if (!isValid) {
       return NextResponse.json(
         { error: "Invalid signature" },
