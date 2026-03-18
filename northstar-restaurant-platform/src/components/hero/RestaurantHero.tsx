@@ -115,12 +115,13 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         <div className="hero-shimmer absolute inset-0" style={{ backgroundColor: palette.background }} />
       )}
 
-      {/* Poster / Ken Burns Background Image — always present, fades out when video ready */}
+      {/* Poster / Ken Burns Background Image — sits behind video, fades out when video ready */}
       {posterUrl && (
         <div
           className={`absolute inset-0 transition-opacity duration-1000 ${
             videoReady ? "opacity-0" : "opacity-100"
           } ${!reducedMotion && !videoReady ? "hero-ken-burns" : ""}`}
+          style={{ zIndex: 0 }}
         >
           <Image
             src={posterUrl}
@@ -136,7 +137,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         </div>
       )}
 
-      {/* Background Video — always rendered if URL exists, autoplay muted */}
+      {/* Background Video — always visible, autoplay muted loop */}
       {heroVideo && (
         <video
           ref={videoRef}
@@ -149,9 +150,8 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           onCanPlay={() => setVideoReady(true)}
           onTimeUpdate={handleTimeUpdate}
           onError={() => setVideoReady(false)}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-            videoReady && !reducedMotion ? "opacity-100" : "opacity-0"
-          }`}
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ zIndex: 1 }}
         />
       )}
 
