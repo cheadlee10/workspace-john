@@ -28,6 +28,7 @@ function addSecurityHeaders(response: NextResponse): NextResponse {
       "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://sandbox.web.squarecdn.com https://web.squarecdn.com https://js.stripe.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https://images.unsplash.com https://*.googleusercontent.com https://res.cloudinary.com https://staticmap.openstreetmap.de https://www.openstreetmap.org",
+      "media-src 'self' https://res.cloudinary.com https://*.fal.media",
       "font-src 'self' https://fonts.gstatic.com",
       "connect-src 'self' https://www.google-analytics.com https://*.squareup.com https://api.stripe.com https://maps.googleapis.com",
       "frame-src https://js.stripe.com https://sandbox.web.squarecdn.com https://web.squarecdn.com https://www.openstreetmap.org",
