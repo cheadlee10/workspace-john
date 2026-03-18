@@ -39,12 +39,9 @@ function useReducedMotion() {
   return reduced;
 }
 
-/** Build Cloudinary-optimized video URL for the given viewport */
-function optimizedVideoUrl(url: string, mobile: boolean): string {
-  if (!url.includes("res.cloudinary.com")) return url;
-  const width = mobile ? "w_640" : "w_1280";
-  // Use q_auto but keep f_mp4 — f_auto can produce webm which some browsers struggle with
-  return url.replace("/video/upload/", `/video/upload/q_auto,${width}/`);
+/** Return video URL as-is — Cloudinary transforms were causing playback failures */
+function optimizedVideoUrl(url: string): string {
+  return url;
 }
 
 interface RestaurantHeroProps {
@@ -130,11 +127,11 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         </div>
       )}
 
-      {/* Background Video — desktop auto, mobile on tap */}
-      {showVideo && (
+      {/* Background Video — always rendered if URL exists, autoplay muted */}
+      {heroVideo && (
         <video
           ref={videoRef}
-          src={optimizedVideoUrl(heroVideo, isMobile)}
+          src={heroVideo}
           autoPlay
           muted
           loop
@@ -144,7 +141,7 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           onTimeUpdate={handleTimeUpdate}
           onError={() => setVideoReady(false)}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
-            videoReady ? "opacity-100" : "opacity-0"
+            videoReady && !reducedMotion ? "opacity-100" : "opacity-0"
           }`}
         />
       )}
