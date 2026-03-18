@@ -7,9 +7,13 @@ import { PRICING_PLANS } from "@/lib/billing/stripe-billing";
 
 interface PricingSectionProps {
   accentColor?: string;
+  dark?: boolean;
 }
 
-export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps) {
+export function PricingSection({
+  accentColor = "#D4A574",
+  dark = false,
+}: PricingSectionProps) {
   const [isAnnual, setIsAnnual] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
@@ -22,7 +26,7 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
         body: JSON.stringify({
           action: "checkout",
           plan: planId,
-          clientEmail: "", // Will be collected by Stripe Checkout
+          clientEmail: "",
           clientName: "",
           successUrl: `${window.location.origin}/pricing?success=true`,
           cancelUrl: `${window.location.origin}/pricing`,
@@ -34,34 +38,70 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
       if (data.url) {
         window.location.href = data.url;
       } else {
-        // Billing not configured yet — scroll to contact or show message
         window.location.href = "mailto:hello@northstarsynergy.com";
       }
     } catch {
-      // Stripe not configured — fall back to contact
       window.location.href = "mailto:hello@northstarsynergy.com";
     } finally {
       setLoadingPlan(null);
     }
   }
 
+  // Theme-aware colors
+  const bg = dark ? "bg-transparent" : "bg-gray-50";
+  const headingColor = dark ? "text-white" : "text-gray-900";
+  const subColor = dark ? "text-slate-400" : "text-gray-500";
+  const toggleBg = dark
+    ? "bg-slate-800/60 border border-slate-700/40"
+    : "bg-white shadow-sm";
+  const toggleInactive = dark ? "text-slate-400" : "text-gray-600";
+  const cardBg = dark
+    ? "bg-slate-800/30 backdrop-blur-sm"
+    : "bg-white";
+  const cardBorder = dark ? "border-slate-700/40" : "border-gray-200";
+  const cardHover = dark ? "hover:bg-slate-800/50" : "hover:shadow-md";
+  const priceColor = dark ? "text-white" : "text-gray-900";
+  const featureColor = dark ? "text-slate-400" : "text-gray-600";
+  const annualColor = dark ? "text-slate-500" : "text-gray-400";
+  const outlineBtnBg = dark
+    ? "bg-transparent hover:bg-slate-700/50"
+    : "bg-white hover:bg-gray-50";
+  const legalColor = dark ? "text-slate-500" : "text-gray-400";
+  const linkColor = dark
+    ? "text-emerald-400 hover:text-emerald-300"
+    : "text-teal-600 hover:text-teal-700";
+  const tableBg = dark ? "bg-slate-800/30" : "bg-white";
+  const tableBorder = dark ? "border-slate-700/40" : "border-gray-200";
+  const tableHeaderBg = dark ? "bg-slate-800/60" : "bg-gray-50";
+  const tableHeaderColor = dark ? "text-slate-300" : "text-gray-700";
+  const tableRowBorder = dark ? "border-slate-700/20" : "border-gray-50";
+  const tableCellColor = dark ? "text-slate-400" : "text-gray-600";
+  const tableCellDim = dark ? "text-slate-500" : "text-gray-500";
+  const faqBorder = dark ? "border-slate-700/40" : "border-gray-200";
+  const faqBg = dark ? "bg-slate-800/30" : "bg-white";
+  const faqSummary = dark ? "text-white" : "text-gray-900";
+  const faqArrow = dark ? "text-slate-500" : "text-gray-400";
+  const faqAnswer = dark ? "text-slate-400" : "text-gray-500";
+
   return (
-    <section id="pricing" className="bg-gray-50 py-16 sm:py-24">
+    <section id="pricing" className={`${bg} py-16 sm:py-24`}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-12 text-center">
-          <h2 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl">
+          <h2 className={`mb-3 text-3xl font-bold ${headingColor} sm:text-4xl`}>
             Simple, Transparent Pricing
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-gray-500">
+          <p className={`mx-auto max-w-2xl text-lg ${subColor}`}>
             No setup fees. No contracts. No hidden costs. Cancel anytime.
           </p>
 
           {/* Annual Toggle */}
-          <div className="mt-6 inline-flex items-center gap-3 rounded-full bg-white p-1 shadow-sm">
+          <div
+            className={`mt-6 inline-flex items-center gap-3 rounded-full p-1 ${toggleBg}`}
+          >
             <button
               onClick={() => setIsAnnual(false)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                !isAnnual ? "text-white" : "text-gray-600"
+                !isAnnual ? "text-white" : toggleInactive
               }`}
               style={!isAnnual ? { backgroundColor: accentColor } : undefined}
             >
@@ -70,7 +110,7 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
             <button
               onClick={() => setIsAnnual(true)}
               className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                isAnnual ? "text-white" : "text-gray-600"
+                isAnnual ? "text-white" : toggleInactive
               }`}
               style={isAnnual ? { backgroundColor: accentColor } : undefined}
             >
@@ -83,7 +123,9 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {PRICING_PLANS.map((plan, i) => {
             const isPopular = plan.id === "growth";
-            const price = isAnnual ? Math.round(plan.price * 0.8) : plan.price;
+            const price = isAnnual
+              ? Math.round(plan.price * 0.8)
+              : plan.price;
 
             return (
               <motion.div
@@ -92,12 +134,14 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className={`relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition-shadow hover:shadow-md sm:p-8 ${
+                className={`relative flex flex-col rounded-2xl border p-5 shadow-sm transition-shadow sm:p-8 ${cardHover} ${cardBg} ${
                   isPopular
                     ? "border-2 shadow-lg"
-                    : "border-gray-200"
+                    : cardBorder
                 }`}
-                style={isPopular ? { borderColor: accentColor } : undefined}
+                style={
+                  isPopular ? { borderColor: accentColor } : undefined
+                }
               >
                 {isPopular && (
                   <div
@@ -109,22 +153,31 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
                 )}
 
                 <div className="mb-6">
-                  <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
+                  <h3 className={`text-xl font-bold ${headingColor}`}>
+                    {plan.name}
+                  </h3>
                   <div className="mt-3 flex items-baseline">
-                    <span className="text-4xl font-bold text-gray-900">${price}</span>
-                    <span className="ml-1 text-gray-500">/mo</span>
+                    <span className={`text-4xl font-bold ${priceColor}`}>
+                      ${price}
+                    </span>
+                    <span className={`ml-1 ${subColor}`}>/mo</span>
                   </div>
                   {isAnnual && (
-                    <p className="mt-1 text-sm text-gray-400">
-                      <span className="line-through">${plan.price}/mo</span>
-                      {" "}billed annually
+                    <p className={`mt-1 text-sm ${annualColor}`}>
+                      <span className="line-through">
+                        ${plan.price}/mo
+                      </span>{" "}
+                      billed annually
                     </p>
                   )}
                 </div>
 
                 <ul className="mb-8 flex-1 space-y-3">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-sm text-gray-600">
+                    <li
+                      key={feature}
+                      className={`flex items-start gap-2 text-sm ${featureColor}`}
+                    >
                       <svg
                         className="mt-0.5 h-4 w-4 shrink-0"
                         fill="none"
@@ -150,7 +203,7 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
                   className={`w-full rounded-xl py-3.5 text-sm font-bold transition-all active:scale-[0.98] disabled:opacity-70 ${
                     isPopular
                       ? "text-white shadow-lg hover:shadow-xl"
-                      : "border-2 bg-white hover:bg-gray-50"
+                      : `border-2 ${outlineBtnBg}`
                   }`}
                   style={
                     isPopular
@@ -165,68 +218,147 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
           })}
         </div>
 
-        <p className="mt-6 text-center text-xs text-gray-400">
+        <p className={`mt-6 text-center text-xs ${legalColor}`}>
           By subscribing, you agree to our{" "}
-          <Link href="/legal/terms" className="text-teal-600 underline hover:text-teal-700">Terms of Service</Link>{" "}
+          <Link
+            href="/legal/terms"
+            className={`underline ${linkColor}`}
+          >
+            Terms of Service
+          </Link>{" "}
           and{" "}
-          <Link href="/legal/privacy" className="text-teal-600 underline hover:text-teal-700">Privacy Policy</Link>.
-          Subscriptions are billed monthly or annually and can be cancelled anytime.
+          <Link
+            href="/legal/privacy"
+            className={`underline ${linkColor}`}
+          >
+            Privacy Policy
+          </Link>
+          . Subscriptions are billed monthly or annually and can be cancelled
+          anytime.
         </p>
 
         {/* Comparison to competitors */}
         <div className="mt-16 text-center">
-          <h3 className="mb-4 text-lg font-bold text-gray-900">
+          <h3 className={`mb-4 text-lg font-bold ${headingColor}`}>
             How We Compare
           </h3>
-          <div className="mx-auto max-w-3xl overflow-x-auto rounded-xl border border-gray-200 bg-white">
+          <div
+            className={`mx-auto max-w-3xl overflow-x-auto rounded-xl border ${tableBorder} ${tableBg}`}
+          >
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50">
-                  <th className="px-3 py-3 font-semibold text-gray-700 sm:px-6">Platform</th>
-                  <th className="px-3 py-3 text-center font-semibold text-gray-700 sm:px-6">Monthly</th>
-                  <th className="hidden px-3 py-3 text-center font-semibold text-gray-700 sm:table-cell sm:px-6">Setup Fee</th>
-                  <th className="hidden px-3 py-3 text-center font-semibold text-gray-700 sm:table-cell sm:px-6">Commission</th>
+                <tr
+                  className={`border-b ${tableRowBorder} ${tableHeaderBg}`}
+                >
+                  <th
+                    className={`px-3 py-3 font-semibold ${tableHeaderColor} sm:px-6`}
+                  >
+                    Platform
+                  </th>
+                  <th
+                    className={`px-3 py-3 text-center font-semibold ${tableHeaderColor} sm:px-6`}
+                  >
+                    Monthly
+                  </th>
+                  <th
+                    className={`hidden px-3 py-3 text-center font-semibold ${tableHeaderColor} sm:table-cell sm:px-6`}
+                  >
+                    Setup Fee
+                  </th>
+                  <th
+                    className={`hidden px-3 py-3 text-center font-semibold ${tableHeaderColor} sm:table-cell sm:px-6`}
+                  >
+                    Commission
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-50" style={{ backgroundColor: `${accentColor}08` }}>
-                  <td className="px-3 py-3 font-bold sm:px-6" style={{ color: accentColor }}>
+                <tr
+                  className={`border-b ${tableRowBorder}`}
+                  style={{
+                    backgroundColor: dark
+                      ? `${accentColor}10`
+                      : `${accentColor}08`,
+                  }}
+                >
+                  <td
+                    className="px-3 py-3 font-bold sm:px-6"
+                    style={{ color: accentColor }}
+                  >
                     NorthStar Synergy
                   </td>
-                  <td className="px-3 py-3 text-center font-bold text-gray-900 sm:px-6">$49-149</td>
-                  <td className="hidden px-3 py-3 text-center font-bold text-gray-900 sm:table-cell sm:px-6">$0</td>
-                  <td className="hidden px-3 py-3 text-center font-bold text-gray-900 sm:table-cell sm:px-6">0%</td>
+                  <td
+                    className={`px-3 py-3 text-center font-bold ${priceColor} sm:px-6`}
+                  >
+                    $49-149
+                  </td>
+                  <td
+                    className={`hidden px-3 py-3 text-center font-bold ${priceColor} sm:table-cell sm:px-6`}
+                  >
+                    $0
+                  </td>
+                  <td
+                    className={`hidden px-3 py-3 text-center font-bold ${priceColor} sm:table-cell sm:px-6`}
+                  >
+                    0%
+                  </td>
                 </tr>
-                <tr className="border-b border-gray-50">
-                  <td className="px-3 py-3 text-gray-600 sm:px-6">BentoBox</td>
-                  <td className="px-3 py-3 text-center text-gray-600 sm:px-6">$199-499</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-500 sm:table-cell sm:px-6">$500+</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-600 sm:table-cell sm:px-6">0%</td>
-                </tr>
-                <tr className="border-b border-gray-50">
-                  <td className="px-3 py-3 text-gray-600 sm:px-6">Popmenu</td>
-                  <td className="px-3 py-3 text-center text-gray-600 sm:px-6">$179-499</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-500 sm:table-cell sm:px-6">$499</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-600 sm:table-cell sm:px-6">0%</td>
-                </tr>
-                <tr className="border-b border-gray-50">
-                  <td className="px-3 py-3 text-gray-600 sm:px-6">Owner.com</td>
-                  <td className="px-3 py-3 text-center text-gray-600 sm:px-6">$499</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-500 sm:table-cell sm:px-6">$500</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-600 sm:table-cell sm:px-6">0%</td>
-                </tr>
-                <tr className="border-b border-gray-50">
-                  <td className="px-3 py-3 text-gray-600 sm:px-6">DoorDash</td>
-                  <td className="px-3 py-3 text-center text-gray-600 sm:px-6">$0</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-600 sm:table-cell sm:px-6">$0</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-500 sm:table-cell sm:px-6">15-30%</td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 text-gray-600 sm:px-6">UberEats</td>
-                  <td className="px-3 py-3 text-center text-gray-600 sm:px-6">$0</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-600 sm:table-cell sm:px-6">$0</td>
-                  <td className="hidden px-3 py-3 text-center text-gray-500 sm:table-cell sm:px-6">15-30%</td>
-                </tr>
+                {[
+                  {
+                    name: "BentoBox",
+                    monthly: "$199-499",
+                    setup: "$500+",
+                    commission: "0%",
+                  },
+                  {
+                    name: "Popmenu",
+                    monthly: "$179-499",
+                    setup: "$499",
+                    commission: "0%",
+                  },
+                  {
+                    name: "Owner.com",
+                    monthly: "$499",
+                    setup: "$500",
+                    commission: "0%",
+                  },
+                  {
+                    name: "DoorDash",
+                    monthly: "$0",
+                    setup: "$0",
+                    commission: "15-30%",
+                  },
+                  {
+                    name: "UberEats",
+                    monthly: "$0",
+                    setup: "$0",
+                    commission: "15-30%",
+                  },
+                ].map((row) => (
+                  <tr
+                    key={row.name}
+                    className={`border-b ${tableRowBorder} last:border-b-0`}
+                  >
+                    <td className={`px-3 py-3 ${tableCellColor} sm:px-6`}>
+                      {row.name}
+                    </td>
+                    <td
+                      className={`px-3 py-3 text-center ${tableCellColor} sm:px-6`}
+                    >
+                      {row.monthly}
+                    </td>
+                    <td
+                      className={`hidden px-3 py-3 text-center ${tableCellDim} sm:table-cell sm:px-6`}
+                    >
+                      {row.setup}
+                    </td>
+                    <td
+                      className={`hidden px-3 py-3 text-center ${tableCellDim} sm:table-cell sm:px-6`}
+                    >
+                      {row.commission}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -234,7 +366,7 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
 
         {/* FAQ */}
         <div className="mt-16">
-          <h3 className="mb-8 text-center text-lg font-bold text-gray-900">
+          <h3 className={`mb-8 text-center text-lg font-bold ${headingColor}`}>
             Frequently Asked Questions
           </h3>
           <div className="mx-auto max-w-2xl space-y-4">
@@ -266,21 +398,32 @@ export function PricingSection({ accentColor = "#D4A574" }: PricingSectionProps)
             ].map(({ q, a }) => (
               <details
                 key={q}
-                className="group rounded-xl border border-gray-200 bg-white"
+                className={`group rounded-xl border ${faqBorder} ${faqBg}`}
               >
-                <summary className="flex cursor-pointer items-center justify-between px-4 py-4 text-sm font-semibold text-gray-900 sm:px-6 [&::-webkit-details-marker]:hidden">
+                <summary
+                  className={`flex cursor-pointer items-center justify-between px-4 py-4 text-sm font-semibold ${faqSummary} sm:px-6 [&::-webkit-details-marker]:hidden`}
+                >
                   {q}
                   <svg
-                    className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180"
+                    className={`h-4 w-4 shrink-0 ${faqArrow} transition-transform group-open:rotate-180`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </summary>
-                <p className="px-4 pb-4 text-sm leading-relaxed text-gray-500 sm:px-6">{a}</p>
+                <p
+                  className={`px-4 pb-4 text-sm leading-relaxed ${faqAnswer} sm:px-6`}
+                >
+                  {a}
+                </p>
               </details>
             ))}
           </div>
