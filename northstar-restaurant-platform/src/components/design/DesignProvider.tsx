@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, type ReactNode } from "react";
 import type { DesignConfig } from "@/lib/design/design-engine";
+import type React from "react";
 import { buildGoogleFontsUrl } from "@/lib/design/font-loader";
 
 const DesignContext = createContext<DesignConfig | null>(null);
@@ -24,6 +25,21 @@ const DEFAULT_CONFIG: DesignConfig = {
     menuCardBg: "#ffffff",
     menuCardBorder: "#f3f4f6",
     reviewSectionBg: "#f9fafb",
+    stitch: {
+      base: "#ffffff",
+      containerLowest: "#ffffff",
+      containerLow: "#f5f3f0",
+      container: "#efecea",
+      containerHigh: "#e9e6e3",
+      containerHighest: "#e3e0dd",
+    },
+    stitchAccent: {
+      primary: "#D4A574",
+      primaryContainer: "#ae8060",
+      onPrimary: "#3b2a15",
+      tertiary: "#c19e92",
+    },
+    outlineVariant: "#d7d3cf",
   },
   fonts: {
     heading: "system-ui",
@@ -95,6 +111,30 @@ export function DesignProvider({ config, children }: DesignProviderProps) {
     config.vibe.mood === "rustic-earthy" ? "texture-organic" :
     "";
 
+  // Build CSS custom properties for Stitch tokens
+  const stitchVars: Record<string, string> = {};
+  if (config.palette.stitch) {
+    const s = config.palette.stitch;
+    stitchVars["--stitch-surface"] = s.base;
+    stitchVars["--stitch-surface-container-lowest"] = s.containerLowest;
+    stitchVars["--stitch-surface-container-low"] = s.containerLow;
+    stitchVars["--stitch-surface-container"] = s.container;
+    stitchVars["--stitch-surface-container-high"] = s.containerHigh;
+    stitchVars["--stitch-surface-container-highest"] = s.containerHighest;
+  }
+  if (config.palette.stitchAccent) {
+    const a = config.palette.stitchAccent;
+    stitchVars["--stitch-primary"] = a.primary;
+    stitchVars["--stitch-primary-container"] = a.primaryContainer;
+    stitchVars["--stitch-on-primary"] = a.onPrimary;
+    stitchVars["--stitch-tertiary"] = a.tertiary;
+  }
+  if (config.palette.outlineVariant) {
+    stitchVars["--stitch-outline-variant"] = config.palette.outlineVariant;
+  }
+  stitchVars["--stitch-on-surface"] = config.palette.text;
+  stitchVars["--stitch-on-surface-variant"] = config.palette.textMuted;
+
   return (
     <DesignContext.Provider value={config}>
       <div
@@ -102,7 +142,8 @@ export function DesignProvider({ config, children }: DesignProviderProps) {
           backgroundColor: config.palette.background,
           color: config.palette.text,
           fontFamily: bodyFont,
-        }}
+          ...stitchVars,
+        } as React.CSSProperties}
         className={`min-h-screen ${textureClass}`}
         data-design-mood={config.vibe.mood}
       >

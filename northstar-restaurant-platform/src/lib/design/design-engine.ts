@@ -13,6 +13,24 @@ import type { Restaurant, CuisineType, RestaurantType } from "@/types/restaurant
 
 // ─── Design Config Interface ────────────────────────────────────────────────
 
+/** Stitch-inspired surface hierarchy (5 levels, dark → light) */
+export interface StitchSurfaces {
+  base: string;            // deepest background (#131313 in dark)
+  containerLowest: string; // recessed areas (#0e0e0e)
+  containerLow: string;    // cards, secondary (#1c1b1b)
+  container: string;       // mid-level (#201f1f)
+  containerHigh: string;   // elevated (#2a2a2a)
+  containerHighest: string;// inputs, active (#353534)
+}
+
+/** Stitch-inspired accent tokens derived from brand color */
+export interface StitchAccent {
+  primary: string;          // main accent (#e9c176)
+  primaryContainer: string; // darker accent for gradients (#c5a059)
+  onPrimary: string;        // text on primary bg (#412d00)
+  tertiary: string;         // warm secondary accent (#e4beb2)
+}
+
 export interface DesignConfig {
   palette: {
     background: string;
@@ -29,6 +47,12 @@ export interface DesignConfig {
     menuCardBg: string;
     menuCardBorder: string;
     reviewSectionBg: string;
+    // Stitch surface hierarchy
+    stitch: StitchSurfaces;
+    // Stitch accent tokens
+    stitchAccent: StitchAccent;
+    // Ghost border color (no-border rule: use at 15-20% opacity only)
+    outlineVariant: string;
   };
 
   fonts: {
@@ -69,6 +93,85 @@ export type VibeMood =
   | "dark-moody"
   | "bright-fresh"
   | "rustic-earthy";
+
+// ─── Stitch Color Derivation ────────────────────────────────────────────────
+
+/** Parse hex to RGB components */
+function hexToRgb(hex: string): [number, number, number] {
+  const c = hex.replace("#", "");
+  return [
+    parseInt(c.substring(0, 2), 16),
+    parseInt(c.substring(2, 4), 16),
+    parseInt(c.substring(4, 6), 16),
+  ];
+}
+
+/** RGB to hex */
+function rgbToHex(r: number, g: number, b: number): string {
+  return "#" + [r, g, b].map(c => Math.round(Math.max(0, Math.min(255, c))).toString(16).padStart(2, "0")).join("");
+}
+
+/** Lighten or darken a hex color by an amount (-255 to +255) */
+function adjustBrightness(hex: string, amount: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  return rgbToHex(r + amount, g + amount, b + amount);
+}
+
+/** Derive a warm-tinted adjustment (slight warm shift for Stitch aesthetic) */
+function warmAdjust(hex: string, amount: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  return rgbToHex(r + amount + 2, g + amount + 1, b + amount);
+}
+
+/** Generate Stitch 5-level surface hierarchy from a base background color */
+function deriveStitchSurfaces(bg: string, isDark: boolean): StitchSurfaces {
+  if (isDark) {
+    return {
+      base: bg,
+      containerLowest: adjustBrightness(bg, -5),
+      containerLow: warmAdjust(bg, 9),
+      container: warmAdjust(bg, 13),
+      containerHigh: warmAdjust(bg, 23),
+      containerHighest: warmAdjust(bg, 34),
+    };
+  }
+  // Light mode: surfaces get progressively darker
+  return {
+    base: bg,
+    containerLowest: "#ffffff",
+    containerLow: adjustBrightness(bg, -5),
+    container: adjustBrightness(bg, -10),
+    containerHigh: adjustBrightness(bg, -17),
+    containerHighest: adjustBrightness(bg, -24),
+  };
+}
+
+/** Derive Stitch accent tokens from a primary accent color */
+function deriveStitchAccent(accent: string, isDark: boolean): StitchAccent {
+  const [r, g, b] = hexToRgb(accent);
+
+  // Primary container: darken accent by ~15%
+  const primaryContainer = rgbToHex(
+    Math.round(r * 0.82),
+    Math.round(g * 0.78),
+    Math.round(b * 0.72)
+  );
+
+  // Text color on primary: very dark version of accent
+  const onPrimary = isDark
+    ? rgbToHex(Math.round(r * 0.28), Math.round(g * 0.25), Math.round(b * 0.15))
+    : rgbToHex(Math.round(r * 0.2), Math.round(g * 0.18), Math.round(b * 0.1));
+
+  // Tertiary: warm rose-beige complement
+  const tertiary = isDark ? "#e4beb2" : "#c19e92";
+
+  return { primary: accent, primaryContainer, onPrimary, tertiary };
+}
+
+/** Derive ghost border color from background */
+function deriveOutlineVariant(bg: string, isDark: boolean): string {
+  return isDark ? warmAdjust(bg, 55) : adjustBrightness(bg, -40);
+}
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -184,12 +287,15 @@ function determineVibe(
 
 // ─── Palette Generation ─────────────────────────────────────────────────────
 
+/** Base palette without Stitch tokens (enriched later in generateDesignConfig) */
+type BasePalette = Omit<DesignConfig["palette"], "stitch" | "stitchAccent" | "outlineVariant">;
+
 function generatePalette(
   mood: VibeMood,
   cuisine: CuisineType,
   type: RestaurantType,
   keywords: VibeKeywords
-): DesignConfig["palette"] {
+): BasePalette {
   switch (mood) {
     case "dark-moody": {
       if (keywords.isCoffee) {
@@ -863,7 +969,19 @@ export function generateDesignConfig(restaurant: Restaurant): DesignConfig {
   const type = restaurant.type;
 
   const mood = determineVibe(restaurant, priceLevel, keywords);
-  const palette = generatePalette(mood, cuisine, type, keywords);
+  const basePalette = generatePalette(mood, cuisine, type, keywords);
+  const bgHex = basePalette.background.replace("#", "");
+  const dark = bgHex.length === 6 && (
+    0.299 * (parseInt(bgHex.substring(0, 2), 16) / 255) +
+    0.587 * (parseInt(bgHex.substring(2, 4), 16) / 255) +
+    0.114 * (parseInt(bgHex.substring(4, 6), 16) / 255)
+  ) < 0.35;
+  const palette: DesignConfig["palette"] = {
+    ...basePalette,
+    stitch: deriveStitchSurfaces(basePalette.background, dark),
+    stitchAccent: deriveStitchAccent(basePalette.accent, dark),
+    outlineVariant: deriveOutlineVariant(basePalette.background, dark),
+  };
   const fonts = generateFonts(mood, cuisine, type, keywords, priceLevel);
   const layout = generateLayout(mood, type, priceLevel, photoCount, keywords);
   const effects = generateEffects(mood, type, priceLevel, keywords);
