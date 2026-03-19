@@ -195,7 +195,7 @@ export async function sendDigestEmail(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: "NorthStar Synergy <digest@northstarsynergy.com>",
+        from: "NorthStar Synergy <digest@northstarsynergy.org>",
         to: recipientEmail,
         subject: `Weekly Digest — ${digest.weekOf}`,
         html,

@@ -406,7 +406,7 @@ export default function HelpPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
                 <p className="mt-2 text-sm font-medium text-gray-900">Email Support</p>
-                <p className="mt-1 text-xs text-gray-500">support@northstarsynergy.com</p>
+                <p className="mt-1 text-xs text-gray-500">support@northstarsynergy.org</p>
                 <p className="mt-0.5 text-xs text-gray-400">Response within 4 hours</p>
               </div>
               <div className="rounded-xl border border-gray-200 bg-white p-5 text-center">

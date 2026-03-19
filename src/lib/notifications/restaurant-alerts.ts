@@ -166,7 +166,7 @@ async function sendAlertEmail(data: OrderAlertData, to: string): Promise<void> {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      from: `${data.restaurantName} Orders <orders@northstarsynergy.com>`,
+      from: `${data.restaurantName} Orders <orders@northstarsynergy.org>`,
       to,
       subject: `New order #${data.orderId} — $${data.total.toFixed(2)}`,
       html,

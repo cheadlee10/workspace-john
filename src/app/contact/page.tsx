@@ -144,7 +144,7 @@ export default function ContactPage() {
 
             {status === "error" && (
               <p role="alert" className="text-sm text-red-600">
-                Something went wrong. Please try again or email us directly at hello@northstarsynergy.com.
+                Something went wrong. Please try again or email us directly at hello@northstarsynergy.org.
               </p>
             )}
 
@@ -159,8 +159,8 @@ export default function ContactPage() {
 
             <p className="text-center text-xs text-gray-400">
               Or email us directly at{" "}
-              <a href="mailto:hello@northstarsynergy.com" className="text-teal-600 hover:underline">
-                hello@northstarsynergy.com
+              <a href="mailto:hello@northstarsynergy.org" className="text-teal-600 hover:underline">
+                hello@northstarsynergy.org
               </a>
             </p>
           </form>

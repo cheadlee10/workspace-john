@@ -63,8 +63,8 @@ export default async function UnsubscribePage({ params }: UnsubscribePageProps) 
         </p>
         <p className="mb-8 text-sm text-gray-400">
           If this was a mistake, or if you change your mind, feel free to reach out at{" "}
-          <a href="mailto:hello@northstarsynergy.com" className="text-teal-600 hover:underline">
-            hello@northstarsynergy.com
+          <a href="mailto:hello@northstarsynergy.org" className="text-teal-600 hover:underline">
+            hello@northstarsynergy.org
           </a>
         </p>
         <Link

@@ -1153,7 +1153,7 @@ export function LandingPage() {
                   Contact Us
                 </Link>
                 <span className="text-sm text-slate-500">
-                  hello@northstarsynergy.com
+                  hello@northstarsynergy.org
                 </span>
                 <span className="text-sm text-slate-500">
                   Woodinville, WA

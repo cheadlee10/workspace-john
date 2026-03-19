@@ -63,7 +63,7 @@ export default function LoginPage() {
                 required
                 autoFocus
                 autoComplete="email"
-                placeholder="admin@northstarsynergy.com"
+                placeholder="admin@northstarsynergy.org"
                 className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-gray-400 focus:outline-none"
               />
             </div>

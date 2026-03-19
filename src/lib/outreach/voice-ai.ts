@@ -182,7 +182,7 @@ Their restaurant: ${prospectInfo.restaurantName}
 Preview URL: ${prospectInfo.previewUrl}
 
 Be friendly and helpful. Answer their questions about the website, pricing, and features. If they want to sign up, walk them through the process:
-1. They can pick a plan at northstarsynergy.com/pricing
+1. They can pick a plan at northstarsynergy.org/pricing
 2. Starter ($49/mo), Growth ($99/mo), or Pro ($149/mo)
 3. No setup fees, no contracts, cancel anytime
 4. We handle everything - they just approve and we launch
@@ -190,7 +190,7 @@ Be friendly and helpful. Answer their questions about the website, pricing, and 
 If they have technical questions you can't answer, offer to have someone follow up via email.`
     : `You are a representative from NorthStar Synergy, a restaurant website platform.
 Someone is calling about our services. Be helpful, professional, and answer their questions.
-Direct them to northstarsynergy.com for more information.`;
+Direct them to northstarsynergy.org for more information.`;
 
   // Platform-specific inbound call handling would go here
   console.log(`[Voice AI] Handling inbound call from ${callerId}`);

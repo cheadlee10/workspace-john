@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       </div>
     `;
 
-    const fallbackEmail = process.env.CONTACT_FORM_EMAIL || "hello@northstarsynergy.com";
+    const fallbackEmail = process.env.CONTACT_FORM_EMAIL || "craigheadlee74@gmail.com";
     const toEmail = (restaurantEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(restaurantEmail))
       ? restaurantEmail
       : fallbackEmail;
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: `${restaurantName} Website <noreply@northstarsynergy.com>`,
+        from: `${restaurantName} Website <noreply@northstarsynergy.org>`,
         to: toEmail,
         reply_to: email,
         subject,

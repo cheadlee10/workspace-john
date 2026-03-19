@@ -260,7 +260,7 @@ export default function SitesPage() {
                     {site.domain ? (
                       <span className="text-xs text-blue-600">{site.domain}</span>
                     ) : (
-                      <span className="text-xs text-gray-400">{site.slug}.northstarsynergy.com</span>
+                      <span className="text-xs text-gray-400">{site.slug}.northstarsynergy.org</span>
                     )}
                   </td>
                   <td className="px-4 py-3">

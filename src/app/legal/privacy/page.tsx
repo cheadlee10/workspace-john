@@ -113,7 +113,7 @@ export default function PrivacyPage() {
               <li>Export your data in a portable format</li>
               <li>Opt out of marketing communications</li>
             </ul>
-            <p>To exercise these rights, contact us at privacy@northstarsynergy.com.</p>
+            <p>To exercise these rights, contact us at privacy@northstarsynergy.org.</p>
           </section>
 
           <section>
@@ -126,7 +126,7 @@ export default function PrivacyPage() {
               <li><strong>Right to Opt-Out:</strong> We do not sell or share your personal information for cross-context behavioral advertising.</li>
               <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising your privacy rights.</li>
             </ul>
-            <p>To exercise these rights, contact us at privacy@northstarsynergy.com. We will verify your identity before processing your request and respond within 45 days.</p>
+            <p>To exercise these rights, contact us at privacy@northstarsynergy.org. We will verify your identity before processing your request and respond within 45 days.</p>
             <p><strong>Categories of information collected:</strong> Identifiers (name, email, phone), commercial information (subscription plan, order history), internet activity (site usage analytics), and professional information (business name, address).</p>
           </section>
 
@@ -148,7 +148,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900">14. Contact Us</h2>
-            <p>NorthStar Synergy LLC<br />Woodinville, WA<br />privacy@northstarsynergy.com</p>
+            <p>NorthStar Synergy LLC<br />Woodinville, WA<br />privacy@northstarsynergy.org</p>
           </section>
         </div>
       </main>

@@ -9,7 +9,7 @@ SaaS restaurant website engine built by Craig (NorthStar Synergy). Turnkey resta
 - **Admin**: https://northstar-restaurant-platform.vercel.app/admin/login (credentials in Vercel env vars)
 - **GitHub**: https://github.com/cheadlee10/northstar-restaurant-platform.git (master)
 - **Git email for commits**: craigheadlee74@gmail.com
-- **IMPORTANT**: northstarsynergy.com is NOT connected yet. The domain is referenced throughout the codebase as the future production URL, but it is NOT live and will return a 502 or error. The only working URL is the Vercel one above. Do NOT send Craig to northstarsynergy.com.
+- **IMPORTANT**: northstarsynergy.org is NOT connected yet. The domain is referenced throughout the codebase as the future production URL, but it is NOT live and will return a 502 or error. The only working URL is the Vercel one above. Do NOT send Craig to northstarsynergy.org.
 
 ## Tech Stack
 Next.js 16+ (App Router), React 19, TypeScript, Tailwind CSS 4, Framer Motion, jose (JWT), Square (payments), Stripe (billing), Resend (email), Twilio (SMS), Supabase (DB, with in-memory fallback)
@@ -30,6 +30,6 @@ All 9 build phases complete. Security hardened (CSP, account lockout, 24hr sessi
 - Schema: `schema.sql`, migration script: `scripts/setup-db.js`
 
 ## Other Remaining Items
-1. Connect domain northstarsynergy.com to Vercel
+1. Connect domain northstarsynergy.org to Vercel
 2. Craig: LLC, EIN, bank, insurance, DMCA agent registration
 3. Set `NEXT_PUBLIC_GA_ID` on Vercel when GA4 property is ready

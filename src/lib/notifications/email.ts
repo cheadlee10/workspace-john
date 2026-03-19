@@ -96,7 +96,7 @@ export async function sendOrderConfirmation(data: OrderEmailData): Promise<{
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: `${data.restaurantName} <orders@northstarsynergy.com>`,
+        from: `${data.restaurantName} <orders@northstarsynergy.org>`,
         to: data.customerEmail,
         subject: `Order Confirmed - #${data.orderId}`,
         html,
@@ -144,7 +144,7 @@ export async function sendOrderStatusUpdate(params: {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: `${params.restaurantName} <orders@northstarsynergy.com>`,
+        from: `${params.restaurantName} <orders@northstarsynergy.org>`,
         to: params.customerEmail,
         subject: `Order Update - #${params.orderId}`,
         html,

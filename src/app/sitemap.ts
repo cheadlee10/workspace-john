@@ -3,7 +3,7 @@ import { demoRestaurant } from "@/config/demo-restaurant";
 import { getAllRestaurants } from "@/lib/tenant/restaurant-store";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://northstarsynergy.com";
+  const baseUrl = "https://northstarsynergy.org";
 
   // Static SaaS pages
   const staticPages: MetadataRoute.Sitemap = [

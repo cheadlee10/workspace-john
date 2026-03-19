@@ -12,8 +12,8 @@ const ORG_JSONLD = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "NorthStar Synergy",
-  url: "https://northstarsynergy.com",
-  logo: "https://northstarsynergy.com/icon.svg",
+  url: "https://northstarsynergy.org",
+  logo: "https://northstarsynergy.org/icon.svg",
   description:
     "Beautiful restaurant websites with built-in online ordering. Zero commissions. No setup fees.",
   address: {
@@ -24,7 +24,7 @@ const ORG_JSONLD = {
   },
   contactPoint: {
     "@type": "ContactPoint",
-    email: "hello@northstarsynergy.com",
+    email: "hello@northstarsynergy.org",
     contactType: "sales",
   },
   sameAs: [],

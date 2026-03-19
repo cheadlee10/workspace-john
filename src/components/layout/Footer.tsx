@@ -167,7 +167,7 @@ export function Footer({ restaurant }: FooterProps) {
             <p>
               Powered by{" "}
               <a
-                href="https://northstarsynergy.com"
+                href="https://northstarsynergy.org"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium transition-colors"

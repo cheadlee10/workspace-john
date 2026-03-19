@@ -317,7 +317,7 @@ async function sendPitchEmail(
     senderTitle: config.senderTitle,
     companyName: config.companyName,
     companyAddress: config.companyAddress,
-    unsubscribeUrl: `https://northstarsynergy.com/unsubscribe/${prospect.id}`,
+    unsubscribeUrl: `https://northstarsynergy.org/unsubscribe/${prospect.id}`,
   };
 
   const email = generateInitialPitchEmail(emailCtx);
@@ -357,7 +357,7 @@ async function sendFollowUpEmail(
     senderTitle: config.senderTitle,
     companyName: config.companyName,
     companyAddress: config.companyAddress,
-    unsubscribeUrl: `https://northstarsynergy.com/unsubscribe/${prospect.id}`,
+    unsubscribeUrl: `https://northstarsynergy.org/unsubscribe/${prospect.id}`,
   };
 
   const email = generateFollowUpEmail(emailCtx);
@@ -393,7 +393,7 @@ async function sendFinalEmail(
     senderTitle: config.senderTitle,
     companyName: config.companyName,
     companyAddress: config.companyAddress,
-    unsubscribeUrl: `https://northstarsynergy.com/unsubscribe/${prospect.id}`,
+    unsubscribeUrl: `https://northstarsynergy.org/unsubscribe/${prospect.id}`,
   };
 
   const email = generateFinalEmail(emailCtx);

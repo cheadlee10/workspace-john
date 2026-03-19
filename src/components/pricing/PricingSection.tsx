@@ -38,10 +38,10 @@ export function PricingSection({
       if (data.url) {
         window.location.href = data.url;
       } else {
-        window.location.href = "mailto:hello@northstarsynergy.com";
+        window.location.href = "mailto:hello@northstarsynergy.org";
       }
     } catch {
-      window.location.href = "mailto:hello@northstarsynergy.com";
+      window.location.href = "mailto:hello@northstarsynergy.org";
     } finally {
       setLoadingPlan(null);
     }

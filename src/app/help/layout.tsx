@@ -46,7 +46,7 @@ const FAQ_JSONLD = {
       name: "How do I get started?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Sign up at northstarsynergy.com/pricing. We'll build your custom site within 48 hours. Review and approve the design, then we handle domain setup and go live.",
+        text: "Sign up at northstarsynergy.org/pricing. We'll build your custom site within 48 hours. Review and approve the design, then we handle domain setup and go live.",
       },
     },
   ],

@@ -47,7 +47,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900">4. Subscription and Payment</h2>
-            <p><strong>Plans:</strong> We offer Starter, Growth, and Pro subscription plans. Plan details and pricing are available at northstarsynergy.com/pricing.</p>
+            <p><strong>Plans:</strong> We offer Starter, Growth, and Pro subscription plans. Plan details and pricing are available at northstarsynergy.org/pricing.</p>
             <p><strong>Billing:</strong> Subscriptions are billed monthly or annually in advance. All fees are in US dollars and non-refundable except as described in Section 5.</p>
             <p><strong>Payment:</strong> Payment is processed through Stripe. You authorize us to charge your payment method on file for recurring subscription fees.</p>
             <p><strong>Price Changes:</strong> We may change pricing with 30 days&apos; written notice. Existing subscriptions continue at their current rate until renewal.</p>
@@ -112,7 +112,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-bold text-gray-900">12. DMCA and Copyright</h2>
             <p>If you believe that content hosted on a NorthStar-powered website infringes your copyright, please submit a DMCA takedown notice to our designated agent:</p>
-            <p>DMCA Agent: NorthStar Synergy LLC<br />Email: legal@northstarsynergy.com<br />Woodinville, WA</p>
+            <p>DMCA Agent: NorthStar Synergy LLC<br />Email: legal@northstarsynergy.org<br />Woodinville, WA</p>
             <p>Your notice must include: (1) identification of the copyrighted work, (2) identification of the infringing material and its location, (3) your contact information, (4) a statement of good faith belief that the use is unauthorized, and (5) a statement under penalty of perjury that the information is accurate and you are authorized to act on behalf of the copyright owner.</p>
           </section>
 
@@ -124,7 +124,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900">14. Dispute Resolution</h2>
-            <p><strong>Informal Resolution:</strong> Before filing any formal claim, you agree to contact us at legal@northstarsynergy.com and attempt to resolve the dispute informally for at least 30 days.</p>
+            <p><strong>Informal Resolution:</strong> Before filing any formal claim, you agree to contact us at legal@northstarsynergy.org and attempt to resolve the dispute informally for at least 30 days.</p>
             <p><strong>Binding Arbitration:</strong> If we cannot resolve the dispute informally, either party may elect to resolve the dispute through binding arbitration administered by the American Arbitration Association (AAA) under its Commercial Arbitration Rules. Arbitration will take place in King County, Washington.</p>
             <p><strong>Class Action Waiver:</strong> All claims must be brought in the parties&apos; individual capacity and not as a plaintiff or class member in any class or representative proceeding.</p>
             <p><strong>Small Claims Exception:</strong> Either party may bring qualifying claims in small claims court in King County, Washington.</p>
@@ -153,7 +153,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-lg font-bold text-gray-900">19. Contact</h2>
-            <p>NorthStar Synergy LLC<br />Woodinville, WA<br />legal@northstarsynergy.com</p>
+            <p>NorthStar Synergy LLC<br />Woodinville, WA<br />legal@northstarsynergy.org</p>
           </section>
         </div>
       </main>

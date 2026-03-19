@@ -96,9 +96,9 @@ export default async function DishPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: restaurant.name, item: `https://${host || "northstarsynergy.com"}` },
-      { "@type": "ListItem", position: 2, name: "Menu", item: `https://${host || "northstarsynergy.com"}/#menu` },
-      { "@type": "ListItem", position: 3, name: section.name, item: `https://${host || "northstarsynergy.com"}/#menu` },
+      { "@type": "ListItem", position: 1, name: restaurant.name, item: `https://${host || "northstarsynergy.org"}` },
+      { "@type": "ListItem", position: 2, name: "Menu", item: `https://${host || "northstarsynergy.org"}/#menu` },
+      { "@type": "ListItem", position: 3, name: section.name, item: `https://${host || "northstarsynergy.org"}/#menu` },
       { "@type": "ListItem", position: 4, name: menuItem.name },
     ],
   };

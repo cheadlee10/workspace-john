@@ -228,7 +228,7 @@ function generatePostcardBack(config: PostcardConfig): string {
         <div class="footer">
           ${config.fromName}<br />
           NorthStar Synergy<br />
-          Questions? hello@northstarsynergy.com
+          Questions? hello@northstarsynergy.org
         </div>
       </div>
       <div class="qr-section">

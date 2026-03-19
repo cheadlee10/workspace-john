@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin/", "/api/", "/checkout", "/order/", "/order-here"],
       },
     ],
-    sitemap: "https://northstarsynergy.com/sitemap.xml",
+    sitemap: "https://northstarsynergy.org/sitemap.xml",
   };
 }

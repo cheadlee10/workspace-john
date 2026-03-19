@@ -110,7 +110,7 @@ export default function OGImage() {
             color: "#6b7280",
           }}
         >
-          northstarsynergy.com
+          northstarsynergy.org
         </div>
       </div>
     ),
