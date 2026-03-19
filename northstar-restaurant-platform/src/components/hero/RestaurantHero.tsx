@@ -270,10 +270,14 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
         >
           <a
             href="#menu"
-            className="inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110 active:scale-[0.98]"
+            className="inline-flex items-center justify-center px-12 py-5 text-sm font-bold shadow-lg transition-all hover:shadow-xl active:scale-[0.98]"
             style={{
-              backgroundColor: palette.accent,
-              borderRadius: design.layout.cornerRadius,
+              background: palette.stitchAccent
+                ? `linear-gradient(to right, ${palette.stitchAccent.primary}, ${palette.stitchAccent.primaryContainer})`
+                : palette.accent,
+              color: palette.stitchAccent?.onPrimary || "#ffffff",
+              borderRadius: "0.75rem",
+              boxShadow: `0 4px 20px ${palette.accent}1A`,
             }}
           >
             View Menu
@@ -282,12 +286,15 @@ export function RestaurantHero({ restaurant }: RestaurantHeroProps) {
           {features.onlineOrdering && (
             <a
               href="#order"
-              className="cta-glow inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:brightness-110 active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-12 py-5 text-sm font-bold shadow-lg transition-all hover:shadow-xl active:scale-[0.98]"
               style={{
-                backgroundColor: palette.accent,
-                borderRadius: design.layout.cornerRadius,
-                "--glow-color": palette.accent,
-              } as React.CSSProperties}
+                background: palette.stitchAccent
+                  ? `linear-gradient(to right, ${palette.stitchAccent.primary}, ${palette.stitchAccent.primaryContainer})`
+                  : palette.accent,
+                color: palette.stitchAccent?.onPrimary || "#ffffff",
+                borderRadius: "0.75rem",
+                boxShadow: `0 4px 20px ${palette.accent}1A`,
+              }}
             >
               Order Now
             </a>

@@ -153,13 +153,13 @@ export function Footer({ restaurant }: FooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t pt-6" style={{ borderColor: `${palette.footerText}15` }}>
+        <div className="mt-12 pt-6" style={{ borderTop: `1px solid ${palette.outlineVariant || palette.footerText}26` }}>
           <div className="flex items-center justify-center text-xs sm:justify-between" style={{ color: `${palette.footerText}66` }}>
             <p>
               &copy; {year} {name}. All rights reserved.
             </p>
             <a
-              href="https://northstarsynergy.com"
+              href="https://northstarsynergy.org"
               target="_blank"
               rel="noopener noreferrer"
               className="ml-3 transition-opacity hover:opacity-60"

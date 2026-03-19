@@ -33,18 +33,19 @@ export function StickyNav({ restaurant }: StickyNavProps) {
     ...(features.cateringPortal ? [{ href: "#catering", label: "Catering" }] : []),
   ];
 
-  // #4 Glassmorphism for dark themes
-  const navStyle: React.CSSProperties = dark
-    ? {
-        backgroundColor: "rgba(0,0,0,0.4)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        borderColor: "rgba(255,255,255,0.1)",
-      }
-    : {
-        backgroundColor: palette.navBackground,
-        borderColor: palette.menuCardBorder,
-      };
+  // Stitch glassmorphism — consistent across all themes
+  const stitch = palette.stitch;
+  const stitchAccent = palette.stitchAccent;
+  const navStyle: React.CSSProperties = {
+    backgroundColor: dark
+      ? `${stitch?.base || "#131313"}99`  // 60% opacity
+      : `${stitch?.base || "#ffffff"}F2`,  // 95% opacity
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    borderColor: dark
+      ? `${palette.outlineVariant || "#4e4639"}26`  // 15% opacity ghost border
+      : `${palette.outlineVariant || "#d7d3cf"}33`,
+  };
 
   return (
     <>
@@ -90,12 +91,15 @@ export function StickyNav({ restaurant }: StickyNavProps) {
             {features.onlineOrdering && (
               <a
                 href="#order"
-                className="cta-glow px-5 py-2 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
+                className="px-5 py-2 text-sm font-bold transition-all hover:shadow-lg active:scale-[0.98]"
                 style={{
-                  backgroundColor: palette.accent,
-                  borderRadius: design.layout.cornerRadius,
-                  "--glow-color": palette.accent,
-                } as React.CSSProperties}
+                  background: stitchAccent
+                    ? `linear-gradient(to right, ${stitchAccent.primary}, ${stitchAccent.primaryContainer})`
+                    : palette.accent,
+                  color: stitchAccent?.onPrimary || "#ffffff",
+                  borderRadius: "0.75rem",
+                  boxShadow: `0 4px 14px ${palette.accent}1A`,
+                }}
               >
                 Order Now
               </a>
@@ -169,12 +173,16 @@ export function StickyNav({ restaurant }: StickyNavProps) {
         </AnimatePresence>
       </motion.nav>
 
-      {/* Mobile Fixed Bottom Bar */}
+      {/* Mobile Fixed Bottom Bar — Stitch glassmorphism */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 border-t p-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] md:hidden"
+        className="fixed bottom-0 left-0 right-0 z-50 rounded-t-xl p-3 md:hidden"
         style={{
-          backgroundColor: palette.surface,
-          borderColor: palette.menuCardBorder,
+          backgroundColor: dark
+            ? `${stitch?.base || "#131313"}CC`  // 80% opacity
+            : `${stitch?.base || "#ffffff"}F2`,
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          boxShadow: "0 -4px 20px rgba(0,0,0,0.3)",
         }}
       >
         <div className="flex gap-2">

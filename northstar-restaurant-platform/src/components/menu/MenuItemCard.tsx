@@ -51,16 +51,14 @@ function MenuItemCardInner({
 
   return (
     <motion.article
-      className={`group relative flex w-full flex-col overflow-hidden border transition-shadow ${
+      className={`group relative flex w-full flex-col overflow-hidden transition-shadow ${
         item.isSoldOut ? "opacity-60" : ""
       }`}
       style={{
-        backgroundColor: palette.menuCardBg,
-        borderColor: dark ? "rgba(255,255,255,0.1)" : palette.menuCardBorder,
-        borderRadius: design.layout.cornerRadius,
-        boxShadow: dark
-          ? "0 1px 3px rgba(0,0,0,0.3)"
-          : "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
+        backgroundColor: palette.stitch?.containerLow || palette.menuCardBg,
+        borderRadius: "0.75rem",
+        // Stitch no-border rule: ghost border at 15% opacity only
+        border: `1px solid ${(palette.outlineVariant || palette.menuCardBorder) + "26"}`,
       }}
       whileHover={{ scale: design.effects.menuItemHoverScale, transition: { duration: 0.2 } }}
       onMouseEnter={() => setIsHovered(true)}
@@ -70,13 +68,13 @@ function MenuItemCardInner({
     >
       {/* #8 Food Photo Hover Zoom — masked container */}
       {showImage && item.image && (
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/5] overflow-hidden">
           <Image
             src={item.image}
             alt={item.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.08]"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
             style={{ filter: design.effects.imageFilter !== "none" ? design.effects.imageFilter : undefined }}
             loading="lazy"
           />
@@ -111,8 +109,8 @@ function MenuItemCardInner({
         </div>
       )}
 
-      {/* Content */}
-      <div className="flex flex-1 flex-col p-4">
+      {/* Content — Stitch spacing */}
+      <div className="flex flex-1 flex-col p-6 space-y-1">
         <div className="mb-2 flex items-start justify-between gap-3">
           <div className="flex min-w-0 flex-1 items-center gap-2.5">
             {/* #3 Image Peek — circular preview on hover (no-image cards only) */}
@@ -160,12 +158,11 @@ function MenuItemCardInner({
               return (
                 <span
                   key={tag}
-                  className="inline-flex items-center border px-2 py-0.5 text-xs font-medium"
+                  className="inline-flex items-center px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest"
                   style={{
-                    borderColor: palette.menuCardBorder,
-                    backgroundColor: palette.surfaceAlt,
-                    color: palette.textMuted,
-                    borderRadius: "6px",
+                    backgroundColor: palette.stitch?.container || palette.surfaceAlt,
+                    color: palette.stitchAccent?.tertiary || palette.textMuted,
+                    borderRadius: "9999px",
                   }}
                   title={info?.label || tag}
                 >
@@ -208,10 +205,14 @@ function MenuItemCardInner({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setIsExpanded(true)}
-                  className="w-full py-2.5 text-sm font-semibold text-white transition-all hover:shadow-md active:scale-[0.98]"
+                  className="w-full py-3 text-sm font-bold transition-all hover:shadow-lg active:scale-[0.98]"
                   style={{
-                    backgroundColor: accent,
-                    borderRadius: design.layout.cornerRadius,
+                    background: palette.stitchAccent
+                      ? `linear-gradient(to right, ${palette.stitchAccent.primary}, ${palette.stitchAccent.primaryContainer})`
+                      : accent,
+                    color: palette.stitchAccent?.onPrimary || "#ffffff",
+                    borderRadius: "0.75rem",
+                    boxShadow: `0 4px 14px ${accent}1A`,
                   }}
                 >
                   Add to Order
