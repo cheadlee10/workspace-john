@@ -117,32 +117,44 @@ function adjustBrightness(hex: string, amount: number): string {
   return rgbToHex(r + amount, g + amount, b + amount);
 }
 
-/** Derive a warm-tinted adjustment (slight warm shift for Stitch aesthetic) */
-function warmAdjust(hex: string, amount: number): string {
-  const [r, g, b] = hexToRgb(hex);
-  return rgbToHex(r + amount + 2, g + amount + 1, b + amount);
+/** Mix two colors together at a given ratio (0 = colorA, 1 = colorB) */
+function mixColors(hexA: string, hexB: string, ratio: number): string {
+  const [rA, gA, bA] = hexToRgb(hexA);
+  const [rB, gB, bB] = hexToRgb(hexB);
+  return rgbToHex(
+    Math.round(rA + (rB - rA) * ratio),
+    Math.round(gA + (gB - gA) * ratio),
+    Math.round(bA + (bB - bA) * ratio),
+  );
 }
 
-/** Generate Stitch 5-level surface hierarchy from a base background color */
-function deriveStitchSurfaces(bg: string, isDark: boolean): StitchSurfaces {
+/**
+ * Generate Stitch 5-level surface hierarchy TINTED with the accent color.
+ * This is the key differentiator — a Japanese restaurant with red accent
+ * gets warm-reddish surfaces, a French bistro with gold accent gets
+ * warm-golden surfaces. Never neutral gray.
+ */
+function deriveStitchSurfaces(bg: string, accent: string, isDark: boolean): StitchSurfaces {
   if (isDark) {
+    // Tint each surface level with a touch of the accent color
+    const tintBase = bg;
     return {
-      base: bg,
-      containerLowest: adjustBrightness(bg, -5),
-      containerLow: warmAdjust(bg, 9),
-      container: warmAdjust(bg, 13),
-      containerHigh: warmAdjust(bg, 23),
-      containerHighest: warmAdjust(bg, 34),
+      base: tintBase,
+      containerLowest: adjustBrightness(tintBase, -5),
+      containerLow: mixColors(adjustBrightness(tintBase, 9), accent, 0.06),
+      container: mixColors(adjustBrightness(tintBase, 13), accent, 0.05),
+      containerHigh: mixColors(adjustBrightness(tintBase, 23), accent, 0.04),
+      containerHighest: mixColors(adjustBrightness(tintBase, 34), accent, 0.03),
     };
   }
-  // Light mode: surfaces get progressively darker
+  // Light mode: tint surfaces with a whisper of accent
   return {
     base: bg,
     containerLowest: "#ffffff",
-    containerLow: adjustBrightness(bg, -5),
-    container: adjustBrightness(bg, -10),
-    containerHigh: adjustBrightness(bg, -17),
-    containerHighest: adjustBrightness(bg, -24),
+    containerLow: mixColors(adjustBrightness(bg, -4), accent, 0.04),
+    container: mixColors(adjustBrightness(bg, -9), accent, 0.05),
+    containerHigh: mixColors(adjustBrightness(bg, -15), accent, 0.04),
+    containerHighest: mixColors(adjustBrightness(bg, -22), accent, 0.03),
   };
 }
 
@@ -150,11 +162,11 @@ function deriveStitchSurfaces(bg: string, isDark: boolean): StitchSurfaces {
 function deriveStitchAccent(accent: string, isDark: boolean): StitchAccent {
   const [r, g, b] = hexToRgb(accent);
 
-  // Primary container: darken accent by ~15%
+  // Primary container: darken accent by ~18%
   const primaryContainer = rgbToHex(
-    Math.round(r * 0.82),
-    Math.round(g * 0.78),
-    Math.round(b * 0.72)
+    Math.round(r * 0.80),
+    Math.round(g * 0.75),
+    Math.round(b * 0.68)
   );
 
   // Text color on primary: very dark version of accent
@@ -162,15 +174,27 @@ function deriveStitchAccent(accent: string, isDark: boolean): StitchAccent {
     ? rgbToHex(Math.round(r * 0.28), Math.round(g * 0.25), Math.round(b * 0.15))
     : rgbToHex(Math.round(r * 0.2), Math.round(g * 0.18), Math.round(b * 0.1));
 
-  // Tertiary: warm rose-beige complement
-  const tertiary = isDark ? "#e4beb2" : "#c19e92";
+  // Tertiary: complementary warm tone derived from accent hue
+  // Shift the hue by rotating RGB channels
+  const tertiary = isDark
+    ? rgbToHex(
+        Math.round(Math.min(255, r * 0.9 + 50)),
+        Math.round(Math.min(255, g * 0.7 + 40)),
+        Math.round(Math.min(255, b * 0.6 + 50))
+      )
+    : rgbToHex(
+        Math.round(r * 0.7 + 30),
+        Math.round(g * 0.6 + 20),
+        Math.round(b * 0.5 + 20)
+      );
 
   return { primary: accent, primaryContainer, onPrimary, tertiary };
 }
 
-/** Derive ghost border color from background */
-function deriveOutlineVariant(bg: string, isDark: boolean): string {
-  return isDark ? warmAdjust(bg, 55) : adjustBrightness(bg, -40);
+/** Derive ghost border color tinted with accent */
+function deriveOutlineVariant(bg: string, accent: string, isDark: boolean): string {
+  const base = isDark ? adjustBrightness(bg, 55) : adjustBrightness(bg, -40);
+  return mixColors(base, accent, 0.12);
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -319,42 +343,44 @@ function generatePalette(
       }
 
       if (cuisine === "japanese" || cuisine === "korean") {
+        // Deep ink-black with crimson soul — distinctly Japanese
         return {
-          background: "#111111",
-          surface: "#1a1a1a",
-          surfaceAlt: "#151515",
-          text: "#f5f5f5",
-          textMuted: "#999999",
+          background: "#0c0a0e",
+          surface: "#161218",
+          surfaceAlt: "#110e13",
+          text: "#f0ece8",
+          textMuted: "#a89898",
           accent: "#DC2626",
           accentHover: "#B91C1C",
           heroOverlay:
-            "linear-gradient(to top, rgba(0,0,0,0.92), rgba(0,0,0,0.5), rgba(0,0,0,0.15))",
-          navBackground: "rgba(17,17,17,0.95)",
-          footerBackground: "#0a0a0a",
-          footerText: "#999999",
-          menuCardBg: "#1a1a1a",
-          menuCardBorder: "#2a2a2a",
-          reviewSectionBg: "#151515",
+            "linear-gradient(to top, rgba(12,10,14,0.92), rgba(12,10,14,0.5), rgba(12,10,14,0.15))",
+          navBackground: "rgba(12,10,14,0.60)",
+          footerBackground: "#060408",
+          footerText: "#a89898",
+          menuCardBg: "#161218",
+          menuCardBorder: "#2a2228",
+          reviewSectionBg: "#110e13",
         };
       }
 
       if (type === "bar-brewery") {
+        // Deep midnight blue with amber warmth — distinctly bar/craft
         return {
-          background: "#1a1a2e",
-          surface: "#252545",
-          surfaceAlt: "#1f1f38",
-          text: "#f0f0f0",
-          textMuted: "#a0a0b8",
+          background: "#0e1018",
+          surface: "#181c28",
+          surfaceAlt: "#131722",
+          text: "#e8e6f0",
+          textMuted: "#8890a8",
           accent: "#D97706",
           accentHover: "#B45309",
           heroOverlay:
-            "linear-gradient(to top, rgba(26,26,46,0.95), rgba(26,26,46,0.5), rgba(26,26,46,0.15))",
-          navBackground: "rgba(26,26,46,0.95)",
-          footerBackground: "#12121f",
-          footerText: "#a0a0b8",
-          menuCardBg: "#252545",
-          menuCardBorder: "#35355a",
-          reviewSectionBg: "#1f1f38",
+            "linear-gradient(to top, rgba(14,16,24,0.95), rgba(14,16,24,0.5), rgba(14,16,24,0.15))",
+          navBackground: "rgba(14,16,24,0.60)",
+          footerBackground: "#080a10",
+          footerText: "#8890a8",
+          menuCardBg: "#181c28",
+          menuCardBorder: "#252a3a",
+          reviewSectionBg: "#131722",
         };
       }
 
@@ -378,23 +404,23 @@ function generatePalette(
         };
       }
 
-      // Fine dining / generic dark
+      // Generic dark-moody — smoky charcoal with warm undertone
       return {
-        background: "#0f0f0f",
-        surface: "#1a1a1a",
-        surfaceAlt: "#141414",
-        text: "#f5f5f5",
-        textMuted: "#a0a0a0",
+        background: "#111010",
+        surface: "#1b1918",
+        surfaceAlt: "#151413",
+        text: "#f2ede8",
+        textMuted: "#a8a098",
         accent: "#C9A96E",
         accentHover: "#B8944F",
         heroOverlay:
-          "linear-gradient(to top, rgba(15,15,15,0.92), rgba(15,15,15,0.5), rgba(15,15,15,0.15))",
-        navBackground: "rgba(15,15,15,0.95)",
-        footerBackground: "#0a0a0a",
-        footerText: "#a0a0a0",
-        menuCardBg: "#1a1a1a",
-        menuCardBorder: "#2a2a2a",
-        reviewSectionBg: "#141414",
+          "linear-gradient(to top, rgba(17,16,16,0.92), rgba(17,16,16,0.5), rgba(17,16,16,0.15))",
+        navBackground: "rgba(17,16,16,0.60)",
+        footerBackground: "#0a0909",
+        footerText: "#a8a098",
+        menuCardBg: "#1b1918",
+        menuCardBorder: "#2c2928",
+        reviewSectionBg: "#151413",
       };
     }
 
@@ -565,22 +591,23 @@ function generatePalette(
     }
 
     case "minimal-elegant": {
+      // Warm obsidian with gold — distinctly upscale, editorial
       return {
-        background: "#0f0f0f",
-        surface: "#1a1a1a",
-        surfaceAlt: "#141414",
-        text: "#f5f5f5",
-        textMuted: "#a0a0a0",
+        background: "#100e0c",
+        surface: "#1c1814",
+        surfaceAlt: "#151210",
+        text: "#f5f0e8",
+        textMuted: "#b0a898",
         accent: "#C9A96E",
         accentHover: "#B8944F",
         heroOverlay:
-          "linear-gradient(to top, rgba(15,15,15,0.92), rgba(15,15,15,0.5), rgba(15,15,15,0.15))",
-        navBackground: "rgba(15,15,15,0.95)",
-        footerBackground: "#0a0a0a",
-        footerText: "#a0a0a0",
-        menuCardBg: "#1a1a1a",
-        menuCardBorder: "#2a2a2a",
-        reviewSectionBg: "#141414",
+          "linear-gradient(to top, rgba(16,14,12,0.92), rgba(16,14,12,0.5), rgba(16,14,12,0.15))",
+        navBackground: "rgba(16,14,12,0.60)",
+        footerBackground: "#0a0908",
+        footerText: "#b0a898",
+        menuCardBg: "#1c1814",
+        menuCardBorder: "#2e2820",
+        reviewSectionBg: "#151210",
       };
     }
 
@@ -628,62 +655,64 @@ function generatePalette(
     case "bright-fresh":
     default: {
       if (cuisine === "mexican") {
+        // Warm terracotta warmth — sun-baked clay
         return {
-          background: "#ffffff",
+          background: "#fdf8f2",
           surface: "#ffffff",
-          surfaceAlt: "#FFF7ED",
-          text: "#1c1917",
-          textMuted: "#78716c",
+          surfaceAlt: "#fef0e0",
+          text: "#2c1a0e",
+          textMuted: "#8a6e58",
           accent: "#B45309",
           accentHover: "#92400E",
           heroOverlay:
-            "linear-gradient(to top, rgba(28,25,23,0.88), rgba(28,25,23,0.4), rgba(28,25,23,0.1))",
-          navBackground: "rgba(255,255,255,0.95)",
-          footerBackground: "#1c1917",
-          footerText: "#a8a29e",
+            "linear-gradient(to top, rgba(44,26,14,0.88), rgba(44,26,14,0.4), rgba(44,26,14,0.1))",
+          navBackground: "rgba(253,248,242,0.60)",
+          footerBackground: "#2c1a0e",
+          footerText: "#c4a888",
           menuCardBg: "#ffffff",
-          menuCardBorder: "#e7e5e4",
-          reviewSectionBg: "#FFF7ED",
+          menuCardBorder: "#f0dcc8",
+          reviewSectionBg: "#fef0e0",
         };
       }
 
       if (cuisine === "thai" || cuisine === "vietnamese") {
+        // Fresh green-gold — tropical brightness
         return {
-          background: "#ffffff",
+          background: "#f8faf5",
           surface: "#ffffff",
-          surfaceAlt: "#f5f5f4",
-          text: "#1c1917",
-          textMuted: "#78716c",
+          surfaceAlt: "#f0f5e8",
+          text: "#1a2210",
+          textMuted: "#687858",
           accent: "#D97706",
           accentHover: "#B45309",
           heroOverlay:
-            "linear-gradient(to top, rgba(28,25,23,0.85), rgba(28,25,23,0.4), rgba(28,25,23,0.1))",
-          navBackground: "rgba(255,255,255,0.95)",
-          footerBackground: "#1c1917",
-          footerText: "#a8a29e",
+            "linear-gradient(to top, rgba(26,34,16,0.85), rgba(26,34,16,0.4), rgba(26,34,16,0.1))",
+          navBackground: "rgba(248,250,245,0.60)",
+          footerBackground: "#1a2210",
+          footerText: "#a0b088",
           menuCardBg: "#ffffff",
-          menuCardBorder: "#e7e5e4",
-          reviewSectionBg: "#f5f5f4",
+          menuCardBorder: "#e0e8d4",
+          reviewSectionBg: "#f0f5e8",
         };
       }
 
-      // Default
+      // Default bright-fresh — clean teal-tinged modern
       return {
-        background: "#ffffff",
+        background: "#f5fafa",
         surface: "#ffffff",
-        surfaceAlt: "#f9fafb",
-        text: "#111827",
-        textMuted: "#6b7280",
+        surfaceAlt: "#edf5f4",
+        text: "#0f2726",
+        textMuted: "#4a7170",
         accent: "#0F766E",
         accentHover: "#0D6660",
         heroOverlay:
-          "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), rgba(0,0,0,0.2))",
-        navBackground: "rgba(255,255,255,0.95)",
-        footerBackground: "#111827",
-        footerText: "#9ca3af",
+          "linear-gradient(to top, rgba(15,39,38,0.8), rgba(15,39,38,0.4), rgba(15,39,38,0.2))",
+        navBackground: "rgba(245,250,250,0.60)",
+        footerBackground: "#0f2726",
+        footerText: "#78a8a6",
         menuCardBg: "#ffffff",
-        menuCardBorder: "#e5e7eb",
-        reviewSectionBg: "#f9fafb",
+        menuCardBorder: "#d8e8e6",
+        reviewSectionBg: "#edf5f4",
       };
     }
   }
@@ -978,9 +1007,9 @@ export function generateDesignConfig(restaurant: Restaurant): DesignConfig {
   ) < 0.35;
   const palette: DesignConfig["palette"] = {
     ...basePalette,
-    stitch: deriveStitchSurfaces(basePalette.background, dark),
+    stitch: deriveStitchSurfaces(basePalette.background, basePalette.accent, dark),
     stitchAccent: deriveStitchAccent(basePalette.accent, dark),
-    outlineVariant: deriveOutlineVariant(basePalette.background, dark),
+    outlineVariant: deriveOutlineVariant(basePalette.background, basePalette.accent, dark),
   };
   const fonts = generateFonts(mood, cuisine, type, keywords, priceLevel);
   const layout = generateLayout(mood, type, priceLevel, photoCount, keywords);
